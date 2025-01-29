@@ -1,8 +1,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { FaChevronDown, FaChevronUp, FaHome, FaWater, FaCar, FaShieldAlt, FaLeaf } from "react-icons/fa"; // Nuevos íconos
+import {
+  FaChevronDown,
+  FaChevronUp,
+  FaHome,
+  FaFileAlt
+} from "react-icons/fa"; // Nuevos íconos
 import { HiOutlineViewGrid } from "react-icons/hi";
+import aguasWhite from "../../assets/icons/aguas-white.png";
+import generalWhite from "../../assets/icons/general-white.png";
+import licenciaWhite from "../../assets/icons/licencia-white.png";
+import seguridadWhite from "../../assets/icons/seguridad-white.png";
+import saludWhite from "../../assets/icons/seguridad-white.png";
 import snMobile from "../../assets/sn-logos/sn-mobile-logo.png";
 import snLogo from "../../assets/sn-logos/san-nicolas.logo.png";
 import crossIcon from "../../assets/icons/x-circle.png";
@@ -18,33 +28,33 @@ export default function Header() {
 
   // Array de objetos para las categorías
   const categories = [
-    { name: "General", icon: <HiOutlineViewGrid /> },
-    { name: "Salud", icon: <FaLeaf /> },
-    { name: "Aguas", icon: <FaWater /> },
-    { name: "Licencia", icon: <FaCar /> },
-    { name: "Seguridad", icon: <FaShieldAlt /> },
+    { name: "General", icon: generalWhite },
+    { name: "Salud", icon: saludWhite }, // Mantiene el icono de react-icons
+    { name: "Aguas", icon: aguasWhite },
+    { name: "Licencia", icon: licenciaWhite },
+    { name: "Seguridad", icon: seguridadWhite },
   ];
 
   return (
     <div>
       {/* Encabezado visible para pantallas grandes */}
-      <div className="hidden md:block w-full h-20 bg-sn flex justify-center items-center sticky top-0 z-50"></div>
+      <div className="hidden md:block w-full h-20 bg-sn flex justify-center items-center fixed top-0 z-50"></div>
 
       {/* Sidebar visible solo para dispositivos móviles */}
       <div className="block md:hidden">
-        <div className="w-full h-20 bg-sn flex justify-center items-center sticky top-0 z-50">
+        <div className="block md:hidden fixed top-0 w-full h-20 bg-sn flex justify-center items-center z-50">
           <div className="w-[97%] flex justify-between h-full">
             <div className="w-auto h-full flex items-center">
               <div className="w-20 h-full flex justify-center items-center">
                 <img
                   src={snMobile}
-                  className="object-contain w-[60%] h-[60%]"
+                  className="object-contain cursor-pointer select-none w-[60%] h-[60%]"
                   alt="snLogo"
                 />
               </div>
               <div className="h-[70%] ml-1 border border-white"></div>
               <div className="w-36 h-full flex justify-center items-center">
-                <span className="text-white">Datos abiertos</span>
+                <span className="text-white cursor-pointer select-none">Datos abiertos</span>
               </div>
             </div>
             <div className="w-16 h-full pl-2 flex items-center">
@@ -78,27 +88,33 @@ export default function Header() {
             <div className="w-64 h-24 ml-6 flex items-center">
               <img
                 src={snLogo}
-                className="object-contain w-[70%] h-[70%]"
+                className="object-contain w-[70%] h-[70%] select-none"
                 alt="Logo San Nicolás"
               />
             </div>
             <div className="w-[55px] h-[50px] flex justify-center items-center">
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-white w-8 h-8 flex items-center justify-center"
+                className="text-white select-none w-8 h-8 flex items-center justify-center"
               >
-                <img src={crossIcon} alt="Cerrar" />
+                <img src={crossIcon} className="select-none" alt="Cerrar" />
               </button>
             </div>
           </div>
 
           {/* Lista de enlaces */}
-          <ul className="mt-8 pl-6 text-white space-y-2 text-xl font-medium">
+          <ul className="mt-8 pl-6 text-white space-y-4 text-xl font-medium">
             <li className="flex items-center gap-2 rounded cursor-pointer select-none hover:underline">
               <div className="w-auto h-auto">
                 <FaHome className="mb-1" size={22} />
               </div>
               <span className="ml-1 mb-1">Inicio</span>
+            </li>
+            <li className="flex items-center gap-2 rounded cursor-pointer select-none hover:underline">
+              <div className="w-auto h-auto">
+                <FaFileAlt className="mb-1" size={22} />
+              </div>
+              <span className="ml-1 mb-1">Acerca</span>
             </li>
             <li>
               <div
@@ -106,7 +122,9 @@ export default function Header() {
                 onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
               >
                 <HiOutlineViewGrid size={22} /> {/* Ícono de Categorías */}
-                <span className="hover:underline select-none cursor-pointer">Categorías</span>
+                <span className="hover:underline select-none cursor-pointer">
+                  Categorías
+                </span>
                 <div className="flex items-center">
                   {isCategoriesOpen ? (
                     <motion.div
@@ -143,7 +161,7 @@ export default function Header() {
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="overflow-hidden bg-[#2490C6] rounded-lg mt-2"
               >
-                <ul className="p-4 space-y-2 text-base">
+                <ul className="p-4 space-y-4 text-base">
                   {categories.map((category, index) => (
                     <motion.li
                       key={category.name}
@@ -153,7 +171,13 @@ export default function Header() {
                       transition={{ duration: 0.3, delay: index * 0.1 }}
                       className="flex items-center gap-2 text-white hover:underline select-none cursor-pointer"
                     >
-                      {category.icon}
+                      <div className="w-5 h-5 flex items-center justify-center">
+                        <img
+                          src={category.icon}
+                          alt={category.name}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
                       <span>{category.name}</span>
                     </motion.li>
                   ))}
