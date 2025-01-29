@@ -12,7 +12,7 @@ import aguasWhite from "../../assets/icons/aguas-white.png";
 import generalWhite from "../../assets/icons/general-white.png";
 import licenciaWhite from "../../assets/icons/licencia-white.png";
 import seguridadWhite from "../../assets/icons/seguridad-white.png";
-import saludWhite from "../../assets/icons/seguridad-white.png";
+import saludWhite from "../../assets/icons/salud-white.png";
 import snMobile from "../../assets/sn-logos/sn-mobile-logo.png";
 import snLogo from "../../assets/sn-logos/san-nicolas.logo.png";
 import crossIcon from "../../assets/icons/x-circle.png";
