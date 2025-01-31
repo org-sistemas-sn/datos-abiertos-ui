@@ -3,6 +3,7 @@ import "../../styles/customCalendar.css";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import CardEventCalendary from "../../components/Cards/CardEventCalendary";
+import { motion } from "framer-motion";
 import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
 import aguas from "../../assets/icons/agua.png";
 import general from "../../assets/icons/general.png";
@@ -25,6 +26,20 @@ export const Home = () => {
     { icon: general, label: "General" },
     { icon: licencia, label: "Licencia" },
   ];
+
+  const cardVariants = {
+    hidden: { opacity: 0, scale: 0.8, y: 50 },
+    visible: (i) => ({
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.2, // Agrega un retraso para que las tarjetas aparezcan una a una
+        duration: 0.6,
+        ease: "easeInOut",
+      },
+    }),
+  };
 
   const events = [
     { day: "LUNES 2", title: "Caravana navideña" },
@@ -100,19 +115,38 @@ export const Home = () => {
           <div className="w-[50%] pl-10 h-full pt-20 relative">
             <div className="w-[600px] h-[400px] relative">
               {/* Primera Card */}
-              <div
-                className="w-[300px] hover:scale-y-105 hover:scale-x-105 select-none h-[150px] bg-blue-50 flex flex-col justify-center items-center rounded-lg shadow absolute transition duration-500 ease-in-out"
+              <motion.div
+                className="w-[300px] h-[150px] bg-blue-50 flex flex-col justify-center items-center rounded-lg shadow-lg absolute select-none"
                 style={{ top: "0", right: "20px" }}
+                initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4, ease: "easeInOut" }}
+                whileHover={{
+                  scaleX: 1.08,
+                  scaleY: 1.08,
+                  transition: { duration: 0.2, ease: "easeOut" }, // ⬅️ Hover rápido e independiente
+                }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-gray-800">
                   167.824
                 </span>
-                <p className="text-gray-500 text-[0.9rem] font-grotesk">Nicoleños</p>
-              </div>
+                <p className="text-gray-500 text-[0.9rem] font-grotesk">
+                  Nicoleños
+                </p>
+              </motion.div>
+
               {/* Segunda Card */}
-              <div
-                className="w-[300px] select-none hover:scale-y-105 hover:scale-x-105 h-[150px] bg-green-50 flex flex-col justify-center items-center rounded-lg shadow absolute transition duration-500 ease-in-out"
+              <motion.div
+                className="w-[300px] h-[150px] bg-green-50 flex flex-col justify-center items-center rounded-lg shadow-lg absolute select-none"
                 style={{ top: "120px", left: "calc(50% - 280px)" }}
+                initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6, ease: "easeInOut" }}
+                whileHover={{
+                  scaleX: 1.08,
+                  scaleY: 1.08,
+                  transition: { duration: 0.2, ease: "easeOut" }, // ⬅️ Hover separado de la entrada
+                }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-gray-800">
                   12.000
@@ -120,11 +154,20 @@ export const Home = () => {
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Becas deportivas entregadas
                 </p>
-              </div>
+              </motion.div>
+
               {/* Tercera Card */}
-              <div
-                className="w-[300px] h-[150px] select-none bg-pink-50 hover:scale-y-105 hover:scale-x-105 flex flex-col justify-center items-center rounded-lg shadow absolute transition duration-500 ease-in-out"
+              <motion.div
+                className="w-[300px] h-[150px] bg-pink-50 flex flex-col justify-center items-center rounded-lg shadow-lg absolute select-none"
                 style={{ top: "240px", right: "5px" }}
+                initial={{ opacity: 0, scale: 0.8, y: 50 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2, ease: "easeInOut" }}
+                whileHover={{
+                  scaleX: 1.08,
+                  scaleY: 1.08,
+                  transition: { duration: 0.2, ease: "easeOut" }, // ⬅️ Hover independiente
+                }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-gray-800">
                   22.000
@@ -132,7 +175,7 @@ export const Home = () => {
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Horas ahorradas en trámites digitales
                 </p>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
