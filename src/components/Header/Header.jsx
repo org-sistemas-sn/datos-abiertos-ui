@@ -1,12 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RxHamburgerMenu } from "react-icons/rx";
-import {
-  FaChevronDown,
-  FaChevronUp,
-  FaHome,
-  FaFileAlt
-} from "react-icons/fa"; // Nuevos íconos
+import { FaChevronDown, FaChevronUp, FaHome, FaFileAlt } from "react-icons/fa"; // Nuevos íconos
 import { HiOutlineViewGrid } from "react-icons/hi";
 import aguasWhite from "../../assets/icons/aguas-white.png";
 import generalWhite from "../../assets/icons/general-white.png";
@@ -29,7 +24,7 @@ export default function Header() {
   // Array de objetos para las categorías
   const categories = [
     { name: "General", icon: generalWhite },
-    { name: "Salud", icon: saludWhite }, // Mantiene el icono de react-icons
+    { name: "Salud", icon: saludWhite },
     { name: "Aguas", icon: aguasWhite },
     { name: "Licencia", icon: licenciaWhite },
     { name: "Seguridad", icon: seguridadWhite },
@@ -38,23 +33,50 @@ export default function Header() {
   return (
     <div>
       {/* Encabezado visible para pantallas grandes */}
-      <div className="hidden md:block w-full h-20 bg-sn flex justify-center items-center fixed top-0 z-50"></div>
+      <div className="hidden md:flex w-full h-24 bg-sn justify-center font-grotesk items-center fixed top-0 z-50">
+        <div className="w-[93%] h-full flex justify-between max-w-[1400px]">
+          <div className="w-80 h-full flex items-center">
+            <div className="w-[180px] h-full flex justify-center items-center">
+              <img
+                src={snLogo}
+                className="w-[80%] cursor-pointer h-[80%] object-contain"
+              />
+            </div>
+            <div className="h-[60%] ml-1 border border-white"></div>
+            <div className="w-[180px] h-full flex justify-center items-center">
+              <span className="text-white text-lg select-none cursor-pointer ml-4">
+                Datos abiertos
+              </span>
+            </div>
+          </div>
+          <div className="w-80 h-full flex items-center justify-evenly">
+            <span className="text-lg ml-20 mr-8 text-white cursor-pointer select-none hover:underline">
+              Categorias
+            </span>
+            <span className="text-lg text-white cursor-pointer select-none hover:underline">
+              Acerca
+            </span>
+          </div>
+        </div>
+      </div>
 
       {/* Sidebar visible solo para dispositivos móviles */}
       <div className="block md:hidden">
-        <div className="block md:hidden fixed top-0 w-full h-20 bg-sn flex justify-center items-center z-50">
+        <div className="block md:hidden fixed font-grotesk top-0 w-full h-24 bg-sn flex justify-center items-center z-50">
           <div className="w-[97%] flex justify-between h-full">
             <div className="w-auto h-full flex items-center">
               <div className="w-20 h-full flex justify-center items-center">
                 <img
                   src={snMobile}
-                  className="object-contain cursor-pointer select-none w-[60%] h-[60%]"
+                  className="object-contain cursor-pointer select-none w-[55%] h-[55%]"
                   alt="snLogo"
                 />
               </div>
-              <div className="h-[70%] ml-1 border border-white"></div>
+              <div className="h-[60%] ml-1 border border-white"></div>
               <div className="w-36 h-full flex justify-center items-center">
-                <span className="text-white cursor-pointer select-none">Datos abiertos</span>
+                <span className="text-white cursor-pointer select-none">
+                  Datos abiertos
+                </span>
               </div>
             </div>
             <div className="w-16 h-full pl-2 flex items-center">
@@ -81,11 +103,11 @@ export default function Header() {
             damping: 22,
             opacity: { duration: 0.6 },
           }}
-          className="fixed top-0 left-0 h-full w-full bg-sn shadow-lg z-50 p-4"
+          className="fixed top-0 left-0 h-full w-full font-grotesk bg-sn shadow-lg z-50 p-4"
         >
           {/* Botón de cierre */}
           <div className="flex justify-between">
-            <div className="w-64 h-24 ml-6 flex items-center">
+            <div className="w-64 h-24 ml-6 flex">
               <img
                 src={snLogo}
                 className="object-contain w-[70%] h-[70%] select-none"

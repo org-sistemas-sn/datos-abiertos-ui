@@ -1,0 +1,87 @@
+/* Contenedor principal */
+.react-calendar {
+    width: 100%;
+    max-width: 320px;
+    background: #ffffff;
+    border: none !important;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Botones de navegación */
+  .react-calendar__navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .react-calendar__navigation button {
+    background: none;
+    border: none;
+    color: #0477AD;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding: 5px;
+    border-radius: 50%;
+  }
+  
+  .react-calendar__navigation button:hover {
+    background: rgba(4, 119, 173, 0.1);
+  }
+  
+  /* Nombres de días */
+  .react-calendar__month-view__weekdays {
+    text-transform: uppercase;
+    color: #677073;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  
+  .react-calendar__month-view__weekdays__weekday {
+    text-align: center;
+  }
+  
+  /* Días del calendario */
+  .react-calendar__tile {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.9rem;
+    color: #3e4345;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .react-calendar__tile:hover {
+    background-color: rgba(4, 119, 173, 0.1);
+    color: #0477AD;
+  }
+  
+  /* Día actual */
+  .react-calendar__tile--now {
+    background: none;
+    color: #0477AD;
+    font-weight: bold;
+  }
+  
+  /* Día resaltado */
+  .highlighted-date {
+    background: #e7f3ff;
+    color: #1d4ed8;
+    font-weight: bold;
+    border-radius: 8px;
+  }
+  
+  .highlighted-date:hover {
+    background: #cfe7ff;
+  }
+  
+  /* Día activo */
+  .react-calendar__tile--active {
+    background: rgba(4, 119, 173, 0.2);
+    color: #0477AD;
+    font-weight: bold;
+  }
+  

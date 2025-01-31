@@ -14,6 +14,9 @@ module.exports = {
         inter: ["Inter", ...defaultTheme.fontFamily.sans],
         grotesk: ["Space Grotesk", ...defaultTheme.fontFamily.sans],
       },
+      screens: {
+        'ipad-max': { min: '768px', max: '1300px' }, // Entre 768px y 1300px
+      },
       colors: {
         primary: "#0477AD",
         gris: "#687073",
@@ -21,6 +24,11 @@ module.exports = {
         negro: "#3E4345",
         celeste: "#E3EEFB",
         azul: "#2589FF"
+      },
+      lineHeight: {
+        'titleMobile': '2.8rem', 
+        'titleIpad': '4rem', 
+        'titleDesktop': '5rem', 
       },
       backgroundColor: {
         sn: "#0477AD !important",
