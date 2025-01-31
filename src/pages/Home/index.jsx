@@ -101,36 +101,36 @@ export const Home = () => {
             <div className="w-[600px] h-[400px] relative">
               {/* Primera Card */}
               <div
-                className="w-[300px] select-none h-[150px] bg-blue-50  flex flex-col justify-center items-center rounded-lg shadow absolute"
+                className="w-[300px] hover:scale-y-105 hover:scale-x-105 select-none h-[150px] bg-blue-50 flex flex-col justify-center items-center rounded-lg shadow absolute transition duration-500 ease-in-out"
                 style={{ top: "0", right: "20px" }}
               >
-                <span className="text-[3rem] font-bold text-gray-800">
+                <span className="text-[4rem] font-grotesk font-bold text-gray-800">
                   167.824
                 </span>
-                <p className="text-gray-500 text-[1rem]">Nicoleños</p>
+                <p className="text-gray-500 text-[0.9rem] font-grotesk">Nicoleños</p>
               </div>
               {/* Segunda Card */}
               <div
-                className="w-[300px] select-none  h-[150px] bg-green-50 flex flex-col justify-center items-center rounded-lg shadow absolute"
+                className="w-[300px] select-none hover:scale-y-105 hover:scale-x-105 h-[150px] bg-green-50 flex flex-col justify-center items-center rounded-lg shadow absolute transition duration-500 ease-in-out"
                 style={{ top: "120px", left: "calc(50% - 280px)" }}
               >
-                <span className="text-[3rem] font-bold text-gray-800">
+                <span className="text-[4rem] font-grotesk font-bold text-gray-800">
                   12.000
                 </span>
-                <p className="text-gray-500 text-[1rem]">
+                <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Becas deportivas entregadas
                 </p>
               </div>
               {/* Tercera Card */}
               <div
-                className="w-[300px] h-[150px] select-none bg-pink-50 flex flex-col justify-center items-center rounded-lg shadow absolute"
+                className="w-[300px] h-[150px] select-none bg-pink-50 hover:scale-y-105 hover:scale-x-105 flex flex-col justify-center items-center rounded-lg shadow absolute transition duration-500 ease-in-out"
                 style={{ top: "240px", right: "5px" }}
               >
-                <span className="text-[3rem] font-bold text-gray-800">
-                  12.000
+                <span className="text-[4rem] font-grotesk font-bold text-gray-800">
+                  22.000
                 </span>
-                <p className="text-gray-500 text-[1rem]">
-                  Becas deportivas entregadas
+                <p className="text-gray-500 text-[0.9rem] font-grotesk">
+                  Horas ahorradas en trámites digitales
                 </p>
               </div>
             </div>
