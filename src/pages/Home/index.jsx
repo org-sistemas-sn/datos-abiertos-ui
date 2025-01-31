@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion, useAnimationControls } from "framer-motion";
 import "../../styles/customCalendar.css";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import CardEventCalendary from "../../components/Cards/CardEventCalendary";
-import { motion } from "framer-motion";
 import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
 import aguas from "../../assets/icons/agua.png";
 import general from "../../assets/icons/general.png";
@@ -27,19 +27,31 @@ export const Home = () => {
     { icon: licencia, label: "Licencia" },
   ];
 
-  const cardVariants = {
-    hidden: { opacity: 0, scale: 0.8, y: 50 },
-    visible: (i) => ({
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.2, // Agrega un retraso para que las tarjetas aparezcan una a una
-        duration: 0.6,
-        ease: "easeInOut",
-      },
-    }),
-  };
+  const [counts, setCounts] = useState({
+    nicoleños: 0,
+    becas: 0,
+    horas: 0,
+  });
+
+  useEffect(() => {
+    const animateCount = (key, end) => {
+      let start = 0;
+      const duration = 2500;
+      const stepTime = duration / end;
+      const timer = setInterval(() => {
+        start += Math.ceil(end / 80);
+        if (start >= end) {
+          start = end;
+          clearInterval(timer);
+        }
+        setCounts((prev) => ({ ...prev, [key]: start }));
+      }, stepTime);
+    };
+
+    animateCount("nicoleños", 167824);
+    animateCount("becas", 12000);
+    animateCount("horas", 22000);
+  }, []);
 
   const events = [
     { day: "LUNES 2", title: "Caravana navideña" },
@@ -124,11 +136,11 @@ export const Home = () => {
                 whileHover={{
                   scaleX: 1.08,
                   scaleY: 1.08,
-                  transition: { duration: 0.2, ease: "easeOut" }, // ⬅️ Hover rápido e independiente
+                  transition: { duration: 0.15, ease: "easeOut" },
                 }}
               >
-                <span className="text-[4rem] font-grotesk font-bold text-gray-800">
-                  167.824
+                <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
+                  {counts.nicoleños.toLocaleString("es-ES")}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Nicoleños
@@ -145,11 +157,11 @@ export const Home = () => {
                 whileHover={{
                   scaleX: 1.08,
                   scaleY: 1.08,
-                  transition: { duration: 0.2, ease: "easeOut" }, // ⬅️ Hover separado de la entrada
+                  transition: { duration: 0.15, ease: "easeOut" },
                 }}
               >
-                <span className="text-[4rem] font-grotesk font-bold text-gray-800">
-                  12.000
+                <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
+                  {counts.becas.toLocaleString("es-ES")}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Becas deportivas entregadas
@@ -166,17 +178,22 @@ export const Home = () => {
                 whileHover={{
                   scaleX: 1.08,
                   scaleY: 1.08,
-                  transition: { duration: 0.2, ease: "easeOut" }, // ⬅️ Hover independiente
+                  transition: { duration: 0.15, ease: "easeOut" },
                 }}
               >
-                <span className="text-[4rem] font-grotesk font-bold text-gray-800">
-                  22.000
+                <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
+                  {counts.horas.toLocaleString("es-ES")}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Horas ahorradas en trámites digitales
                 </p>
               </motion.div>
             </div>
+          </div>
+        </div>
+        <div className="w-full h-[60vh] border border-red-500 flex justify-center items-center">
+          <div className="w-[88%] h-full border border-red-500">
+            <div className="w-full h-16 border border-red-500"></div>
           </div>
         </div>
       </div>
@@ -344,18 +361,20 @@ export const Home = () => {
         </div>
         {/* Categorías */}
         <div className="w-full flex justify-center mt-8">
-          <div className="w-[89%]">
-            <h3 className="font-grotesk text-[#3e4345] font-semibold mb-4">
+          <div className="w-[89%] flex flex-col justify-center items-center">
+            <h3 className="font-grotesk text-[#3e4345] self-start font-semibold mb-4">
               Categorías
             </h3>
-            <div className="grid grid-cols-2 gap-4">
-              {categories.map((category, index) => (
-                <CategoryHomeCard
-                  key={index}
-                  icon={category.icon}
-                  label={category.label}
-                />
-              ))}
+            <div className="w-full max-w-[420px] h-full self-start">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-3">
+                {categories.map((category, index) => (
+                  <CategoryHomeCard
+                    key={index}
+                    icon={category.icon}
+                    label={category.label}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

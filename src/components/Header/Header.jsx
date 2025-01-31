@@ -39,7 +39,7 @@ export default function Header() {
             <div className="w-[180px] h-full flex justify-center items-center">
               <img
                 src={snLogo}
-                className="w-[80%] cursor-pointer h-[80%] object-contain"
+                className="w-[80%] cursor-pointer h-[80%] object-contain select-none"
               />
             </div>
             <div className="h-[60%] ml-1 border border-white"></div>

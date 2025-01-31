@@ -1,7 +1,6 @@
 export default function CategoryHomeCard({ icon, label }) {
   return (
-    <div className="flex items-center cursor-pointer select-none p-4 md:p-0 md:h-20 md:w-full bg-white border rounded-lg shadow transition-transform duration-500 ease-in-out hover:shadow-lg hover:scale-105">
-      {" "}
+    <div className="max-w-[200px] md:max-w-[8000px] flex items-center cursor-pointer select-none p-4 md:p-0 md:h-20 md:w-full bg-white border rounded-lg shadow transition-transform duration-500 ease-in-out hover:shadow-lg hover:scale-105">
       {/* Contenedor del ícono */}
       <div className="flex w-full h-full md:justify-center md:items-center">
         <div className="w-[45%] md:w-auto h-full flex items-center">
