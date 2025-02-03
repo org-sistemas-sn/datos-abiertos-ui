@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { FaChevronDown, FaChevronUp, FaHome, FaFileAlt } from "react-icons/fa"; // Nuevos íconos
@@ -34,7 +35,7 @@ export default function Header() {
     <div>
       {/* Encabezado visible para pantallas grandes */}
       <div className="hidden md:flex w-full h-24 bg-sn justify-center font-grotesk items-center fixed top-0 z-50">
-        <div className="w-[93%] h-full flex justify-between max-w-[1400px]">
+        <div className="w-[93%] h-full flex justify-between max-w-[1600px]">
           <div className="w-80 h-full flex items-center">
             <div className="w-[180px] h-full flex justify-center items-center">
               <img
@@ -50,9 +51,11 @@ export default function Header() {
             </div>
           </div>
           <div className="w-80 h-full flex items-center justify-evenly">
-            <span className="text-lg ml-20 mr-8 text-white cursor-pointer select-none hover:underline">
-              Categorias
-            </span>
+            <Link to={`/categorias`}>
+              <span className="text-lg ml-20 mr-8 text-white cursor-pointer select-none hover:underline">
+                Categorias
+              </span>
+            </Link>
             <span className="text-lg text-white cursor-pointer select-none hover:underline">
               Acerca
             </span>

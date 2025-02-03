@@ -37,45 +37,49 @@ const CategoryPage = () => {
   return (
     <div className="w-full h-auto mt-24 flex flex-col items-center">
       {/* Breadcrumb */}
-      <div className="h-32 w-full bg-[#f2f7ff] flex flex-col justify-end md:h-40 md:pt-0 md:mt-0 md:pb-8 md:pl-1 lg:pl-10 lg:h-48">
-        <div className="w-full flex items-center md:pl-2 md:pt-0">
-          <div className="w-16 pl-6 mt-2 h-full flex justify-center items-end md:mt-0">
-            <Link to={"/"}>
-              <IoArrowBack size={32} color="#0477AD" />
-            </Link>
+      <div className="h-32 w-full bg-[#f2f7ff] flex flex-col justify-end md:h-40 md:pt-0 md:mt-0 md:pb-8 md:pl-1 lg:pl-10 lg:h-48 lg:justify-center lg:items-center">
+        <div className="w-full max-w-[1600px] flex justify-center items-center flex-col">
+          <div className="w-full flex items-center md:pl-2">
+            <div className="w-16 pl-6 md:mt-2 h-full flex justify-center items-end mb-6 md:mb-0">
+              <Link to={"/"}>
+                <IoArrowBack className="mb-1 lg:mb-5" size={32} color="#0477AD" />
+              </Link>
+            </div>
+            <div className="w-auto flex items-center md:mt-10 lg:mt-0">
+              <span className="font-grotesk pl-2 pb-1 text-[#677073] text-sm md:text-base">
+                {category.label}
+              </span>
+              <MdOutlineKeyboardDoubleArrowRight
+                color="#677073"
+                className="ml-1 mb-1"
+              />
+              <span className="font-grotesk text-[#677073] pb-1 text-sm md:text-base">
+                Temas
+              </span>
+            </div>
           </div>
-          <div className="w-auto flex items-center">
-            <span className="font-grotesk pl-2 pb-1 text-[#677073] text-sm md:text-base">
+          <div className="w-full pl-6 pt-5 pb-3 md:pt-8">
+            <span className="text-3xl font-grotesk text-sn font-semibold md:text-5xl md:pl-4">
               {category.label}
             </span>
-            <MdOutlineKeyboardDoubleArrowRight
-              color="#677073"
-              className="ml-1 mb-1"
-            />
-            <span className="font-grotesk text-[#677073] pb-1 text-sm md:text-base">
-              Temas
-            </span>
           </div>
-        </div>
-        <div className="w-full pl-6 pt-5 md:pt-8">
-          <span className="text-3xl font-grotesk text-sn font-semibold md:text-5xl md:pl-4">
-            {category.label}
-          </span>
         </div>
       </div>
 
       {/* Títulos */}
-      <div className="w-full h-auto mt-6 md:mt-8">
-        <div className="w-full flex items-center lg:pl-16 lg:mt-10">
-          <span className="pl-6 font-semibold font-grotesk text-[#677073] text-lg md:text-xl">
+      <div className="w-full h-auto mt-6 md:mt-8 max-w-[1600px]">
+        <div className="w-full flex items-center lg:mt-10 flex justify-center items-center">
+          <div className="w-[89%]">
+          <span className="font-semibold font-grotesk text-[#677073] text-lg md:text-xl">
             TEMAS
           </span>
+          </div>
         </div>
       </div>
 
       {/* Contenedor de Temas */}
-      <div className="w-full h-auto flex justify-center pb-20">
-        <div className="w-[89%]">
+      <div className="w-full h-auto flex justify-center pb-20 max-w-[1600px]">
+        <div className="w-[89%] max-w-[1400px]">
           {category.themes && category.themes.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4"

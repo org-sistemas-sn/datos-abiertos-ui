@@ -88,7 +88,7 @@ export const Home = () => {
       const duration = 2500;
       const stepTime = duration / end;
       const timer = setInterval(() => {
-        start += Math.ceil(end / 80);
+        start += Math.ceil(end / 45);
         if (start >= end) {
           start = end;
           clearInterval(timer);
@@ -397,10 +397,12 @@ export const Home = () => {
               >
                 {filteredCategories.map((category, index) => (
                   <motion.div key={index} variants={itemVariants}>
-                    <CategoryHomeCard
-                      icon={category.icon}
-                      label={category.label}
-                    />
+                    <Link to={`/categoria/${category.id}`}>
+                      <CategoryHomeCard
+                        icon={category.icon}
+                        label={category.label}
+                      />
+                    </Link>
                   </motion.div>
                 ))}
               </motion.div>
@@ -532,10 +534,12 @@ export const Home = () => {
               >
                 {filteredCategories.map((category, index) => (
                   <motion.div key={index} variants={itemVariants}>
-                    <CategoryHomeCard
-                      icon={category.icon}
-                      label={category.label}
-                    />
+                    <Link to={`/categoria/${category.id}`}>
+                      <CategoryHomeCard
+                        icon={category.icon}
+                        label={category.label}
+                      />
+                    </Link>
                   </motion.div>
                 ))}
               </motion.div>
