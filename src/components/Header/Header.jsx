@@ -38,16 +38,20 @@ export default function Header() {
         <div className="w-[93%] h-full flex justify-between max-w-[1600px]">
           <div className="w-80 h-full flex items-center">
             <div className="w-[180px] h-full flex justify-center items-center">
-              <img
-                src={snLogo}
-                className="w-[80%] cursor-pointer h-[80%] object-contain select-none"
-              />
+              <Link to={"/"}>
+                <img
+                  src={snLogo}
+                  className="w-[80%] cursor-pointer h-[80%] object-contain select-none"
+                />
+              </Link>
             </div>
             <div className="h-[60%] ml-1 border border-white"></div>
             <div className="w-[180px] h-full flex justify-center items-center">
-              <span className="text-white text-lg select-none cursor-pointer ml-4">
-                Datos abiertos
-              </span>
+              <Link to={"/"}>
+                <span className="text-white text-lg select-none cursor-pointer ml-4">
+                  Datos abiertos
+                </span>
+              </Link>
             </div>
           </div>
           <div className="w-80 h-full flex items-center justify-evenly">

@@ -1,7 +1,7 @@
 import { categories } from "../../data/categories";
 import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
 import { IoArrowBack } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const containerVariants = {
@@ -20,6 +20,8 @@ const itemVariants = {
 };
 
 export default function Categories() {
+  const navigate = useNavigate();
+
   return (
     <div className="mt-24 w-full h-auto flex flex-col items-center">
       {/* Breadcrumb */}
@@ -27,13 +29,12 @@ export default function Categories() {
         <div className="w-full max-w-[1600px] flex justify-center items-center flex-col">
           <div className="w-full flex items-center md:pl-2">
             <div className="w-16 pl-6 md:mt-2 h-full flex justify-center items-end mb-6 md:mb-0">
-              <Link to={"/"}>
-                <IoArrowBack
-                  className="mt-10 mb-1 lg:mb-5"
-                  size={32}
-                  color="#0477AD"
-                />
-              </Link>
+              <IoArrowBack
+                className="mt-10 mb-1 lg:mb-5 cursor-pointer"
+                size={32}
+                color="#0477AD"
+                onClick={() => navigate(-1)} // Función de flecha
+              />
             </div>
           </div>
         </div>
