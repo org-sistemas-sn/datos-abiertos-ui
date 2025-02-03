@@ -13,6 +13,7 @@ import salud from "../../assets/icons/salud.png";
 
 export const Home = () => {
   const [date, setDate] = useState(new Date());
+  const [searchTerm, setSearchTerm] = useState("");
 
   const categories = [
     { icon: aguas, label: "Aguas" },
@@ -32,6 +33,21 @@ export const Home = () => {
     becas: 0,
     horas: 0,
   });
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2, // Hace que cada tarjeta entre con un retraso de 0.2s
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 }, // Inicia con opacidad 0 y 20px abajo
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  };
 
   useEffect(() => {
     const animateCount = (key, end) => {
@@ -58,6 +74,10 @@ export const Home = () => {
     { day: "LUNES 14", title: "Inscripción Becas Deportivas" },
     { day: "JUEVES 17", title: "Festival Rico" },
     { day: "MARTES 22", title: "Boca vs Juventude" },
+    { day: "LUNES 2", title: "Caravana navideña" },
+    { day: "LUNES 14", title: "Inscripción Becas Deportivas" },
+    { day: "JUEVES 17", title: "Festival Rico" },
+    { day: "MARTES 22", title: "Boca vs Juventude" },
   ];
 
   // Colores predefinidos
@@ -70,19 +90,21 @@ export const Home = () => {
 
   // Fechas a resaltar
   const highlightedDates = [
-    new Date(2025, 0, 2).toDateString(),
-    new Date(2025, 0, 14).toDateString(),
-    new Date(2025, 0, 17).toDateString(),
-    new Date(2025, 0, 22).toDateString(),
+    new Date(2025, 1, 2).toDateString(),
+    new Date(2025, 1, 14).toDateString(),
+    new Date(2025, 1, 17).toDateString(),
+    new Date(2025, 1, 22).toDateString(),
   ];
 
-  console.log(highlightedDates);
+  const filteredCategories = categories.filter((category) =>
+    category.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="w-full h-full">
       {/* Desktop */}
       <div className="hidden w-full h-auto mt-24 lg:flex flex-col items-center ipad-max:hidden">
-        <div className="w-[92%] flex max-w-[1400px] h-full relative">
+        <div className="w-[92%] flex max-w-[1400px] h-auto relative">
           <div className="w-[50%] pl-8 h-full pt-28">
             <div className="h-auto w-[600px]">
               <h1 className="font-grotesk text-[5rem] select-none leading-titleDesktop font-bold text-[#3e4345]">
@@ -102,7 +124,9 @@ export const Home = () => {
                   <input
                     type="text"
                     placeholder="Qué dataset buscas?"
-                    className="w-full py-5 pl-4 pr-10 text-lg font-grotesk text-gray-500 rounded-lg shadow focus:outline-none"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full py-5 pl-4 pr-10 text-lg rounded-md shadow-lg focus:outline-none"
                   />
                   <span className="absolute inset-y-0 right-2 flex items-center">
                     <svg
@@ -124,7 +148,7 @@ export const Home = () => {
               </div>
             </div>
           </div>
-          <div className="w-[50%] pl-10 h-full pt-20 relative">
+          <div className="w-[50%] pl-10 h-auto pt-20 relative">
             <div className="w-[600px] h-[400px] relative">
               {/* Primera Card */}
               <motion.div
@@ -191,9 +215,89 @@ export const Home = () => {
             </div>
           </div>
         </div>
-        <div className="w-full h-[60vh] border border-red-500 flex justify-center items-center">
-          <div className="w-[88%] h-full border border-red-500">
-            <div className="w-full h-16 border border-red-500"></div>
+        <div className="w-full h-auto flex justify-center items-center pb-24">
+          <div className="w-[88%] h-full max-w-[1320px] pt-5">
+            <div className="w-full h-auto">
+              <div className="w-full flex justify-center mt-3">
+                <div className="w-[100%]">
+                  <h3 className="font-grotesk select-none text-[#3e4345] text-xl font-semibold mb-4">
+                    Categorías
+                  </h3>
+                  {/* Contenedor animado */}
+                  <motion.div
+                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                  >
+                    {filteredCategories.map((category, index) => (
+                      <motion.div key={index} variants={itemVariants}>
+                        <CategoryHomeCard
+                          icon={category.icon}
+                          label={category.label}
+                        />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="w-full h-auto flex flex-col items-center max-w-[1500px]">
+          <div className="w-[87%]">
+            <div className="w-full pb-6 h-12 flex items-center">
+              <h6 className="font-semibold text-xl font-grotesk text-[#3e4345] select-none">
+                Calendario de eventos
+              </h6>
+            </div>
+          </div>
+          <div className="w-[87%] h-full flex">
+            <div className="w-[360px] h-auto">
+              <div className="bg-white border-none rounded-lg flex">
+                <Calendar
+                  className="react-calendar"
+                  tileClassName={({ date, view }) =>
+                    view === "month" &&
+                    highlightedDates.includes(date.toDateString())
+                      ? "highlighted-date"
+                      : null
+                  }
+                  navigationLabel={({ date }) =>
+                    `${date.toLocaleDateString("es-ES", {
+                      month: "long",
+                      year: "numeric",
+                    })}`
+                  }
+                  onChange={setDate}
+                  value={date}
+                  locale="es-ES"
+                />
+              </div>
+            </div>
+            <div className="w-full h-full">
+              <div className="w-full flex flex-wrap justify-center pb-16">
+                <div className="w-[89%] flex-wrap">
+                  {/* Contenedor animado */}
+                  <motion.div
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                  >
+                    {events.map((event, index) => (
+                      <motion.div key={index} variants={itemVariants}>
+                        <CardEventCalendary
+                          day={event.day}
+                          title={event.title}
+                          bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
+                        />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -221,7 +325,9 @@ export const Home = () => {
                 <input
                   type="text"
                   placeholder="Qué dataset buscas?"
-                  className="w-full py-5 pl-4 pr-10 text-lg font-grotesk text-gray-500 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-sn focus:border-sn"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full py-5 pl-4 pr-10 text-lg font-grotesk text-gray-500 rounded-lg shadow focus:outline-none focus:ring-2"
                 />
                 <span className="absolute inset-y-0 right-2 flex items-center">
                   <svg
@@ -247,15 +353,19 @@ export const Home = () => {
               <h3 className="font-grotesk text-[#3e4345] font-semibold mb-4">
                 Categorías
               </h3>
-              <div className="grid grid-cols-2 gap-4">
-                {categories.map((category, index) => (
-                  <CategoryHomeCard
-                    key={index}
-                    icon={category.icon}
-                    label={category.label}
-                  />
-                ))}
-              </div>
+              {/* Contenedor con animación */}
+              <motion.div
+                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+              >
+              {filteredCategories.map((category, index) => (
+                <motion.div key={index} variants={itemVariants}>
+                  <CategoryHomeCard icon={category.icon} label={category.label} />
+                </motion.div>
+              ))}
+              </motion.div>
             </div>
           </div>
           <div className="w-full h-auto flex">
@@ -291,16 +401,23 @@ export const Home = () => {
             <div className="w-[50%] h-full">
               <div className="w-full flex justify-center pb-16">
                 <div className="w-[89%] mt-10">
-                  <div className="space-y-4">
+                  {/* Contenedor animado */}
+                  <motion.div
+                    className="space-y-4"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="show"
+                  >
                     {events.map((event, index) => (
-                      <CardEventCalendary
-                        key={index}
-                        day={event.day}
-                        title={event.title}
-                        bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
-                      />
+                      <motion.div key={index} variants={itemVariants}>
+                        <CardEventCalendary
+                          day={event.day}
+                          title={event.title}
+                          bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
+                        />
+                      </motion.div>
                     ))}
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </div>
@@ -337,8 +454,10 @@ export const Home = () => {
             <div className="relative w-full max-w-md">
               <input
                 type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Qué dataset buscas?"
-                className="w-full py-5 pl-4 pr-10 text-lg font-grotesk text-gray-500 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-sn focus:border-sn"
+                className="w-full py-5 pl-4 pr-10 text-lg font-grotesk text-gray-500 rounded-lg shadow focus:outline-none"
               />
               <span className="absolute inset-y-0 right-2 flex items-center">
                 <svg
@@ -365,16 +484,20 @@ export const Home = () => {
             <h3 className="font-grotesk text-[#3e4345] self-start font-semibold mb-4">
               Categorías
             </h3>
-            <div className="w-full max-w-[420px] h-full self-start">
-              <div className="grid grid-cols-2 gap-x-2 gap-y-3">
-                {categories.map((category, index) => (
-                  <CategoryHomeCard
-                    key={index}
-                    icon={category.icon}
-                    label={category.label}
-                  />
-                ))}
-              </div>
+            <div className="w-full h-full self-start">
+              {/* Contenedor con animación */}
+              <motion.div
+                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+              >
+              {filteredCategories.map((category, index) => (
+                <motion.div key={index} variants={itemVariants}>
+                  <CategoryHomeCard icon={category.icon} label={category.label} />
+                </motion.div>
+              ))}
+              </motion.div>
             </div>
           </div>
         </div>
@@ -409,16 +532,23 @@ export const Home = () => {
         {/* Eventos */}
         <div className="w-full flex justify-center mt-10 pb-16">
           <div className="w-[89%]">
-            <div className="space-y-4">
+            {/* Contenedor animado */}
+            <motion.div
+              className="space-y-4"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+            >
               {events.map((event, index) => (
-                <CardEventCalendary
-                  key={index}
-                  day={event.day}
-                  title={event.title}
-                  bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
-                />
+                <motion.div key={index} variants={itemVariants}>
+                  <CardEventCalendary
+                    day={event.day}
+                    title={event.title}
+                    bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
+                  />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
