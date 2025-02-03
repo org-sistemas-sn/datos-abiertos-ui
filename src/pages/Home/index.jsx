@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, useAnimationControls } from "framer-motion";
 import "../../styles/customCalendar.css";
+import { Link } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import CardEventCalendary from "../../components/Cards/CardEventCalendary";
@@ -16,16 +17,48 @@ export const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const categories = [
-    { icon: aguas, label: "Aguas" },
-    { icon: seguridad, label: "Seguridad" },
-    { icon: salud, label: "Salud" },
-    { icon: general, label: "General" },
-    { icon: licencia, label: "Licencia" },
-    { icon: aguas, label: "Aguas" },
-    { icon: seguridad, label: "Seguridad" },
-    { icon: salud, label: "Salud" },
-    { icon: general, label: "General" },
-    { icon: licencia, label: "Licencia" },
+    { id: 1, icon: aguas, label: "Aguas" },
+    { id: 2, icon: seguridad, label: "Seguridad" },
+    {
+      id: 3,
+      icon: salud,
+      label: "Salud y Familia",
+      themes: [
+        {
+          id: 1,
+          label: "Same",
+          description: "Salidas y respuestas  del same",
+        },
+        {
+          id: 2,
+          label: "Ausentismo",
+          description:
+            "Monitoreo de pozos, efluentes y plantas potabilizadoras",
+        },
+        {
+          id: 3,
+          label: "Credencial municipal",
+          description: "Consumo y tiempo entre mediciones",
+        },
+        {
+          id: 4,
+          label: "Plataforma Alepho",
+          description: "Consumo y tiempo entre mediciones",
+        },
+        {
+          id: 5,
+          label: "Plataforma Alepho",
+          description: "Consumo y tiempo entre mediciones",
+        },
+      ],
+    },
+    { id: 4, icon: general, label: "General" },
+    { id: 5, icon: licencia, label: "Licencia" },
+    { id: 6, icon: aguas, label: "Aguas" },
+    { id: 7, icon: seguridad, label: "Seguridad" },
+    { id: 8, icon: salud, label: "Salud" },
+    { id: 9, icon: general, label: "General" },
+    { id: 10, icon: licencia, label: "Licencia" },
   ];
 
   const [counts, setCounts] = useState({
@@ -232,10 +265,12 @@ export const Home = () => {
                   >
                     {filteredCategories.map((category, index) => (
                       <motion.div key={index} variants={itemVariants}>
-                        <CategoryHomeCard
-                          icon={category.icon}
-                          label={category.label}
-                        />
+                        <Link to={`/categoria/${category.id}`}>
+                          <CategoryHomeCard
+                            icon={category.icon}
+                            label={category.label}
+                          />
+                        </Link>
                       </motion.div>
                     ))}
                   </motion.div>
@@ -360,11 +395,14 @@ export const Home = () => {
                 initial="hidden"
                 animate="show"
               >
-              {filteredCategories.map((category, index) => (
-                <motion.div key={index} variants={itemVariants}>
-                  <CategoryHomeCard icon={category.icon} label={category.label} />
-                </motion.div>
-              ))}
+                {filteredCategories.map((category, index) => (
+                  <motion.div key={index} variants={itemVariants}>
+                    <CategoryHomeCard
+                      icon={category.icon}
+                      label={category.label}
+                    />
+                  </motion.div>
+                ))}
               </motion.div>
             </div>
           </div>
@@ -492,11 +530,14 @@ export const Home = () => {
                 initial="hidden"
                 animate="show"
               >
-              {filteredCategories.map((category, index) => (
-                <motion.div key={index} variants={itemVariants}>
-                  <CategoryHomeCard icon={category.icon} label={category.label} />
-                </motion.div>
-              ))}
+                {filteredCategories.map((category, index) => (
+                  <motion.div key={index} variants={itemVariants}>
+                    <CategoryHomeCard
+                      icon={category.icon}
+                      label={category.label}
+                    />
+                  </motion.div>
+                ))}
               </motion.div>
             </div>
           </div>
