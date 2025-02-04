@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { FaEye, FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
-import "../../../styles/itemCard.css"
+import "../../../styles/itemCard.css";
 
-export default function ItemCard({ label, description, type, uploadDate }) {
+export default function ItemCard({ id, label, description, type, uploadDate }) {
+  const navigate = useNavigate();
+
   // Función para asignar colores según el tipo
   const getBadgeColor = (type) => {
     const cleanType = type.trim().toUpperCase();
@@ -32,10 +35,10 @@ export default function ItemCard({ label, description, type, uploadDate }) {
       confirmButtonText: "Descargar",
       cancelButtonText: "Cancelar",
       customClass: {
-        confirmButton: "custom-confirm-button", // Estilo personalizado para el botón de confirmar
-        cancelButton: "custom-cancel-button", // Estilo personalizado para el botón de cancelar
+        confirmButton: "custom-confirm-button",
+        cancelButton: "custom-cancel-button",
       },
-      buttonsStyling: false, // Desactivar los estilos predeterminados de SweetAlert2
+      buttonsStyling: false,
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
@@ -44,7 +47,7 @@ export default function ItemCard({ label, description, type, uploadDate }) {
           icon: "success",
           confirmButtonText: "Entendido",
         });
-        // Aquí puedes agregar la lógica real para manejar la descarga del archivo
+        // Lógica real para manejar la descarga
       }
     });
   };
@@ -56,8 +59,10 @@ export default function ItemCard({ label, description, type, uploadDate }) {
         <h3
           className="font-grotesk cursor-pointer hover:underline inline text-lg font-bold text-[#3e4345]"
           onClick={() => {
-            if (type.toUpperCase() === "PDF") {
-              handleDownload(); // Disparar el modal de confirmación solo si es PDF
+            if (type.toUpperCase() !== "PDF") {
+              navigate(`/item/${id}`); // Navega al detalle del ítem si no es PDF
+            } else {
+              handleDownload(); // Disparar el modal para PDF
             }
           }}
         >
@@ -83,7 +88,10 @@ export default function ItemCard({ label, description, type, uploadDate }) {
       {/* Botones de acciones (30%) */}
       <div className="w-full flex lg:flex-col items-center gap-2 mt-4 lg:mt-0">
         {type.toUpperCase() === "PBIX" && (
-          <button className="flex items-center gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition">
+          <button
+            className="flex items-center gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition"
+            onClick={() => navigate(`/item/${id}`)} // Navega al detalle del ítem
+          >
             Consultar <FaEye />
           </button>
         )}
@@ -97,7 +105,10 @@ export default function ItemCard({ label, description, type, uploadDate }) {
         )}
         {type.toUpperCase() !== "PBIX" && type.toUpperCase() !== "PDF" && (
           <>
-            <button className="flex items-center gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition">
+            <button
+              className="flex items-center gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition"
+              onClick={() => navigate(`/item/${id}`)} // Navega al detalle del ítem
+            >
               Consultar <FaEye />
             </button>
             <button

@@ -96,6 +96,7 @@ const ThemeItems = () => {
             {theme.items?.map((item) => (
               <motion.div key={item.id} variants={itemVariants}>
                 <ItemCard
+                  id={item.id}
                   label={item.label}
                   description={item.description}
                   type={item.type}
