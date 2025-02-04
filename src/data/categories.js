@@ -37,7 +37,21 @@ export const categories = [
               type: "PDF",
               description: "Monitoreo de pozos, efluentes y plantas potabilizadoras",
               upload_date: "3/8/2022"
-            }
+            },
+            {
+              id: 4,
+              label: "SAME EXCEL",
+              type: "XLS",
+              description: "Monitoreo de pozos, efluentes y plantas potabilizadoras",
+              upload_date: "3/8/2022"
+            },
+            {
+              id: 5,
+              label: "SAME TABLERO",
+              type: "PBIX",
+              description: "Monitoreo de pozos, efluentes y plantas potabilizadoras",
+              upload_date: "3/8/2022"
+            },
           ]
         },
         {

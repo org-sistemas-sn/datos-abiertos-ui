@@ -12,7 +12,7 @@ const Breadcrumb = ({ category, theme, showTitle = true }) => {
       } w-full flex flex-col justify-center items-center`}
     >
       {/* Breadcrumb con flecha y trazado */}
-      <div className="w-[88%] max-w-[1600px] h-auto flex items-center pt-5">
+      <div className="w-[93%] max-w-[1600px] h-auto flex items-center pt-5">
         {/* Botón de regreso */}
         <button onClick={() => navigate(-1)} className="flex items-center">
           <IoArrowBack className="mb-5 mr-2" size={32} color="#0477AD" />
@@ -38,7 +38,7 @@ const Breadcrumb = ({ category, theme, showTitle = true }) => {
       {/* Contenido adicional solo si `showTitle` es true */}
       {showTitle && (
         <div className="w-full h-24 flex justify-center">
-          <div className="w-[89%] flex items-center">
+          <div className="w-[93%] max-w-[1600px] flex items-center">
             {category && <span className="font-grotesk text-[#677073] text-3xl font-semibold text-sn ml-3 lg:text-4xl">{category.label}</span>}
           </div>
         </div>

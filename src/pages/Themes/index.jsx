@@ -42,7 +42,7 @@ const Themes = () => {
       {/* Títulos */}
       <div className="w-full h-auto mt-6 md:mt-8 max-w-[1600px]">
         <div className="w-full flex items-center lg:mt-10 flex justify-center items-center">
-          <div className="w-[89%]">
+          <div className="w-[90.5%] max-w-[1600px]">
             <span className="font-semibold font-grotesk text-[#677073] text-lg md:text-xl">
               TEMAS
             </span>
@@ -52,7 +52,7 @@ const Themes = () => {
 
       {/* Contenedor de Temas */}
       <div className="w-full h-auto flex justify-center pb-20 max-w-[1600px]">
-        <div className="w-[89%] max-w-[1400px]">
+        <div className="w-[91%] max-w-[1600px]">
           {category.themes && category.themes.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4"

@@ -36,19 +36,26 @@ const ThemeItems = () => {
 
   // Función para asignar colores a las tarjetas según el tipo
   const getBadgeColor = (type) => {
-    switch (type.toUpperCase()) {
+    const cleanType = type.trim().toUpperCase(); // Limpiar espacios y normalizar a mayúsculas
+    switch (cleanType) {
       case "CSV":
         return "bg-green-200 text-green-800";
       case "TXT":
         return "bg-blue-200 text-blue-800";
       case "PDF":
         return "bg-red-200 text-red-800";
-      case "ZIP":
+      case "PBIX":
         return "bg-yellow-200 text-yellow-800";
+      case "XLS":
+        return "bg-orange-200 text-orange-800";
       default:
         return "bg-gray-200 text-gray-800";
     }
   };
+  
+
+  // Extraer tipos únicos para evitar duplicados
+  const uniqueTypes = [...new Set(theme.items?.map((item) => item.type))];
 
   return (
     <div className="w-full h-auto mt-24 flex flex-col items-center">
@@ -56,8 +63,8 @@ const ThemeItems = () => {
       <Breadcrumb category={category} theme={theme} showTitle={false} />
 
       {/* Título y descripción del tema */}
-      <div className="w-full flex justify-center max-w-[1800px]">
-        <div className="w-[87%] pt-4">
+      <div className="w-full flex justify-center max-w-[1600px]">
+        <div className="w-[92%] pt-4">
           <h2 className="font-grotesk text-3xl font-semibold text-[#3e4345]">
             {theme.label.toUpperCase()}
           </h2>
@@ -65,16 +72,16 @@ const ThemeItems = () => {
             {theme.description}
           </div>
 
-          {/* Tarjetas de tipos de archivos */}
+          {/* Tarjetas de tipos de archivos (únicas) */}
           <div className="flex flex-wrap gap-2 mt-4">
-            {theme.items?.map((item) => (
+            {uniqueTypes.map((type, index) => (
               <span
-                key={item.id}
+                key={index}
                 className={`px-3 py-1 rounded text-sm font-medium ${getBadgeColor(
-                  item.type
+                  type
                 )}`}
               >
-                {item.type.toUpperCase()}
+                {type.toUpperCase()}
               </span>
             ))}
           </div>

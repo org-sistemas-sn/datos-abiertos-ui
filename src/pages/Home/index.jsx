@@ -162,7 +162,7 @@ export const Home = () => {
     <div className="w-full h-full">
       {/* Desktop */}
       <div className="hidden w-full h-auto mt-24 lg:flex flex-col items-center ipad-max:hidden">
-        <div className="w-[92%] flex max-w-[1400px] h-auto relative">
+        <div className="w-[95%] flex max-w-[1600px] h-auto relative">
           <div className="w-[50%] pl-8 h-full pt-28">
             <div className="h-auto w-[600px]">
               <h1 className="font-grotesk text-[5rem] select-none leading-titleDesktop font-bold text-[#3e4345]">
@@ -274,7 +274,7 @@ export const Home = () => {
           </div>
         </div>
         <div className="w-full h-auto flex justify-center items-center pb-24">
-          <div className="w-[88%] h-full max-w-[1320px] pt-5">
+          <div className="w-[90%] h-full max-w-[1500px] pt-5">
             <div className="w-full h-auto">
               <div className="w-full flex justify-center mt-3">
                 <div className="w-[100%]">
@@ -304,15 +304,15 @@ export const Home = () => {
             </div>
           </div>
         </div>
-        <div className="w-full h-auto flex flex-col items-center max-w-[1500px]">
-          <div className="w-[87%]">
+        <div className="w-full h-auto flex flex-col items-center max-w-[1600px]">
+          <div className="w-[89%]">
             <div className="w-full pb-6 h-12 flex items-center">
               <h6 className="font-semibold text-xl font-grotesk text-[#3e4345] select-none">
                 Calendario de eventos
               </h6>
             </div>
           </div>
-          <div className="w-[87%] h-full flex">
+          <div className="w-[90%] h-full flex">
             <div className="w-[360px] h-auto">
               <div className="bg-white border-none rounded-lg flex">
                 <Calendar
@@ -337,7 +337,7 @@ export const Home = () => {
             </div>
             <div className="w-full h-full">
               <div className="w-full flex flex-wrap justify-center pb-16">
-                <div className="w-[89%] flex-wrap">
+                <div className="w-[87%] flex-wrap">
                   {/* Contenedor animado */}
                   <motion.div
                     className="grid grid-cols-1 sm:grid-cols-2 gap-4"

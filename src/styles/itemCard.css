@@ -1,0 +1,36 @@
+/* Botón de confirmar */
+.custom-confirm-button {
+  background-color: #0477ad;
+  color: white;
+  border: none;
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 4px; /* Bordes redondeados */
+  width: 120px; /* Ajustar tamaño */
+  cursor: pointer;
+}
+
+.custom-confirm-button:hover {
+  background-color: #005a8c;
+}
+
+/* Botón de cancelar */
+.custom-cancel-button {
+  background-color: white;
+  color: #0477ad;
+  border: 2px solid #0477ad; /* Borde con color personalizado */
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 4px; /* Bordes redondeados */
+  width: 120px; /* Ajustar tamaño */
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.custom-cancel-button:hover {
+  background-color: #e6f7ff;
+}
