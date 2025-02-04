@@ -4,8 +4,18 @@ import Breadcrumb from "../../components/Breadcrumb";
 import ItemCard from "../../components/Cards/ItemCard";
 import { motion } from "framer-motion";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2, // Aparece cada tarjeta con un intervalo de 0.2s
+    },
+  },
+};
+
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 20 }, // Aparece con desplazamiento hacia arriba
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
@@ -24,13 +34,29 @@ const ThemeItems = () => {
     );
   }
 
+  // Función para asignar colores a las tarjetas según el tipo
+  const getBadgeColor = (type) => {
+    switch (type.toUpperCase()) {
+      case "CSV":
+        return "bg-green-200 text-green-800";
+      case "TXT":
+        return "bg-blue-200 text-blue-800";
+      case "PDF":
+        return "bg-red-200 text-red-800";
+      case "ZIP":
+        return "bg-yellow-200 text-yellow-800";
+      default:
+        return "bg-gray-200 text-gray-800";
+    }
+  };
+
   return (
     <div className="w-full h-auto mt-24 flex flex-col items-center">
       {/* Breadcrumb */}
       <Breadcrumb category={category} theme={theme} showTitle={false} />
 
       {/* Título y descripción del tema */}
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center max-w-[1800px]">
         <div className="w-[87%] pt-4">
           <h2 className="font-grotesk text-3xl font-semibold text-[#3e4345]">
             {theme.label.toUpperCase()}
@@ -39,10 +65,29 @@ const ThemeItems = () => {
             {theme.description}
           </div>
 
-          {/* Tarjetas de los items en diseño grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          {/* Tarjetas de tipos de archivos */}
+          <div className="flex flex-wrap gap-2 mt-4">
             {theme.items?.map((item) => (
-              <motion.div key={item.id} variants={itemVariants} initial="hidden" animate="show">
+              <span
+                key={item.id}
+                className={`px-3 py-1 rounded text-sm font-medium ${getBadgeColor(
+                  item.type
+                )}`}
+              >
+                {item.type.toUpperCase()}
+              </span>
+            ))}
+          </div>
+
+          {/* Tarjetas de los items con animación escalonada */}
+          <motion.div
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+          >
+            {theme.items?.map((item) => (
+              <motion.div key={item.id} variants={itemVariants}>
                 <ItemCard
                   label={item.label}
                   description={item.description}
@@ -51,7 +96,7 @@ const ThemeItems = () => {
                 />
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

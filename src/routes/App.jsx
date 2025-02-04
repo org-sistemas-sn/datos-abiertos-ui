@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import CategoryPage from "../pages/CategoryPage";
+import Themes from "../pages/Themes";
+import ThemeItems from "../pages/ThemeItems";
 import Categories from "../pages/Categories";
 import { Layout } from "@Components";
 import { Home } from "@Pages";
@@ -11,7 +12,8 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="categorias" element={<Categories />} />
-          <Route path="categoria/:id" element={<CategoryPage />} />
+          <Route path="/themes/:id" element={<Themes />} />
+          <Route path="/themes/:categoryId/:themeId" element={<ThemeItems />} />
         </Route>
       </Routes>
     </BrowserRouter>
