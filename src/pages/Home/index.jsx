@@ -304,8 +304,8 @@ export const Home = () => {
             </div>
           </div>
         </div>
-        <div className="w-full h-auto flex flex-col items-center max-w-[1600px]">
-          <div className="w-[89%]">
+        <div className="w-full h-auto flex flex-col items-center max-w-[1500px]">
+          <div className="w-[90%]">
             <div className="w-full pb-6 h-12 flex items-center">
               <h6 className="font-semibold text-xl font-grotesk text-[#3e4345] select-none">
                 Calendario de eventos
@@ -337,7 +337,7 @@ export const Home = () => {
             </div>
             <div className="w-full h-full">
               <div className="w-full flex flex-wrap justify-center pb-16">
-                <div className="w-[87%] flex-wrap">
+                <div className="w-[90%] flex-wrap">
                   {/* Contenedor animado */}
                   <motion.div
                     className="grid grid-cols-1 sm:grid-cols-2 gap-4"

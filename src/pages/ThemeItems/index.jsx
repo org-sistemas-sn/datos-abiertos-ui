@@ -63,7 +63,7 @@ const ThemeItems = () => {
       <Breadcrumb category={category} theme={theme} showTitle={false} />
 
       {/* Título y descripción del tema */}
-      <div className="w-full flex justify-center max-w-[1600px]">
+      <div className="w-full flex justify-center max-w-[1730px]">
         <div className="w-[92%] pt-4">
           <h2 className="font-grotesk text-3xl font-semibold text-[#3e4345]">
             {theme.label.toUpperCase()}

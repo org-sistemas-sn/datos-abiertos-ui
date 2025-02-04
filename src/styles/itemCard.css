@@ -1,6 +1,6 @@
 /* Botón de confirmar */
 .custom-confirm-button {
-  background-color: #0477ad;
+  background-color: #0477ad !important;
   color: white;
   border: none;
   padding: 11px 20px;
@@ -12,9 +12,6 @@
   cursor: pointer;
 }
 
-.custom-confirm-button:hover {
-  background-color: #005a8c;
-}
 
 /* Botón de cancelar */
 .custom-cancel-button {
