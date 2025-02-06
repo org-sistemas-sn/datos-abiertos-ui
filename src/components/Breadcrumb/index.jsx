@@ -2,7 +2,7 @@ import { IoArrowBack } from "react-icons/io5";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
-const Breadcrumb = ({ category, theme, item, showTitle = true }) => {
+ const Breadcrumb = ({ category, theme, item, showTitle = true }) => {
   const navigate = useNavigate();
 
   return (
@@ -32,7 +32,7 @@ const Breadcrumb = ({ category, theme, item, showTitle = true }) => {
         )}
         {theme && (
           <>
-            <span className="ml-1 mb-1 font-semibold text-sn mb-5">/</span>
+            <span className="ml-1 font-semibold text-sn mb-5">/</span>
             <span className="ml-1 font-grotesk text-[#677073] font-semibold text-sn mb-5">
               {theme.label.toUpperCase()}
             </span>
@@ -40,7 +40,7 @@ const Breadcrumb = ({ category, theme, item, showTitle = true }) => {
         )}
         {item && (
           <>
-            <span className="ml-1 mb-1 font-semibold text-sn mb-5">/</span>
+            <span className="ml-1 font-semibold text-sn mb-5">/</span>
             <span className="ml-1 font-grotesk text-[#677073] font-semibold text-sn mb-5">
               {item.label.toUpperCase()}
             </span>

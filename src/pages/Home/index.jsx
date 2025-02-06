@@ -33,24 +33,27 @@ export const Home = () => {
               id: 1,
               label: "SAME (SISTEMA VIEJO)",
               type: "CSV",
-              description: "Monitoreo de pozos, efluentes y plantas potabilizadoras",
-              upload_date: "22/11/2024"
+              description:
+                "Monitoreo de pozos, efluentes y plantas potabilizadoras",
+              upload_date: "22/11/2024",
             },
             {
               id: 2,
               label: "MONITOREO SAME",
               type: "TXT",
-              description: "Monitoreo de pozos, efluentes y plantas potabilizadoras",
-              upload_date: "22/11/2023"
+              description:
+                "Monitoreo de pozos, efluentes y plantas potabilizadoras",
+              upload_date: "22/11/2023",
             },
             {
               id: 3,
               label: "SAME (SISTEMA NUEVO)",
               type: "PDF",
-              description: "Monitoreo de pozos, efluentes y plantas potabilizadoras",
-              upload_date: "3/8/2022"
-            }
-          ]
+              description:
+                "Monitoreo de pozos, efluentes y plantas potabilizadoras",
+              upload_date: "3/8/2022",
+            },
+          ],
         },
         {
           id: 2,
@@ -82,7 +85,6 @@ export const Home = () => {
     { id: 8, icon: salud, label: "Salud" },
     { id: 9, icon: general, label: "General" },
     { id: 10, icon: licencia, label: "Licencia" },
-    
   ];
 
   const [counts, setCounts] = useState({
@@ -96,7 +98,7 @@ export const Home = () => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2, // Hace que cada tarjeta entre con un retraso de 0.2s
+        staggerChildren: 0.2,
       },
     },
   };
@@ -106,13 +108,15 @@ export const Home = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
 
+  /*
+
   useEffect(() => {
     const animateCount = (key, end) => {
       let start = 0;
       const duration = 2500;
       const stepTime = duration / end;
       const timer = setInterval(() => {
-        start += Math.ceil(end / 45);
+        start += Math.ceil(end / 25);
         if (start >= end) {
           start = end;
           clearInterval(timer);
@@ -126,6 +130,8 @@ export const Home = () => {
     animateCount("horas", 22000);
   }, []);
 
+  */
+
   const events = [
     { day: "LUNES 2", title: "Caravana navideña" },
     { day: "LUNES 14", title: "Inscripción Becas Deportivas" },
@@ -135,7 +141,6 @@ export const Home = () => {
     { day: "LUNES 14", title: "Inscripción Becas Deportivas" },
     { day: "JUEVES 17", title: "Festival Rico" },
     { day: "MARTES 22", title: "Boca vs Juventude" },
-    
   ];
 
   // Colores predefinidos
@@ -222,7 +227,8 @@ export const Home = () => {
                 }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
-                  {counts.nicoleños.toLocaleString("es-ES")}
+                  167824
+                  {/* {counts.nicoleños.toLocaleString("es-ES")} */}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Nicoleños
@@ -243,7 +249,12 @@ export const Home = () => {
                 }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
-                  {counts.becas.toLocaleString("es-ES")}
+                  12000
+                  {
+                    
+                      /*{counts.becas.toLocaleString("es-ES")*/
+                    
+                  }
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Becas deportivas entregadas
@@ -264,7 +275,12 @@ export const Home = () => {
                 }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
-                  {counts.horas.toLocaleString("es-ES")}
+                  22000
+                  {
+                    
+                      /*{counts.horas.toLocaleString("es-ES")*/
+                    
+                  }
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Horas ahorradas en trámites digitales
