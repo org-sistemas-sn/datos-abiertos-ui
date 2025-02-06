@@ -80,13 +80,6 @@ const ThemeItems = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <h2 className="text-center text-red-500 text-xl">{error}</h2>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full h-auto mt-24 flex flex-col items-center">
@@ -103,25 +96,34 @@ const ThemeItems = () => {
             {selectedTheme?.description}
           </div>
 
-          {/* Tarjetas de los items con animación escalonada */}
-          <motion.div
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-          >
-            {items.map((item) => (
-              <motion.div key={item.id} variants={itemVariants}>
-                <ItemCard
-                  id={item.id}
-                  name={item.name}
-                  description={item.description}
-                  type={item.type}
-                  uploadDate={item.upload_date}
-                />
-              </motion.div>
-            ))}
-          </motion.div>
+          {/* Si el tema no tiene ítems, mostrar un mensaje */}
+          {items.length === 0 ? (
+            <div className="w-full text-center mt-6 text-gray-500 text-lg font-semibold">
+              <p>Este tema no tiene ítems relacionados.</p>
+            </div>
+          ) : (
+            /* Tarjetas de los items con animación escalonada */
+            <motion.div
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+            >
+              {items.map((item) => (
+                <motion.div key={item.id} variants={itemVariants}>
+                  <ItemCard
+                    id={item.id}
+                    name={item.name}
+                    description={item.description}
+                    type={item.type}
+                    publicationDate={item.publication_date}
+                    selectedSection={selectedSection}
+                    selectedTheme={selectedTheme}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
         </div>
       </div>
     </div>

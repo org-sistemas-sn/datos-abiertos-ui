@@ -171,7 +171,7 @@ export const Home = () => {
                   {/* {counts.nicoleños.toLocaleString("es-ES")} */}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
-                  Nicoleños
+                  Habitantes según censo 2022
                 </p>
               </motion.div>
 
@@ -189,7 +189,7 @@ export const Home = () => {
                 }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
-                  12000
+                  +1500
                   {/*{counts.becas.toLocaleString("es-ES")*/}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
@@ -211,11 +211,11 @@ export const Home = () => {
                 }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
-                  22000
+                  +42000
                   {/*{counts.horas.toLocaleString("es-ES")*/}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
-                  Horas ahorradas en trámites digitales
+                  Personas con seguro médico municipal
                 </p>
               </motion.div>
             </div>

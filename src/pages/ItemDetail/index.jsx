@@ -1,32 +1,18 @@
 import { useParams } from "react-router-dom";
 import Breadcrumb from "../../components/Breadcrumb";
-import { categories } from "../../data/categories";
+import { useSectionContext } from "../../context/sectionContext/sectionContext";
 
 const ItemDetail = () => {
   const { id } = useParams();
   const itemId = parseInt(id, 10);
 
-  // Depuración: Mostrar el ID y los datos cargados
-  console.log("Buscando item con ID:", itemId);
-  console.log("Categorías disponibles:", categories);
+  const { selectedTheme, selectedSection } = useSectionContext();
 
-  // Buscar la categoría que contiene el ítem
-  const category = categories.find(
-    (cat) => cat.themes && cat.themes.some((theme) =>
-      theme.items && theme.items.some((item) => item.id === itemId)
-    )
-  );
+  // Buscar el ítem dentro del tema actual
+  const item = selectedTheme?.items?.find((item) => item.id === itemId);
 
-  // Buscar el tema que contiene el ítem dentro de la categoría encontrada
-  const theme = category?.themes?.find((th) =>
-    th.items && th.items.some((item) => item.id === itemId)
-  );
-
-  // Buscar el ítem dentro del tema encontrado
-  const item = theme?.items?.find((it) => it.id === itemId);
-
-  // Verificar si el ítem no existe
-  if (!item || !theme || !category) {
+  // Verificar si no se encontró el ítem
+  if (!item) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <h1 className="text-2xl font-bold text-red-500">
@@ -39,12 +25,12 @@ const ItemDetail = () => {
   return (
     <div className="w-full h-auto mt-24">
       {/* Breadcrumb con categoría, tema e ítem */}
-      <Breadcrumb category={category} theme={theme} item={item} showTitle={false} />
+      <Breadcrumb category={selectedSection} theme={selectedTheme} item={item} showTitle={false} />
 
       <div className="w-full h-auto flex flex-col items-center mt-10">
         <div className="w-[93%] max-w-[1200px]">
           {/* Título del ítem */}
-          <h1 className="text-4xl font-bold text-[#3e4345]">{item.label}</h1>
+          <h1 className="text-4xl font-bold text-[#3e4345]">{item.name}</h1>
 
           {/* Descripción del ítem */}
           <p className="mt-4 text-lg text-gray-600">{item.description}</p>
@@ -57,7 +43,7 @@ const ItemDetail = () => {
                 <strong>Tipo:</strong> {item.type.toUpperCase()}
               </li>
               <li>
-                <strong>Fecha de subida:</strong> {item.upload_date}
+                <strong>Fecha de subida:</strong> {item.publication_date}
               </li>
             </ul>
           </div>

@@ -3,7 +3,7 @@ import { FaEye, FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "../../../styles/itemCard.css";
 
-export default function ItemCard({ id, name, description, type, uploadDate }) {
+export default function ItemCard({ id, name, description, type, publicationDate }) {
   const navigate = useNavigate();
 
   // Función para asignar colores según el tipo
@@ -12,14 +12,12 @@ export default function ItemCard({ id, name, description, type, uploadDate }) {
     switch (cleanType) {
       case "CSV":
         return "bg-green-200 text-green-800";
-      case "TXT":
+      case "GIS":
         return "bg-blue-200 text-blue-800";
-      case "PDF":
-        return "bg-red-200 text-red-800";
       case "PBIX":
         return "bg-yellow-200 text-yellow-800";
-      case "XLS":
-        return "bg-orange-200 text-orange-800";
+      case "XLSX":
+        return "bg-red-200 text-red-800";
       default:
         return "bg-gray-200 text-gray-800";
     }
@@ -47,7 +45,6 @@ export default function ItemCard({ id, name, description, type, uploadDate }) {
           icon: "success",
           confirmButtonText: "Entendido",
         });
-        // Lógica real para manejar la descarga
       }
     });
   };
@@ -80,7 +77,7 @@ export default function ItemCard({ id, name, description, type, uploadDate }) {
             {type.toUpperCase()}
           </span>
           <span className="text-sm text-[#677073] bg-[#f2f7ff] rounded p-1">
-            Fecha de publicación: {uploadDate}
+            Fecha de publicación: {publicationDate}
           </span>
         </div>
       </div>

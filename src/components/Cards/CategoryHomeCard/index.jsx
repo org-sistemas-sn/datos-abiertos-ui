@@ -1,11 +1,7 @@
 export default function CategoryHomeCard({ icon, name }) {
   // Obtener la URL base desde las variables de entorno
   const baseUrl = import.meta.env.VITE_FTP_SERVER_URL;
-
-  console.log(baseUrl)
-
-  console.log(icon)
-
+  
   // Construir la URL completa de la imagen
   const imageUrl = `${baseUrl}/statics/icons/${icon}`;
 
