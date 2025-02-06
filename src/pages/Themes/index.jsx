@@ -1,8 +1,12 @@
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import ThemeCard from "../../components/Cards/ThemeCard";
-import { categories } from "../../data/categories";
 import Breadcrumb from "../../components/Breadcrumb";
+import MoonLoader from "react-spinners/MoonLoader";
+import { themeService } from "../../services/themes/themeService";
+import { sectionsService } from "../../services/sections/sectionService";
+import { useSectionContext } from "../../context/sectionContext/sectionContext";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -19,29 +23,65 @@ const itemVariants = {
 
 const Themes = () => {
   const { id } = useParams();
-  const category = categories.find((cat) => cat.id === parseInt(id, 10));
+  const { selectedSection, setSelectedSection, setSelectedTheme } = useSectionContext();
+  const [themes, setThemes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!category) {
+  useEffect(() => {
+    const fetchSectionData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Obtener la sección por ID y guardarla en el contexto
+        const sectionData = await sectionsService.getSectionById(id);
+        setSelectedSection(sectionData);
+
+        // Obtener los temas de la sección
+        const themesData = await themeService.getThemesBySectionId(id);
+        setThemes(themesData);
+      } catch (err) {
+        setError("Error al cargar los datos de la sección.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSectionData();
+  }, [id, setSelectedSection]);
+
+  // useEffect para monitorear los cambios en selectedSection y themes
+  useEffect(() => {
+    console.log("🟢 Sección seleccionada en contexto:", selectedSection);
+  }, [selectedSection]);
+
+  if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
-        <h2 className="text-center text-red-500 text-xl">
-          Categoría no encontrada
-        </h2>
+        <MoonLoader color="#0477AD" size={50} />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <h2 className="text-center text-red-500 text-xl">{error}</h2>
       </div>
     );
   }
 
   return (
     <div className="w-full h-auto mt-24 flex flex-col items-center">
-      {/* Breadcrumb */}
+      {/* Breadcrumb con la sección */}
       <div className="w-full h-auto flex flex-col items-center">
-        {/* Breadcrumb con título */}
-        <Breadcrumb category={category} showTitle={true} />
+        <Breadcrumb category={selectedSection} showTitle={true} />
       </div>
 
       {/* Títulos */}
       <div className="w-full h-auto mt-6 md:mt-8 max-w-[1730px]">
-        <div className="w-full flex items-center lg:mt-10 flex justify-center items-center">
+        <div className="w-full flex items-center lg:mt-10 flex justify-center">
           <div className="w-[90.5%] max-w-[1730px]">
             <span className="font-semibold font-grotesk text-[#677073] text-lg md:text-xl">
               TEMAS
@@ -53,27 +93,28 @@ const Themes = () => {
       {/* Contenedor de Temas */}
       <div className="w-full h-auto flex justify-center pb-20 max-w-[1730px]">
         <div className="w-[91%] max-w-[1730px]">
-          {category.themes && category.themes.length > 0 ? (
+          {themes.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4"
               variants={containerVariants}
               initial="hidden"
               animate="show"
             >
-              {category.themes.map((theme) => (
-                <motion.div key={theme.id} variants={itemVariants}>
-                  <Link to={`/themes/${category.id}/${theme.id}`}>
-                    <ThemeCard
-                      label={theme.label}
-                      description={theme.description}
-                    />
+              {themes.map((theme) => (
+                <motion.div
+                  key={theme.id}
+                  variants={itemVariants}
+                  onClick={() => setSelectedTheme(theme)} // Guarda el tema seleccionado en el contexto
+                >
+                  <Link to={`/themes/${id}/${theme.id}`}>
+                    <ThemeCard name={theme.name} description={theme.description} />
                   </Link>
                 </motion.div>
               ))}
             </motion.div>
           ) : (
             <div className="mt-8 text-center text-gray-500">
-              <p>No hay temas relacionados para esta categoría.</p>
+              <p>No hay temas relacionados para esta sección.</p>
             </div>
           )}
         </div>

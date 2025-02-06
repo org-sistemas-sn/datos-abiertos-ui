@@ -1,91 +1,18 @@
-import { useState, useEffect } from "react";
-import { motion, useAnimationControls } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { sectionsService } from "../../services/sections/sectionService.js";
 import "../../styles/customCalendar.css";
 import { Link } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import CardEventCalendary from "../../components/Cards/CardEventCalendary";
+import MoonLoader from "react-spinners/MoonLoader";
 import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
-import aguas from "../../assets/icons/agua.png";
-import general from "../../assets/icons/general.png";
-import licencia from "../../assets/icons/licencia.png";
-import seguridad from "../../assets/icons/seguridad.png";
-import salud from "../../assets/icons/salud.png";
 
 export const Home = () => {
   const [date, setDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
-
-  const categories = [
-    { id: 1, icon: aguas, label: "Aguas" },
-    { id: 2, icon: seguridad, label: "Seguridad" },
-    {
-      id: 3,
-      icon: salud,
-      label: "Salud y Familia",
-      themes: [
-        {
-          id: 1,
-          label: "Same",
-          description: "Salidas y respuestas  del same",
-          items: [
-            {
-              id: 1,
-              label: "SAME (SISTEMA VIEJO)",
-              type: "CSV",
-              description:
-                "Monitoreo de pozos, efluentes y plantas potabilizadoras",
-              upload_date: "22/11/2024",
-            },
-            {
-              id: 2,
-              label: "MONITOREO SAME",
-              type: "TXT",
-              description:
-                "Monitoreo de pozos, efluentes y plantas potabilizadoras",
-              upload_date: "22/11/2023",
-            },
-            {
-              id: 3,
-              label: "SAME (SISTEMA NUEVO)",
-              type: "PDF",
-              description:
-                "Monitoreo de pozos, efluentes y plantas potabilizadoras",
-              upload_date: "3/8/2022",
-            },
-          ],
-        },
-        {
-          id: 2,
-          label: "Ausentismo",
-          description:
-            "Monitoreo de pozos, efluentes y plantas potabilizadoras",
-        },
-        {
-          id: 3,
-          label: "Credencial municipal",
-          description: "Consumo y tiempo entre mediciones",
-        },
-        {
-          id: 4,
-          label: "Plataforma Alepho",
-          description: "Consumo y tiempo entre mediciones",
-        },
-        {
-          id: 5,
-          label: "Plataforma Alepho",
-          description: "Consumo y tiempo entre mediciones",
-        },
-      ],
-    },
-    { id: 4, icon: general, label: "General" },
-    { id: 5, icon: licencia, label: "Licencia" },
-    { id: 6, icon: aguas, label: "Aguas" },
-    { id: 7, icon: seguridad, label: "Seguridad" },
-    { id: 8, icon: salud, label: "Salud" },
-    { id: 9, icon: general, label: "General" },
-    { id: 10, icon: licencia, label: "Licencia" },
-  ];
+  const [sections, setSections] = useState([]);
 
   const [counts, setCounts] = useState({
     nicoleños: 0,
@@ -107,6 +34,19 @@ export const Home = () => {
     hidden: { opacity: 0, y: 20 }, // Inicia con opacidad 0 y 20px abajo
     show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const sectionsData = await sectionsService.getAllSections();
+        setSections(sectionsData);
+      } catch (error) {
+        console.error("Error al obtener las secciones:", error);
+      }
+    };
+
+    fetchSections();
+  }, []);
 
   /*
 
@@ -159,8 +99,8 @@ export const Home = () => {
     new Date(2025, 1, 22).toDateString(),
   ];
 
-  const filteredCategories = categories.filter((category) =>
-    category.label.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCategories = sections.filter((category) =>
+    category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -250,11 +190,7 @@ export const Home = () => {
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
                   12000
-                  {
-                    
-                      /*{counts.becas.toLocaleString("es-ES")*/
-                    
-                  }
+                  {/*{counts.becas.toLocaleString("es-ES")*/}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Becas deportivas entregadas
@@ -276,11 +212,7 @@ export const Home = () => {
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
                   22000
-                  {
-                    
-                      /*{counts.horas.toLocaleString("es-ES")*/
-                    
-                  }
+                  {/*{counts.horas.toLocaleString("es-ES")*/}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Horas ahorradas en trámites digitales
@@ -297,24 +229,32 @@ export const Home = () => {
                   <h3 className="font-grotesk select-none text-[#3e4345] text-xl font-semibold mb-4">
                     Categorías
                   </h3>
-                  {/* Contenedor animado */}
-                  <motion.div
-                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="show"
-                  >
-                    {filteredCategories.map((category, index) => (
-                      <motion.div key={index} variants={itemVariants}>
-                        <Link to={`/themes/${category.id}`}>
-                          <CategoryHomeCard
-                            icon={category.icon}
-                            label={category.label}
-                          />
-                        </Link>
-                      </motion.div>
-                    ))}
-                  </motion.div>
+
+                  {/* Si no hay categorías, mostrar MoonLoader */}
+                  {filteredCategories.length === 0 ? (
+                    <div className="flex justify-center items-center h-40">
+                      <MoonLoader color="#0477AD" size={50} />
+                    </div>
+                  ) : (
+                    /* Contenedor animado con las categorías */
+                    <motion.div
+                      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
+                      variants={containerVariants}
+                      initial="hidden"
+                      animate="show"
+                    >
+                      {filteredCategories.map((category, index) => (
+                        <motion.div key={index} variants={itemVariants}>
+                          <Link to={`/themes/${category.id}`}>
+                            <CategoryHomeCard
+                              icon={category.icon_path}
+                              name={category.name}
+                            />
+                          </Link>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}
                 </div>
               </div>
             </div>
@@ -429,26 +369,35 @@ export const Home = () => {
               <h3 className="font-grotesk text-[#3e4345] font-semibold mb-4">
                 Categorías
               </h3>
-              {/* Contenedor con animación */}
-              <motion.div
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-              >
-                {filteredCategories.map((category, index) => (
-                  <motion.div key={index} variants={itemVariants}>
-                    <Link to={`/themes/${category.id}`}>
-                      <CategoryHomeCard
-                        icon={category.icon}
-                        label={category.label}
-                      />
-                    </Link>
-                  </motion.div>
-                ))}
-              </motion.div>
+
+              {/* Si no hay categorías, mostrar MoonLoader */}
+              {filteredCategories.length === 0 ? (
+                <div className="flex justify-center items-center h-40">
+                  <MoonLoader color="#0477AD" size={50} />
+                </div>
+              ) : (
+                /* Contenedor con animación */
+                <motion.div
+                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="show"
+                >
+                  {filteredCategories.map((category, index) => (
+                    <motion.div key={index} variants={itemVariants}>
+                      <Link to={`/themes/${category.id}`}>
+                        <CategoryHomeCard
+                          icon={category.icon_path}
+                          name={category.name}
+                        />
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
             </div>
           </div>
+
           <div className="w-full h-auto flex">
             <div className="w-[50%] h-full">
               <div className="w-full flex justify-center mt-10 pb-5">
@@ -566,27 +515,35 @@ export const Home = () => {
               Categorías
             </h3>
             <div className="w-full h-full self-start">
-              {/* Contenedor con animación */}
-              <motion.div
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-              >
-                {filteredCategories.map((category, index) => (
-                  <motion.div key={index} variants={itemVariants}>
-                    <Link to={`/themes/${category.id}`}>
-                      <CategoryHomeCard
-                        icon={category.icon}
-                        label={category.label}
-                      />
-                    </Link>
-                  </motion.div>
-                ))}
-              </motion.div>
+              {/* Si no hay categorías, mostrar MoonLoader */}
+              {filteredCategories.length === 0 ? (
+                <div className="flex justify-center h-32">
+                  <MoonLoader color="#0477AD" size={32} />
+                </div>
+              ) : (
+                /* Contenedor con animación */
+                <motion.div
+                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="show"
+                >
+                  {filteredCategories.map((category, index) => (
+                    <motion.div key={index} variants={itemVariants}>
+                      <Link to={`/themes/${category.id}`}>
+                        <CategoryHomeCard
+                          icon={category.icon_path}
+                          name={category.name}
+                        />
+                      </Link>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
             </div>
           </div>
         </div>
+
         {/* Calendario */}
         <div className="w-full flex justify-center mt-10 pb-5">
           <div className="w-[89%] mt-5">

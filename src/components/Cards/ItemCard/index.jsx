@@ -3,7 +3,7 @@ import { FaEye, FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "../../../styles/itemCard.css";
 
-export default function ItemCard({ id, label, description, type, uploadDate }) {
+export default function ItemCard({ id, name, description, type, uploadDate }) {
   const navigate = useNavigate();
 
   // Función para asignar colores según el tipo
@@ -29,7 +29,7 @@ export default function ItemCard({ id, label, description, type, uploadDate }) {
   const handleDownload = () => {
     Swal.fire({
       title: "¿Estás seguro?",
-      text: `¿Quieres descargar el archivo "${label}"?`,
+      text: `¿Quieres descargar el archivo "${name}"?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Descargar",
@@ -66,7 +66,7 @@ export default function ItemCard({ id, label, description, type, uploadDate }) {
             }
           }}
         >
-          {label.toUpperCase()}
+          {name.toUpperCase()}
         </h3>
         <p className="text-sm text-[#677073] mt-2">{description}</p>
 
