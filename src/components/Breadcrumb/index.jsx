@@ -67,7 +67,7 @@ const formatName = (text) => {
         <div className="w-full h-24 flex justify-center">
           <div className="w-[93%] max-w-[1600px] flex items-center">
             {category && (
-              <span className="font-grotesk text-[#677073] text-3xl font-semibold text-sn ml-3 lg:text-4xl">
+              <span className="font-grotesk text-[#677073] text-3xl font-semibold text-sn ml-3 lg:text-4xl lg:ml-10 lg:mb-3">
                 {formatName(category.name)}
               </span>
             )}

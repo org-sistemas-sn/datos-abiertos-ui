@@ -49,6 +49,8 @@ export default function ItemCard({ id, name, description, type, publicationDate 
     });
   };
 
+  const cleanType = type.trim().toUpperCase();
+
   return (
     <div className="w-full border hover:shadow-lg hover:scale-x-105 hover:scale-y-105 border-gray-300 rounded-lg shadow-sm p-4 grid grid-cols-1 lg:grid-cols-[70%_30%] gap-4 items-center transition-transform duration-500 ease-in-out">
       {/* Contenido principal (70%) */}
@@ -56,7 +58,7 @@ export default function ItemCard({ id, name, description, type, publicationDate 
         <h3
           className="font-grotesk cursor-pointer hover:underline inline text-lg font-bold text-[#3e4345]"
           onClick={() => {
-            if (type.toUpperCase() !== "PDF") {
+            if (cleanType !== "PDF") {
               navigate(`/item/${id}`); // Navega al detalle del ítem si no es PDF
             } else {
               handleDownload(); // Disparar el modal para PDF
@@ -74,7 +76,7 @@ export default function ItemCard({ id, name, description, type, publicationDate 
               type
             )}`}
           >
-            {type.toUpperCase()}
+            {cleanType}
           </span>
           <span className="text-sm text-[#677073] bg-[#f2f7ff] rounded p-1">
             Fecha de publicación: {publicationDate}
@@ -84,27 +86,22 @@ export default function ItemCard({ id, name, description, type, publicationDate 
 
       {/* Botones de acciones (30%) */}
       <div className="w-full flex lg:flex-col items-center gap-2 mt-4 lg:mt-0">
-        {type.toUpperCase() === "PBIX" && (
+        {/* Si el archivo es GIS o PBIX, solo mostrar "Consultar" */}
+        {(cleanType === "GIS" || cleanType === "PBIX") && (
           <button
             className="flex items-center gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition"
-            onClick={() => navigate(`/item/${id}`)} // Navega al detalle del ítem
+            onClick={() => navigate(`/item/${id}`)}
           >
             Consultar <FaEye />
           </button>
         )}
-        {type.toUpperCase() === "PDF" && (
-          <button
-            onClick={handleDownload}
-            className="flex items-center gap-2 bg-[#0477AD] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#005a8c] transition"
-          >
-            Descargar <FaDownload />
-          </button>
-        )}
-        {type.toUpperCase() !== "PBIX" && type.toUpperCase() !== "PDF" && (
+
+        {/* Si el archivo es CSV o XLSX, mostrar ambos botones */}
+        {(cleanType === "CSV" || cleanType === "XLSX") && (
           <>
             <button
               className="flex items-center gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition"
-              onClick={() => navigate(`/item/${id}`)} // Navega al detalle del ítem
+              onClick={() => navigate(`/item/${id}`)}
             >
               Consultar <FaEye />
             </button>
@@ -115,6 +112,16 @@ export default function ItemCard({ id, name, description, type, publicationDate 
               Descargar <FaDownload />
             </button>
           </>
+        )}
+
+        {/* Si el archivo es PDF, solo mostrar "Descargar" */}
+        {cleanType === "PDF" && (
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-2 bg-[#0477AD] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#005a8c] transition"
+          >
+            Descargar <FaDownload />
+          </button>
         )}
       </div>
     </div>
