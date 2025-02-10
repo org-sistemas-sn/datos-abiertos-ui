@@ -48,7 +48,7 @@ export const Home = () => {
     fetchSections();
   }, []);
 
-  /*
+
 
   useEffect(() => {
     const animateCount = (key, end) => {
@@ -66,11 +66,11 @@ export const Home = () => {
     };
 
     animateCount("nicoleños", 167824);
-    animateCount("becas", 12000);
-    animateCount("horas", 22000);
+    animateCount("becas", 1500);
+    animateCount("horas", 42000);
   }, []);
 
-  */
+
 
   const events = [
     { day: "LUNES 2", title: "Caravana navideña" },
@@ -167,8 +167,8 @@ export const Home = () => {
                 }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
-                  167824
-                  {/* {counts.nicoleños.toLocaleString("es-ES")} */}
+                  {/* 167824 */}
+                   {counts.nicoleños.toLocaleString("es-ES")} 
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Habitantes según censo 2022
@@ -189,8 +189,8 @@ export const Home = () => {
                 }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
-                  +1500
-                  {/*{counts.becas.toLocaleString("es-ES")*/}
+                  
+                  {`${counts.becas.toLocaleString("es-ES")}+`}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Becas deportivas entregadas
@@ -211,8 +211,7 @@ export const Home = () => {
                 }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
-                  +42000
-                  {/*{counts.horas.toLocaleString("es-ES")*/}
+                  {`${counts.horas.toLocaleString("es-ES")}+`}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Personas con seguro médico municipal

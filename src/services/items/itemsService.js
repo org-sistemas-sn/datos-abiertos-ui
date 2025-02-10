@@ -3,7 +3,8 @@ import { API } from "../../api";
 export const itemsService = {
   getAllItems,
   getItemById,
-  getItemsByThemeId
+  getItemsByThemeId,
+  getItemFile // Nuevo servicio agregado
 };
 
 async function getAllItems() {
@@ -16,26 +17,37 @@ async function getAllItems() {
   }
 }
 
-// Nuevo servicio para obtener una sección por su ID
 async function getItemById(itemId) {
   try {
     const res = await API.get(`/items/${itemId}`);
     return res.data;
   } catch (error) {
-    console.error(`Error al obtener la sección con ID ${sectionId}:`, error.response ? error.response.data : error.message);
+    console.error(`Error al obtener la sección con ID ${itemId}:`, error.response ? error.response.data : error.message);
     throw error;
   }
 }
 
 async function getItemsByThemeId(themeId) {
-    try {
-      const res = await API.get(`/themes/${themeId}/items`);
-      return res.data;
-    } catch (error) {
-      console.error(`Error al obtener los temas de la sección con ID ${themeId}:`, error.response ? error.response.data : error.message);
-      throw error;
-    }
+  try {
+    const res = await API.get(`/themes/${themeId}/items`);
+    return res.data;
+  } catch (error) {
+    console.error(`Error al obtener los temas de la sección con ID ${themeId}:`, error.response ? error.response.data : error.message);
+    throw error;
+  }
 }
+
+// 📌 Nuevo servicio para obtener el archivo de un item
+async function getItemFile(itemId) {
+  try {
+    const res = await API.get(`/items/${itemId}/file`);
+    return res.data; // Devuelve el archivo formateado en JSON
+  } catch (error) {
+    console.error(`Error al obtener el archivo del item con ID ${itemId}:`, error.response ? error.response.data : error.message);
+    throw error;
+  }
+}
+
 
 
 /*

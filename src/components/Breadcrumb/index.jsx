@@ -1,6 +1,7 @@
 import { IoArrowBack } from "react-icons/io5";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const formatName = (text) => {
   if (!text) return "";
@@ -16,54 +17,69 @@ const formatName = (text) => {
     .join(" ");
 };
 
- const Breadcrumb = ({ category, theme, item, showTitle = true }) => {
+const Breadcrumb = ({ category, theme, item, showTitle = true }) => {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div
       className={`bg-[#f2f7ff] ${
-        showTitle ? "h-32" : "h-16"
+        showTitle && !isMobile ? "h-32" : "h-16"
       } w-full flex flex-col justify-center items-center`}
     >
       {/* Breadcrumb con flecha y trazado */}
       <div className="w-[93%] max-w-[1600px] h-auto flex items-center pt-5">
         {/* Botón de regreso */}
         <button onClick={() => navigate(-1)} className="flex items-center">
-          <IoArrowBack className="mb-5 mr-2" size={32} color="#0477AD" />
+          <IoArrowBack className="mb-5 mr-2 ml-3 md:ml-0" size={32} color="#0477AD" />
         </button>
-        {/* Trazado del breadcrumb */}
-        {category && (
+
+        {/* Mostrar breadcrumb solo si no es móvil */}
+        {!isMobile && (
           <>
-            <span className="font-grotesk text-[#677073] mb-5">
-              {formatName(category.name)}
-            </span>
-            <MdOutlineKeyboardDoubleArrowRight
-              color="#677073"
-              className="ml-1 mb-5"
-            />
-            <span className="font-grotesk text-[#677073] mb-5">Temas</span>
-          </>
-        )}
-        {theme && (
-          <>
-            <span className="ml-1 font-semibold text-sn mb-5">/</span>
-            <span className="ml-1 font-grotesk text-[#677073] font-semibold text-sn mb-5">
-              {theme.name.toUpperCase()}
-            </span>
-          </>
-        )}
-        {item && (
-          <>
-            <span className="ml-1 font-semibold text-sn mb-5">/</span>
-            <span className="ml-1 font-grotesk text-[#677073] font-semibold text-sn mb-5">
-              {item.name.toUpperCase()}
-            </span>
+            {category && (
+              <>
+                <span className="font-grotesk text-[#677073] mb-5">
+                  {formatName(category.name)}
+                </span>
+                <MdOutlineKeyboardDoubleArrowRight
+                  color="#677073"
+                  className="ml-1 mb-5"
+                />
+                <span className="font-grotesk text-[#677073] mb-5">Temas</span>
+              </>
+            )}
+            {theme && (
+              <>
+                <span className="ml-1 font-semibold text-sn mb-5">/</span>
+                <span className="ml-1 font-grotesk text-[#677073] font-semibold text-sn mb-5">
+                  {theme.name.toUpperCase()}
+                </span>
+              </>
+            )}
+            {item && (
+              <>
+                <span className="ml-1 font-semibold text-sn mb-5">/</span>
+                <span className="ml-1 font-grotesk text-[#677073] font-semibold text-sn mb-5">
+                  {item.name.toUpperCase()}
+                </span>
+              </>
+            )}
           </>
         )}
       </div>
 
-      {/* Contenido adicional solo si `showTitle` es true */}
-      {showTitle && (
+      {/* Contenido adicional solo si `showTitle` es true y no es móvil */}
+      {showTitle && !isMobile && (
         <div className="w-full h-24 flex justify-center">
           <div className="w-[93%] max-w-[1600px] flex items-center">
             {category && (
@@ -78,4 +94,4 @@ const formatName = (text) => {
   );
 };
 
-export default Breadcrumb
+export default Breadcrumb;
