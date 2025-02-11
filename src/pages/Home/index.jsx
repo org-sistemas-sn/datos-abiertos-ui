@@ -63,37 +63,37 @@ export const Home = () => {
       try {
         const data = await dateService.getDatesByMonthYear(date);
         setEvents(data);
-
+  
         // Extraer y transformar las fechas en español
         const formattedDates = data.map((event) => {
           const dateObj = new Date(event.date);
-
-          // Obtener día y mes en español
-          const day = dateObj.toLocaleDateString("es-ES", { weekday: "long" }); // Ejemplo: "martes"
-          const month = dateObj.toLocaleDateString("es-ES", { month: "long" }); // Ejemplo: "febrero"
-
+  
+          // Obtener día, mes y año
+          const day = dateObj.toLocaleDateString("es-ES", { weekday: "long" });
+          const month = dateObj.toLocaleDateString("es-ES", { month: "long" });
+  
           // Convertir la primera letra a mayúscula
           const dayFormatted = day.charAt(0).toUpperCase() + day.slice(1);
           const monthFormatted = month.charAt(0).toUpperCase() + month.slice(1);
-
+  
           return {
             fullDate: dateObj.toLocaleDateString("es-ES", {
               weekday: "long",
               day: "2-digit",
               month: "long",
               year: "numeric",
-            }), // Ejemplo: "Martes, 25 de febrero de 2025"
+            }),
             day: dayFormatted, // "Martes"
             month: monthFormatted, // "Febrero"
+            monthNumber: dateObj.getMonth() + 1, // Se agrega el mes en formato numérico (1-12)
             number: dateObj.getDate().toString(), // "25"
             year: dateObj.getFullYear().toString(), // "2025"
-            title: event.title, // ✅ Se añade el título del evento
+            title: event.title // Se añade el título del evento
           };
         });
-
+  
         setHighlightedDates(formattedDates);
-
-        // 🔥 Mostrar datos en consola
+  
         console.log("📅 Fechas transformadas (ES):", formattedDates);
       } catch (error) {
         console.error("Error al cargar eventos:", error);
@@ -101,6 +101,7 @@ export const Home = () => {
     };
     fetchEvents();
   }, [date]);
+  
 
   useEffect(() => {
     const animateCount = (key, end) => {
@@ -372,10 +373,15 @@ export const Home = () => {
                   tileClassName={({ date, view }) => {
                     if (view === "month") {
                       const dayNumber = date.getDate(); // Obtener el número del día (1-31)
+                      const monthNumber = date.getMonth() + 1; // Obtener el mes (1-12)
+                      const yearNumber = date.getFullYear(); // Obtener el año
 
-                      // Verificar si el número del día está en la lista de eventos
+                      // Verificar si el día, mes y año coinciden con un evento
                       const isHighlighted = highlightedDates.some(
-                        (event) => parseInt(event.number, 10) === dayNumber
+                        (event) =>
+                          parseInt(event.number, 10) === dayNumber &&
+                          parseInt(event.monthNumber, 10) === monthNumber && // Verificar mes
+                          parseInt(event.year, 10) === yearNumber // Verificar año
                       );
 
                       return isHighlighted ? "highlighted-date" : null;
@@ -517,10 +523,15 @@ export const Home = () => {
                       tileClassName={({ date, view }) => {
                         if (view === "month") {
                           const dayNumber = date.getDate(); // Obtener el número del día (1-31)
+                          const monthNumber = date.getMonth() + 1; // Obtener el mes (1-12)
+                          const yearNumber = date.getFullYear(); // Obtener el año
 
-                          // Verificar si el número del día está en la lista de eventos
+                          // Verificar si el día, mes y año coinciden con un evento
                           const isHighlighted = highlightedDates.some(
-                            (event) => parseInt(event.number, 10) === dayNumber
+                            (event) =>
+                              parseInt(event.number, 10) === dayNumber &&
+                              parseInt(event.monthNumber, 10) === monthNumber && // Verificar mes
+                              parseInt(event.year, 10) === yearNumber // Verificar año
                           );
 
                           return isHighlighted ? "highlighted-date" : null;
@@ -672,10 +683,15 @@ export const Home = () => {
                 tileClassName={({ date, view }) => {
                   if (view === "month") {
                     const dayNumber = date.getDate(); // Obtener el número del día (1-31)
+                    const monthNumber = date.getMonth() + 1; // Obtener el mes (1-12)
+                    const yearNumber = date.getFullYear(); // Obtener el año
 
-                    // Verificar si el número del día está en la lista de eventos
+                    // Verificar si el día, mes y año coinciden con un evento
                     const isHighlighted = highlightedDates.some(
-                      (event) => parseInt(event.number, 10) === dayNumber
+                      (event) =>
+                        parseInt(event.number, 10) === dayNumber &&
+                        parseInt(event.monthNumber, 10) === monthNumber && // Verificar mes
+                        parseInt(event.year, 10) === yearNumber // Verificar año
                     );
 
                     return isHighlighted ? "highlighted-date" : null;
