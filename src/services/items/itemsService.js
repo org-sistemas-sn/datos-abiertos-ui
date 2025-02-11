@@ -4,7 +4,9 @@ export const itemsService = {
   getAllItems,
   getItemById,
   getItemsByThemeId,
-  getItemFile // Nuevo servicio agregado
+  getItemFile,
+  getItemsByName, 
+  getItemSectionAndTheme
 };
 
 async function getAllItems() {
@@ -37,13 +39,34 @@ async function getItemsByThemeId(themeId) {
   }
 }
 
-// 📌 Nuevo servicio para obtener el archivo de un item
+// 📌 Servicio para obtener el archivo de un item
 async function getItemFile(itemId) {
   try {
     const res = await API.get(`/items/${itemId}/file`);
     return res.data; // Devuelve el archivo formateado en JSON
   } catch (error) {
     console.error(`Error al obtener el archivo del item con ID ${itemId}:`, error.response ? error.response.data : error.message);
+    throw error;
+  }
+}
+
+// 📌 Nuevo servicio para buscar items por nombre
+async function getItemsByName(name) {
+  try {
+    const res = await API.get(`/items/search`, { params: { name } });
+    return res.data;
+  } catch (error) {
+    console.error(`Error al buscar items con el nombre ${name}:`, error.response ? error.response.data : error.message);
+    throw error;
+  }
+}
+
+async function getItemSectionAndTheme(itemId) {
+  try {
+    const res = await API.get(`/items/${itemId}/section-theme`);
+    return res.data; // Devuelve el item con su tema y sección
+  } catch (error) {
+    console.error(`Error al obtener la sección y el tema del item con ID ${itemId}:`, error.response ? error.response.data : error.message);
     throw error;
   }
 }

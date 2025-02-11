@@ -117,6 +117,7 @@ const ThemeItems = () => {
                     description={item.description}
                     type={item.type}
                     publicationDate={item.publication_date}
+                    url_or_ftp_path={item.url_or_ftp_path}
                     selectedSection={selectedSection}
                     selectedTheme={selectedTheme}
                   />

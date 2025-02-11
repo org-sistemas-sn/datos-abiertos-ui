@@ -1,35 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { FaChevronDown, FaChevronUp, FaHome, FaFileAlt } from "react-icons/fa"; // Nuevos íconos
+import { FaChevronDown, FaChevronUp, FaHome, FaFileAlt } from "react-icons/fa";
 import { HiOutlineViewGrid } from "react-icons/hi";
-import aguasWhite from "../../assets/icons/aguas-white.png";
-import generalWhite from "../../assets/icons/general-white.png";
-import licenciaWhite from "../../assets/icons/licencia-white.png";
-import seguridadWhite from "../../assets/icons/seguridad-white.png";
-import saludWhite from "../../assets/icons/salud-white.png";
-import snMobile from "../../assets/sn-logos/sn-mobile-logo.png";
+import { sectionsService } from "../../services/sections/sectionService";
+import saludWhite from "../../assets/icons/salud-white.png"; // Asegúrate de usar el formato de archivo correcto
 import snLogo from "../../assets/sn-logos/san-nicolas.logo.png";
+import snMobile from "../../assets/sn-logos/sn-mobile-logo.png";
+import movilidadWhite from "../../assets/icons/movilidad-white.png";
+import descubriWhite from "../../assets/icons/descubri-white.png";
+import gisWhite from "../../assets/icons/gis-white.png";
+import educacionWhite from "../../assets/icons/educacion-white.png";
 import crossIcon from "../../assets/icons/x-circle.png";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [sections, setSections] = useState([]);
+
+  const ftpUrl = import.meta.env.VITE_FTP_SERVER_URL + "statics/icons/";
+
+  const sectionsIcons = [
+    {
+      id: 1, // ID de la sección
+      icon: saludWhite, // Ruta al ícono correspondiente
+    },
+    {
+      id: 2,
+      icon: movilidadWhite,
+    },
+    {
+      id: 3,
+      icon: descubriWhite,
+    },
+    {
+      id: 4,
+      icon: gisWhite,
+    },
+    {
+      id: 5,
+      icon: educacionWhite,
+    },
+    // Agrega más íconos según corresponda
+  ];
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const sectionsData = await sectionsService.getAllSections();
+        setSections(sectionsData);
+      } catch (error) {
+        console.error("Error al obtener las secciones:", error);
+      }
+    };
+
+    fetchSections();
+  }, []);
 
   const itemVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: { opacity: 1, y: 0 },
   };
-
-  // Array de objetos para las categorías
-  const categories = [
-    { name: "General", icon: generalWhite },
-    { name: "Salud", icon: saludWhite },
-    { name: "Aguas", icon: aguasWhite },
-    { name: "Licencia", icon: licenciaWhite },
-    { name: "Seguridad", icon: seguridadWhite },
-  ];
 
   return (
     <div>
@@ -42,6 +74,7 @@ export default function Header() {
                 <img
                   src={snLogo}
                   className="w-[80%] cursor-pointer h-[80%] object-contain select-none"
+                  alt="Logo San Nicolás"
                 />
               </Link>
             </div>
@@ -60,31 +93,37 @@ export default function Header() {
                 Categorias
               </span>
             </Link>
-            <span className="text-lg text-white cursor-pointer select-none hover:underline">
-              Acerca
-            </span>
+            <Link to={`/acerca`}>
+              <span className="text-lg text-white cursor-pointer select-none hover:underline">
+                Acerca
+              </span>
+            </Link>
           </div>
         </div>
       </div>
 
       {/* Sidebar visible solo para dispositivos móviles */}
       <div className="block md:hidden">
-        <div className="block md:hidden fixed font-grotesk top-0 w-full h-24 bg-sn flex justify-center items-center z-50">
+        <div className="fixed font-grotesk top-0 w-full h-24 bg-sn flex justify-center items-center z-50">
           <div className="w-[97%] flex justify-between h-full">
             <div className="w-auto h-full flex items-center">
-              <div className="w-20 h-full flex justify-center items-center">
-                <img
-                  src={snMobile}
-                  className="object-contain cursor-pointer select-none w-[55%] h-[55%]"
-                  alt="snLogo"
-                />
-              </div>
+              <Link to={"/"}>
+                <div className="w-20 h-full flex justify-center items-center">
+                  <img
+                    src={snMobile}
+                    className="object-contain cursor-pointer select-none w-[55%] h-[55%]"
+                    alt="snLogo"
+                  />
+                </div>
+              </Link>
               <div className="h-[60%] ml-1 border border-white"></div>
-              <div className="w-36 h-full flex justify-center items-center">
-                <span className="text-white cursor-pointer select-none">
-                  Datos abiertos
-                </span>
-              </div>
+              <Link to={"/"}>
+                <div className="w-36 h-full flex justify-center items-center">
+                  <span className="text-white cursor-pointer select-none">
+                    Datos abiertos
+                  </span>
+                </div>
+              </Link>
             </div>
             <div className="w-16 h-full pl-2 flex items-center">
               <RxHamburgerMenu
@@ -137,50 +176,35 @@ export default function Header() {
               <div className="w-auto h-auto">
                 <FaHome className="mb-1" size={22} />
               </div>
-              <span className="ml-1 mb-1">Inicio</span>
+              <Link to={"/"} onClick={() => setIsOpen(false)}>
+                <span className="ml-1 mb-1">Inicio</span>
+              </Link>
             </li>
             <li className="flex items-center gap-2 rounded cursor-pointer select-none hover:underline">
               <div className="w-auto h-auto">
                 <FaFileAlt className="mb-1" size={22} />
               </div>
-              <span className="ml-1 mb-1">Acerca</span>
+              <Link to={"/acerca"} onClick={() => setIsOpen(false)}>
+                <span className="ml-1 mb-1">Acerca</span>
+              </Link>
             </li>
             <li>
               <div
                 className="flex items-center gap-3 cursor-pointer"
                 onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
               >
-                <HiOutlineViewGrid size={22} /> {/* Ícono de Categorías */}
+                <HiOutlineViewGrid size={22} />
                 <span className="hover:underline select-none cursor-pointer">
                   Categorías
                 </span>
                 <div className="flex items-center">
                   {isCategoriesOpen ? (
-                    <motion.div
-                      key="up"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="mt-1"
-                    >
-                      <FaChevronUp size={12} className="text-white" />
-                    </motion.div>
+                    <FaChevronUp size={12} className="text-white mt-1" />
                   ) : (
-                    <motion.div
-                      key="down"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="mt-1"
-                    >
-                      <FaChevronDown size={12} className="text-white" />
-                    </motion.div>
+                    <FaChevronDown size={12} className="text-white mt-1" />
                   )}
                 </div>
               </div>
-              {/* Contenedor con fondo para las categorías con animación */}
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{
@@ -191,25 +215,35 @@ export default function Header() {
                 className="overflow-hidden bg-[#2490C6] rounded-lg mt-2"
               >
                 <ul className="p-4 space-y-4 text-base">
-                  {categories.map((category, index) => (
-                    <motion.li
-                      key={category.name}
-                      variants={itemVariants}
-                      initial="hidden"
-                      animate={isCategoriesOpen ? "visible" : "hidden"}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="flex items-center gap-2 text-white hover:underline select-none cursor-pointer"
-                    >
-                      <div className="w-5 h-5 flex items-center justify-center">
-                        <img
-                          src={category.icon}
-                          alt={category.name}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <span>{category.name}</span>
-                    </motion.li>
-                  ))}
+                  {sections.map((section, index) => {
+                    const icon =
+                      sectionsIcons.find((iconObj) => iconObj.id === section.id)
+                        ?.icon || `${ftpUrl}default-icon.png`; // Ícono predeterminado si no hay coincidencia
+
+                    return (
+                      <motion.li
+                        key={section.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="flex items-center gap-2 text-white hover:underline select-none cursor-pointer"
+                      >
+                        <div className="w-5 h-5 flex items-center justify-center">
+                          <img
+                            src={icon}
+                            alt={section.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <Link
+                          to={`/themes/${section.id}`}
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <span>{section.name}</span>
+                        </Link>
+                      </motion.li>
+                    );
+                  })}
                 </ul>
               </motion.div>
             </li>

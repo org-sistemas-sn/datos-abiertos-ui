@@ -3,7 +3,7 @@ import { FaEye, FaDownload } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "../../../styles/itemCard.css";
 
-export default function ItemCard({ id, name, description, type, publicationDate }) {
+export default function ItemCard({ id, name, description, type, publicationDate, url_or_ftp_path }) {
   const navigate = useNavigate();
 
   // Función para asignar colores según el tipo
@@ -23,28 +23,31 @@ export default function ItemCard({ id, name, description, type, publicationDate 
     }
   };
 
+  let ftpUrl = import.meta.env.VITE_FTP_SERVER_URL;
+
+  // Corrección: Acceder a "type" y "url_or_ftp_path" desde las props en lugar de "item"
+  if (type === "XLSX") {
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${url_or_ftp_path}`;
+  } else if (type === "CSV") {
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${url_or_ftp_path}`;
+  }
+
   // Función para manejar la descarga con SweetAlert2
   const handleDownload = () => {
     Swal.fire({
       title: "¿Estás seguro?",
-      text: `¿Quieres descargar el archivo "${name}"?`,
+      text: `Vas a descargar el archivo: ${url_or_ftp_path}`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Descargar",
-      cancelButtonText: "Cancelar",
       customClass: {
         confirmButton: "custom-confirm-button",
         cancelButton: "custom-cancel-button",
       },
-      buttonsStyling: false,
+      confirmButtonText: "Descargar",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "Descarga iniciada",
-          text: "El archivo se está descargando.",
-          icon: "success",
-          confirmButtonText: "Entendido",
-        });
+        window.location.href = ftpUrl; // Redirige a la URL externa
       }
     });
   };
@@ -71,11 +74,7 @@ export default function ItemCard({ id, name, description, type, publicationDate 
 
         {/* Información del tipo y fecha */}
         <div className="flex items-center gap-2 mt-4">
-          <span
-            className={`px-3 py-1 rounded text-sm font-medium ${getBadgeColor(
-              type
-            )}`}
-          >
+          <span className={`px-3 py-1 rounded text-sm font-medium ${getBadgeColor(type)}`}>
             {cleanType}
           </span>
           <span className="text-sm text-[#677073] bg-[#f2f7ff] rounded p-1">

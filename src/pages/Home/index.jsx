@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { sectionsService } from "../../services/sections/sectionService.js";
+import { useNavigate } from "react-router-dom";
+import { itemsService } from "../../services/items/itemsService.js";
 import "../../styles/customCalendar.css";
 import { Link } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import CardEventCalendary from "../../components/Cards/CardEventCalendary";
+import Swal from "sweetalert2";
 import MoonLoader from "react-spinners/MoonLoader";
 import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
 
@@ -13,6 +16,10 @@ export const Home = () => {
   const [date, setDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
   const [sections, setSections] = useState([]);
+  const [loading, setLoading] = useState(null)
+  const [searchResults, setSearchResults] = useState(null)
+
+  const navigate = useNavigate()
 
   const [counts, setCounts] = useState({
     nicoleños: 0,
@@ -99,9 +106,82 @@ export const Home = () => {
     new Date(2025, 1, 22).toDateString(),
   ];
 
-  const filteredCategories = sections.filter((category) =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleSearch = async () => {
+    if (searchTerm.trim() !== "") {
+      Swal.fire({
+        title: "Buscando...",
+        text: "Por favor, espera mientras encontramos los resultados.",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+  
+      try {
+        const results = await itemsService.getItemsByName(searchTerm);
+  
+        if (Array.isArray(results) && results.length > 0) {
+          console.log("Items encontrados:", results);
+          setSearchResults(results);
+  
+          // Oculta la alerta y redirige automáticamente
+          Swal.close();
+          navigate("/itemssearch", { state: { searchTerm, results } });
+  
+        } else {
+          console.log(`No se encontraron items con el nombre "${searchTerm}"`);
+          setSearchResults([]);
+  
+          Swal.fire({
+            title: "Sin resultados",
+            text: `No se encontró ningún dataset con el nombre "${searchTerm}".`,
+            icon: "warning",
+            confirmButtonText: "Aceptar",
+            customClass: { confirmButton: "custom-confirm-button" },
+          });
+        }
+      } catch (error) {
+        console.error("Error en la búsqueda de items:", error);
+  
+        const errorMessage = error?.response?.data?.error || error?.message || "";
+  
+        if (errorMessage.includes("No se encontraron items con ese nombre")) {
+          console.log(`No se encontraron items con el nombre "${searchTerm}"`);
+          setSearchResults([]);
+  
+          Swal.fire({
+            title: "Sin resultados",
+            text: `No se encontró ningún dataset con el nombre "${searchTerm}".`,
+            icon: "warning",
+            confirmButtonText: "Aceptar",
+            customClass: { confirmButton: "custom-confirm-button" },
+          });
+        } else {
+          setSearchResults([]);
+  
+          Swal.fire({
+            title: "Error",
+            text: "Ocurrió un error al buscar los items.",
+            icon: "error",
+            confirmButtonText: "Aceptar",
+            customClass: { confirmButton: "custom-confirm-button" },
+          });
+        }
+      }
+    }
+  };
+  
+  
+  
+  
+
+  // Función para manejar la tecla "Enter"
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
 
   return (
     <div className="w-full h-full">
@@ -129,6 +209,7 @@ export const Home = () => {
                     placeholder="Qué dataset buscas?"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={handleKeyPress}
                     className="w-full py-5 pl-4 pr-10 text-lg rounded-md shadow-lg focus:outline-none"
                   />
                   <span className="absolute inset-y-0 right-2 flex items-center">
@@ -138,7 +219,8 @@ export const Home = () => {
                       viewBox="0 0 24 24"
                       strokeWidth={2}
                       stroke="currentColor"
-                      className="w-7 h-7 text-gray-400 mr-3 mb-1"
+                      onClick={handleSearch}
+                      className="w-7 h-7 text-gray-400 mr-3 mb-1 cursor-pointer"
                     >
                       <path
                         strokeLinecap="round"
@@ -230,7 +312,7 @@ export const Home = () => {
                   </h3>
 
                   {/* Si no hay categorías, mostrar MoonLoader */}
-                  {filteredCategories.length === 0 ? (
+                  {sections.length === 0 ? (
                     <div className="flex justify-center items-center h-40">
                       <MoonLoader color="#0477AD" size={50} />
                     </div>
@@ -242,7 +324,7 @@ export const Home = () => {
                       initial="hidden"
                       animate="show"
                     >
-                      {filteredCategories.map((category, index) => (
+                      {sections.map((category, index) => (
                         <motion.div key={index} variants={itemVariants}>
                           <Link to={`/themes/${category.id}`}>
                             <CategoryHomeCard
@@ -342,6 +424,7 @@ export const Home = () => {
                   placeholder="Qué dataset buscas?"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={handleKeyPress}
                   className="w-full py-5 pl-4 pr-10 text-lg font-grotesk text-gray-500 rounded-lg shadow focus:outline-none focus:ring-2"
                 />
                 <span className="absolute inset-y-0 right-2 flex items-center">
@@ -351,7 +434,8 @@ export const Home = () => {
                     viewBox="0 0 24 24"
                     strokeWidth={2}
                     stroke="currentColor"
-                    className="w-7 h-7 text-gray-400 mr-3 mb-1"
+                    className="w-7 h-7 text-gray-400 mr-3 mb-1 cursor-pointer"
+                    onClick={handleSearch}
                   >
                     <path
                       strokeLinecap="round"
@@ -370,7 +454,7 @@ export const Home = () => {
               </h3>
 
               {/* Si no hay categorías, mostrar MoonLoader */}
-              {filteredCategories.length === 0 ? (
+              {sections.length === 0 ? (
                 <div className="flex justify-center items-center h-40">
                   <MoonLoader color="#0477AD" size={50} />
                 </div>
@@ -382,7 +466,7 @@ export const Home = () => {
                   initial="hidden"
                   animate="show"
                 >
-                  {filteredCategories.map((category, index) => (
+                  {sections.map((category, index) => (
                     <motion.div key={index} variants={itemVariants}>
                       <Link to={`/themes/${category.id}`}>
                         <CategoryHomeCard
@@ -485,6 +569,7 @@ export const Home = () => {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleKeyPress}
                 placeholder="Qué dataset buscas?"
                 className="w-full py-5 pl-4 pr-10 text-lg font-grotesk text-gray-500 rounded-lg shadow focus:outline-none"
               />
@@ -495,7 +580,8 @@ export const Home = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={2}
                   stroke="currentColor"
-                  className="w-7 h-7 text-gray-400 mr-3 mb-1"
+                  className="w-7 h-7 text-gray-400 mr-3 mb-1 cursor-pointer"
+                  onClick={handleSearch}
                 >
                   <path
                     strokeLinecap="round"
@@ -515,7 +601,7 @@ export const Home = () => {
             </h3>
             <div className="w-full h-full self-start">
               {/* Si no hay categorías, mostrar MoonLoader */}
-              {filteredCategories.length === 0 ? (
+              {sections.length === 0 ? (
                 <div className="flex justify-center h-32">
                   <MoonLoader color="#0477AD" size={32} />
                 </div>
@@ -527,7 +613,7 @@ export const Home = () => {
                   initial="hidden"
                   animate="show"
                 >
-                  {filteredCategories.map((category, index) => (
+                  {sections.map((category, index) => (
                     <motion.div key={index} variants={itemVariants}>
                       <Link to={`/themes/${category.id}`}>
                         <CategoryHomeCard

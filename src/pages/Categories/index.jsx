@@ -1,5 +1,7 @@
-import { categories } from "../../data/categories";
+import { useEffect } from "react";
 import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
+import { sectionsService } from "../../services/sections/sectionService";
+import { useState } from "react";
 import Breadcrumb from "../../components/Breadcrumb"; // Importamos el Breadcrumb
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -19,9 +21,22 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-
-
 export default function Categories() {
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const sectionsData = await sectionsService.getAllSections();
+        setSections(sectionsData);
+      } catch (error) {
+        console.error("Error al obtener las secciones:", error);
+      }
+    };
+
+    fetchSections();
+  }, []);
+
   return (
     <div className="mt-24 w-full h-auto flex flex-col items-center">
       {/* Breadcrumb con solo la flecha */}
@@ -47,12 +62,12 @@ export default function Categories() {
             initial="hidden"
             animate="show"
           >
-            {categories.map((category) => (
-              <motion.div key={category.id} variants={itemVariants}>
-                <Link to={`/themes/${category.id}`}>
+            {sections.map((section) => (
+              <motion.div key={section.id} variants={itemVariants}>
+                <Link to={`/themes/${section.id}`}>
                   <CategoryHomeCard
-                    icon={category.icon}
-                    label={category.label}
+                    icon={section.icon_path}
+                    name={section.name}
                   />
                 </Link>
               </motion.div>
