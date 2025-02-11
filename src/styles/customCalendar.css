@@ -68,10 +68,10 @@
   
   /* Día resaltado */
   .highlighted-date {
-    background: #e7f3ff;
-    color: #1d4ed8;
+    background-color: #0477AD !important;
+    color: white !important;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: none !important;
   }
   
   .highlighted-date:hover {

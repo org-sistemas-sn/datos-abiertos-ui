@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { sectionsService } from "../../services/sections/sectionService.js";
 import { useNavigate } from "react-router-dom";
 import { itemsService } from "../../services/items/itemsService.js";
+import { dateService } from "../../services/date/dateService.js";
 import "../../styles/customCalendar.css";
 import { Link } from "react-router-dom";
 import Calendar from "react-calendar";
@@ -16,10 +17,12 @@ export const Home = () => {
   const [date, setDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
   const [sections, setSections] = useState([]);
-  const [loading, setLoading] = useState(null)
-  const [searchResults, setSearchResults] = useState(null)
+  const [events, setEvents] = useState([]);
+  const [highlightedDates, setHighlightedDates] = useState([]);
+  const [loading, setLoading] = useState(null);
+  const [searchResults, setSearchResults] = useState(null);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [counts, setCounts] = useState({
     nicoleños: 0,
@@ -55,7 +58,49 @@ export const Home = () => {
     fetchSections();
   }, []);
 
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const data = await dateService.getDatesByMonthYear(date);
+        setEvents(data);
 
+        // Extraer y transformar las fechas en español
+        const formattedDates = data.map((event) => {
+          const dateObj = new Date(event.date);
+
+          // Obtener día y mes en español
+          const day = dateObj.toLocaleDateString("es-ES", { weekday: "long" }); // Ejemplo: "martes"
+          const month = dateObj.toLocaleDateString("es-ES", { month: "long" }); // Ejemplo: "febrero"
+
+          // Convertir la primera letra a mayúscula
+          const dayFormatted = day.charAt(0).toUpperCase() + day.slice(1);
+          const monthFormatted = month.charAt(0).toUpperCase() + month.slice(1);
+
+          return {
+            fullDate: dateObj.toLocaleDateString("es-ES", {
+              weekday: "long",
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            }), // Ejemplo: "Martes, 25 de febrero de 2025"
+            day: dayFormatted, // "Martes"
+            month: monthFormatted, // "Febrero"
+            number: dateObj.getDate().toString(), // "25"
+            year: dateObj.getFullYear().toString(), // "2025"
+            title: event.title, // ✅ Se añade el título del evento
+          };
+        });
+
+        setHighlightedDates(formattedDates);
+
+        // 🔥 Mostrar datos en consola
+        console.log("📅 Fechas transformadas (ES):", formattedDates);
+      } catch (error) {
+        console.error("Error al cargar eventos:", error);
+      }
+    };
+    fetchEvents();
+  }, [date]);
 
   useEffect(() => {
     const animateCount = (key, end) => {
@@ -77,33 +122,12 @@ export const Home = () => {
     animateCount("horas", 42000);
   }, []);
 
-
-
-  const events = [
-    { day: "LUNES 2", title: "Caravana navideña" },
-    { day: "LUNES 14", title: "Inscripción Becas Deportivas" },
-    { day: "JUEVES 17", title: "Festival Rico" },
-    { day: "MARTES 22", title: "Boca vs Juventude" },
-    { day: "LUNES 2", title: "Caravana navideña" },
-    { day: "LUNES 14", title: "Inscripción Becas Deportivas" },
-    { day: "JUEVES 17", title: "Festival Rico" },
-    { day: "MARTES 22", title: "Boca vs Juventude" },
-  ];
-
   // Colores predefinidos
   const bgColors = [
     "bg-blue-100",
     "bg-pink-100",
     "bg-purple-100",
     "bg-green-100",
-  ];
-
-  // Fechas a resaltar
-  const highlightedDates = [
-    new Date(2025, 1, 2).toDateString(),
-    new Date(2025, 1, 14).toDateString(),
-    new Date(2025, 1, 17).toDateString(),
-    new Date(2025, 1, 22).toDateString(),
   ];
 
   const handleSearch = async () => {
@@ -116,22 +140,19 @@ export const Home = () => {
           Swal.showLoading();
         },
       });
-  
+
       try {
         const results = await itemsService.getItemsByName(searchTerm);
-  
+
         if (Array.isArray(results) && results.length > 0) {
-          console.log("Items encontrados:", results);
           setSearchResults(results);
-  
+
           // Oculta la alerta y redirige automáticamente
           Swal.close();
           navigate("/itemssearch", { state: { searchTerm, results } });
-  
         } else {
-          console.log(`No se encontraron items con el nombre "${searchTerm}"`);
           setSearchResults([]);
-  
+
           Swal.fire({
             title: "Sin resultados",
             text: `No se encontró ningún dataset con el nombre "${searchTerm}".`,
@@ -142,13 +163,13 @@ export const Home = () => {
         }
       } catch (error) {
         console.error("Error en la búsqueda de items:", error);
-  
-        const errorMessage = error?.response?.data?.error || error?.message || "";
-  
+
+        const errorMessage =
+          error?.response?.data?.error || error?.message || "";
+
         if (errorMessage.includes("No se encontraron items con ese nombre")) {
-          console.log(`No se encontraron items con el nombre "${searchTerm}"`);
           setSearchResults([]);
-  
+
           Swal.fire({
             title: "Sin resultados",
             text: `No se encontró ningún dataset con el nombre "${searchTerm}".`,
@@ -158,7 +179,7 @@ export const Home = () => {
           });
         } else {
           setSearchResults([]);
-  
+
           Swal.fire({
             title: "Error",
             text: "Ocurrió un error al buscar los items.",
@@ -170,10 +191,6 @@ export const Home = () => {
       }
     }
   };
-  
-  
-  
-  
 
   // Función para manejar la tecla "Enter"
   const handleKeyPress = (e) => {
@@ -181,7 +198,6 @@ export const Home = () => {
       handleSearch();
     }
   };
-
 
   return (
     <div className="w-full h-full">
@@ -250,7 +266,7 @@ export const Home = () => {
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
                   {/* 167824 */}
-                   {counts.nicoleños.toLocaleString("es-ES")} 
+                  {counts.nicoleños.toLocaleString("es-ES")}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
                   Habitantes según censo 2022
@@ -271,7 +287,6 @@ export const Home = () => {
                 }}
               >
                 <span className="text-[4rem] font-grotesk font-bold text-[#3e4345]">
-                  
                   {`${counts.becas.toLocaleString("es-ES")}+`}
                 </span>
                 <p className="text-gray-500 text-[0.9rem] font-grotesk">
@@ -354,12 +369,19 @@ export const Home = () => {
               <div className="bg-white border-none rounded-lg flex">
                 <Calendar
                   className="react-calendar"
-                  tileClassName={({ date, view }) =>
-                    view === "month" &&
-                    highlightedDates.includes(date.toDateString())
-                      ? "highlighted-date"
-                      : null
-                  }
+                  tileClassName={({ date, view }) => {
+                    if (view === "month") {
+                      const dayNumber = date.getDate(); // Obtener el número del día (1-31)
+
+                      // Verificar si el número del día está en la lista de eventos
+                      const isHighlighted = highlightedDates.some(
+                        (event) => parseInt(event.number, 10) === dayNumber
+                      );
+
+                      return isHighlighted ? "highlighted-date" : null;
+                    }
+                    return null;
+                  }}
                   navigationLabel={({ date }) =>
                     `${date.toLocaleDateString("es-ES", {
                       month: "long",
@@ -382,11 +404,12 @@ export const Home = () => {
                     initial="hidden"
                     animate="show"
                   >
-                    {events.map((event, index) => (
+                    {highlightedDates.map((event, index) => (
                       <motion.div key={index} variants={itemVariants}>
                         <CardEventCalendary
-                          day={event.day}
-                          title={event.title}
+                          day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
+                          month={event.month} // Ejemplo: "Febrero"
+                          title={event.title} // Mantiene el título del evento
                           bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
                         />
                       </motion.div>
@@ -491,12 +514,19 @@ export const Home = () => {
                   <div className="bg-white border-none rounded-lg">
                     <Calendar
                       className="react-calendar"
-                      tileClassName={({ date, view }) =>
-                        view === "month" &&
-                        highlightedDates.includes(date.toDateString())
-                          ? "highlighted-date"
-                          : null
-                      }
+                      tileClassName={({ date, view }) => {
+                        if (view === "month") {
+                          const dayNumber = date.getDate(); // Obtener el número del día (1-31)
+
+                          // Verificar si el número del día está en la lista de eventos
+                          const isHighlighted = highlightedDates.some(
+                            (event) => parseInt(event.number, 10) === dayNumber
+                          );
+
+                          return isHighlighted ? "highlighted-date" : null;
+                        }
+                        return null;
+                      }}
                       navigationLabel={({ date }) =>
                         `${date.toLocaleDateString("es-ES", {
                           month: "long",
@@ -521,11 +551,12 @@ export const Home = () => {
                     initial="hidden"
                     animate="show"
                   >
-                    {events.map((event, index) => (
+                    {highlightedDates.map((event, index) => (
                       <motion.div key={index} variants={itemVariants}>
                         <CardEventCalendary
-                          day={event.day}
-                          title={event.title}
+                          day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
+                          month={event.month} // Ejemplo: "Febrero"
+                          title={event.title} // Mantiene el título del evento
                           bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
                         />
                       </motion.div>
@@ -638,12 +669,19 @@ export const Home = () => {
             <div className="bg-white border-none rounded-lg flex">
               <Calendar
                 className="react-calendar"
-                tileClassName={({ date, view }) =>
-                  view === "month" &&
-                  highlightedDates.includes(date.toDateString())
-                    ? "highlighted-date"
-                    : null
-                }
+                tileClassName={({ date, view }) => {
+                  if (view === "month") {
+                    const dayNumber = date.getDate(); // Obtener el número del día (1-31)
+
+                    // Verificar si el número del día está en la lista de eventos
+                    const isHighlighted = highlightedDates.some(
+                      (event) => parseInt(event.number, 10) === dayNumber
+                    );
+
+                    return isHighlighted ? "highlighted-date" : null;
+                  }
+                  return null;
+                }}
                 navigationLabel={({ date }) =>
                   `${date.toLocaleDateString("es-ES", {
                     month: "long",
@@ -667,11 +705,12 @@ export const Home = () => {
               initial="hidden"
               animate="show"
             >
-              {events.map((event, index) => (
+              {highlightedDates.map((event, index) => (
                 <motion.div key={index} variants={itemVariants}>
                   <CardEventCalendary
-                    day={event.day}
-                    title={event.title}
+                    day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
+                    month={event.month} // Ejemplo: "Febrero"
+                    title={event.title} // Mantiene el título del evento
                     bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
                   />
                 </motion.div>
