@@ -13,7 +13,7 @@ const ItemDetail = () => {
 
   const navigate = useNavigate();
 
-  console.log(id)
+  console.log(id);
 
   const { selectedTheme, selectedSection } = useSectionContext();
 
@@ -21,8 +21,7 @@ const ItemDetail = () => {
   const [fileData, setFileData] = useState(null);
   const [tableData, setTableData] = useState([]);
 
-  console.log(selectedTheme.items
-  )
+  console.log(selectedTheme.items);
 
   // Buscar el ítem dentro del tema actual
   const item = selectedTheme?.items?.find((item) => item.id === itemId);
@@ -34,7 +33,7 @@ const ItemDetail = () => {
         .then((data) => {
           console.log("Archivo obtenido desde el servicio:", data);
           setFileData(data);
-  
+
           // 📌 Tomar los últimos 10 registros del JSON si existen
           if (data?.data && Array.isArray(data.data)) {
             setTableData(data.data.slice(-10));
@@ -46,7 +45,6 @@ const ItemDetail = () => {
         .finally(() => setIsLoading(false));
     }
   }, [item, itemId]);
-  
 
   if (!item) {
     return (
@@ -293,53 +291,61 @@ const ItemDetail = () => {
                   Ultimos 10 registros del {item.type}
                 </h2>
                 <div className="overflow-x-auto w-full">
-                  <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
-                    <tbody>
-                      {tableData.length > 0 && (
-                        <div className="overflow-x-auto w-full">
-                          <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
-                            <thead>
-                              <tr className="bg-[#f2f7ff]">
-                                {/* Renderiza dinámicamente las columnas según las claves del JSON */}
-                                {tableData.length > 0 &&
-                                  Object.keys(tableData[0]).map(
-                                    (key, index) => (
-                                      <th
-                                        key={index}
-                                        className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-left font-semibold text-[#3e4345]"
-                                      >
-                                        {key}
-                                      </th>
-                                    )
-                                  )}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {tableData.map((row, rowIndex) => (
-                                <tr
-                                  key={rowIndex}
-                                  className={
-                                    rowIndex % 2 === 0
-                                      ? "bg-[#f9fafb]"
-                                      : "bg-white"
-                                  }
-                                >
-                                  {Object.values(row).map((value, colIndex) => (
-                                    <td
-                                      key={colIndex}
-                                      className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-[#3e4345]"
-                                    >
-                                      {value}
-                                    </td>
-                                  ))}
+                  {isLoading ? (
+                    <div className="w-full h-[30vh] flex justify-center items-center">
+                      <MoonLoader color="#0477AD" size={50}/>
+                    </div>
+                  ) : (
+                    <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
+                      <tbody>
+                        {tableData.length > 0 && (
+                          <div className="overflow-x-auto w-full">
+                            <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
+                              <thead>
+                                <tr className="bg-[#f2f7ff]">
+                                  {/* Renderiza dinámicamente las columnas según las claves del JSON */}
+                                  {tableData.length > 0 &&
+                                    Object.keys(tableData[0]).map(
+                                      (key, index) => (
+                                        <th
+                                          key={index}
+                                          className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-left font-semibold text-[#3e4345]"
+                                        >
+                                          {key}
+                                        </th>
+                                      )
+                                    )}
                                 </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                    </tbody>
-                  </table>
+                              </thead>
+                              <tbody>
+                                {tableData.map((row, rowIndex) => (
+                                  <tr
+                                    key={rowIndex}
+                                    className={
+                                      rowIndex % 2 === 0
+                                        ? "bg-[#f9fafb]"
+                                        : "bg-white"
+                                    }
+                                  >
+                                    {Object.values(row).map(
+                                      (value, colIndex) => (
+                                        <td
+                                          key={colIndex}
+                                          className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-[#3e4345]"
+                                        >
+                                          {value}
+                                        </td>
+                                      )
+                                    )}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </div>
 
