@@ -357,7 +357,7 @@ export const Home = () => {
             </div>
           </div>
         </div>
-        <div className="w-full h-auto flex flex-col items-center max-w-[1500px]">
+        <div className="w-full h-auto flex flex-col items-center max-w-[1650px]">
           <div className="w-[90%]">
             <div className="w-full pb-6 h-12 flex items-center">
               <h6 className="font-semibold text-xl font-grotesk text-[#3e4345] select-none">
