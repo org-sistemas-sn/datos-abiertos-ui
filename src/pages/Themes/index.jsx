@@ -28,7 +28,16 @@ const Themes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Recuperar la sección guardada en localStorage al montar el componente
   useEffect(() => {
+    const storedSection = localStorage.getItem("selectedSection");
+
+    if (storedSection) {
+      const parsedSection = JSON.parse(storedSection);
+      console.log("🔵 Sección recuperada del localStorage:", parsedSection);
+      setSelectedSection(parsedSection);
+    }
+
     const fetchSectionData = async () => {
       try {
         setLoading(true);
@@ -51,9 +60,12 @@ const Themes = () => {
     fetchSectionData();
   }, [id, setSelectedSection]);
 
-  // useEffect para monitorear los cambios en selectedSection y themes
+  // Guardar en localStorage cuando selectedSection cambie y tenga datos válidos
   useEffect(() => {
-    console.log("🟢 Sección seleccionada en contexto:", selectedSection);
+    if (selectedSection && Object.keys(selectedSection).length > 0) {
+      localStorage.setItem("selectedSection", JSON.stringify(selectedSection));
+      console.log("🟢 Sección guardada en localStorage:", selectedSection);
+    }
   }, [selectedSection]);
 
   if (loading) {

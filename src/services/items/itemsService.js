@@ -5,6 +5,7 @@ export const itemsService = {
   getItemById,
   getItemsByThemeId,
   getItemFile,
+  getItemData,
   getItemsByName, 
   getItemSectionAndTheme
 };
@@ -43,6 +44,16 @@ async function getItemsByThemeId(themeId) {
 async function getItemFile(itemId) {
   try {
     const res = await API.get(`/items/${itemId}/file`);
+    return res.data; // Devuelve el archivo formateado en JSON
+  } catch (error) {
+    console.error(`Error al obtener el archivo del item con ID ${itemId}:`, error.response ? error.response.data : error.message);
+    throw error;
+  }
+}
+
+async function getItemData(itemId) {
+  try {
+    const res = await API.get(`/items/${itemId}/data`);
     return res.data; // Devuelve el archivo formateado en JSON
   } catch (error) {
     console.error(`Error al obtener el archivo del item con ID ${itemId}:`, error.response ? error.response.data : error.message);

@@ -10,18 +10,27 @@ import Swal from "sweetalert2";
 const ItemDetail = () => {
   const { id } = useParams();
   const itemId = parseInt(id, 10);
-
   const navigate = useNavigate();
 
-  console.log(id);
-
-  const { selectedTheme, selectedSection } = useSectionContext();
-
+  const [selectedTheme, setSelectedTheme] = useState(null);
+  const [selectedSection, setSelectedSection] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fileData, setFileData] = useState(null);
   const [tableData, setTableData] = useState([]);
 
-  console.log(selectedTheme.items);
+  // Recuperar `selectedTheme` y `selectedSection` desde localStorage al montar el componente
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("selectedTheme");
+    const storedSection = localStorage.getItem("selectedSection");
+
+    if (storedTheme) {
+      setSelectedTheme(JSON.parse(storedTheme));
+    }
+
+    if (storedSection) {
+      setSelectedSection(JSON.parse(storedSection));
+    }
+  }, []);
 
   // Buscar el ítem dentro del tema actual
   const item = selectedTheme?.items?.find((item) => item.id === itemId);
@@ -29,7 +38,7 @@ const ItemDetail = () => {
   useEffect(() => {
     if (item && (item.type === "XLSX" || item.type === "CSV")) {
       itemsService
-        .getItemFile(itemId)
+        .getItemData(itemId)
         .then((data) => {
           console.log("Archivo obtenido desde el servicio:", data);
           setFileData(data);
@@ -64,13 +73,9 @@ const ItemDetail = () => {
   let ftpUrl = import.meta.env.VITE_FTP_SERVER_URL;
 
   if (item.type === "XLSX") {
-    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${
-      item.url_or_ftp_path
-    }`;
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${item.url_or_ftp_path}`;
   } else if (item.type === "CSV") {
-    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${
-      item.url_or_ftp_path
-    }`;
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${item.url_or_ftp_path}`;
   }
 
   console.log(ftpUrl);
@@ -89,8 +94,7 @@ const ItemDetail = () => {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        window.location.href = ftpUrl; // Redirige a la URL externa
-        // window.open(ftpUrl, "_blank"); // Si quieres abrirlo en una nueva pestaña
+        window.location.href = ftpUrl;
       }
     });
   };

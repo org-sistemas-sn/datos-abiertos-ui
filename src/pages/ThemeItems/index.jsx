@@ -31,6 +31,14 @@ const ThemeItems = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    // Recuperar el tema guardado en localStorage al montar el componente
+    const storedTheme = localStorage.getItem("selectedTheme");
+    if (storedTheme) {
+      const parsedTheme = JSON.parse(storedTheme);
+      console.log("🔵 Theme recuperado del localStorage:", parsedTheme);
+      setSelectedTheme(parsedTheme);
+    }
+
     const fetchThemeData = async () => {
       try {
         setLoading(true);
@@ -44,18 +52,24 @@ const ThemeItems = () => {
         setItems(itemsData);
 
         // Guardar el tema seleccionado con toda la información en el contexto
-        setSelectedTheme({
+        const newTheme = {
           id: themeData.id,
           name: themeData.name,
           description: themeData.description,
           id_section: themeData.id_section,
           items: itemsData,
-        });
+        };
+
+        setSelectedTheme(newTheme);
+        localStorage.setItem("selectedTheme", JSON.stringify(newTheme)); // Guardar en localStorage
+        console.log("🟢 Theme guardado en localStorage:", newTheme);
 
         // Si no hay una sección seleccionada, obtener y guardar la sección
         if (!selectedSection || selectedSection.id !== themeData.id_section) {
           const sectionData = await themeService.getSectionById(themeData.id_section);
           setSelectedSection(sectionData);
+          localStorage.setItem("selectedSection", JSON.stringify(sectionData)); // Guardar sección en localStorage
+          console.log("🟢 Sección guardada en localStorage:", sectionData);
         }
       } catch (err) {
         setError("Error al cargar los datos del tema.");
@@ -79,7 +93,6 @@ const ThemeItems = () => {
       </div>
     );
   }
-
 
   return (
     <div className="w-full h-auto mt-24 flex flex-col items-center">
