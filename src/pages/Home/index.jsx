@@ -12,14 +12,12 @@ import CardEventCalendary from "../../components/Cards/CardEventCalendary";
 import Swal from "sweetalert2";
 import MoonLoader from "react-spinners/MoonLoader";
 import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
+import useFetchSections from "../../hooks/useSections.js";
+import { containerVariants, itemVariants } from "../../utils/homeMotionVariants/index.js";
 
 export const Home = () => {
   const [date, setDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
-  const [sections, setSections] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [highlightedDates, setHighlightedDates] = useState([]);
-  const [loading, setLoading] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
 
   const navigate = useNavigate();
@@ -30,78 +28,9 @@ export const Home = () => {
     horas: 0,
   });
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 }, // Inicia con opacidad 0 y 20px abajo
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-  };
-
-  useEffect(() => {
-    const fetchSections = async () => {
-      try {
-        const sectionsData = await sectionsService.getAllSections();
-        setSections(sectionsData);
-      } catch (error) {
-        console.error("Error al obtener las secciones:", error);
-      }
-    };
-
-    fetchSections();
-  }, []);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const data = await dateService.getDatesByMonthYear(date);
-        setEvents(data);
-  
-        // Extraer y transformar las fechas en español
-        const formattedDates = data.map((event) => {
-          const dateObj = new Date(event.date);
-  
-          // Obtener día, mes y año
-          const day = dateObj.toLocaleDateString("es-ES", { weekday: "long" });
-          const month = dateObj.toLocaleDateString("es-ES", { month: "long" });
-  
-          // Convertir la primera letra a mayúscula
-          const dayFormatted = day.charAt(0).toUpperCase() + day.slice(1);
-          const monthFormatted = month.charAt(0).toUpperCase() + month.slice(1);
-  
-          return {
-            fullDate: dateObj.toLocaleDateString("es-ES", {
-              weekday: "long",
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-            }),
-            day: dayFormatted, // "Martes"
-            month: monthFormatted, // "Febrero"
-            monthNumber: dateObj.getMonth() + 1, // Se agrega el mes en formato numérico (1-12)
-            number: dateObj.getDate().toString(), // "25"
-            year: dateObj.getFullYear().toString(), // "2025"
-            title: event.title // Se añade el título del evento
-          };
-        });
-  
-        setHighlightedDates(formattedDates);
-  
-        console.log("📅 Fechas transformadas (ES):", formattedDates);
-      } catch (error) {
-        console.error("Error al cargar eventos:", error);
-      }
-    };
-    fetchEvents();
-  }, [date]);
-  
+  const { sections, loadingSections, errorSections, refreshSections } = useSections();
+  const { events, highlightedDates, loadingEvents, errorEvents } = useEvents(date);
 
   useEffect(() => {
     const animateCount = (key, end) => {
