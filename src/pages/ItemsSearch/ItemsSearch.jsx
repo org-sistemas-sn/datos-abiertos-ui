@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { itemsService } from "../../services/items/itemsService";
 import { motion } from "framer-motion";
 import { useSectionContext } from "../../context/sectionContext/sectionContext";
+import Breadcrumb from "../../components/Breadcrumb";
 import ItemCard from "../../components/Cards/ItemCard";
 import Swal from "sweetalert2";
 
@@ -28,7 +29,12 @@ export default function ItemsSearch() {
   const [loading, setLoading] = useState(false);
 
   // Estados globales del contexto
-  const { selectedTheme, setSelectedTheme, selectedSection, setSelectedSection } = useSectionContext();
+  const {
+    selectedTheme,
+    setSelectedTheme,
+    selectedSection,
+    setSelectedSection,
+  } = useSectionContext();
 
   // Al cargar la página, obtenemos los datos de búsqueda si los hay
   useEffect(() => {
@@ -41,35 +47,81 @@ export default function ItemsSearch() {
 
   // 📌 Mostrar en consola cada vez que los estados cambian
   useEffect(() => {
-    console.log("🔹 selectedSection:", selectedSection);
-    console.log("🔹 selectedTheme:", selectedTheme);
-  }, [selectedSection, selectedTheme]);
+    const storedSection = localStorage.getItem("selectedSection");
+    const storedTheme = localStorage.getItem("selectedTheme");
+  
+    if (storedSection) {
+      const parsedSection = JSON.parse(storedSection);
+      setSelectedSection(parsedSection);
+      console.log("🔄 Recuperando selectedSection del localStorage:", parsedSection);
+    }
+  
+    if (storedTheme) {
+      const parsedTheme = JSON.parse(storedTheme);
+      setSelectedTheme(parsedTheme);
+      console.log("🔄 Recuperando selectedTheme del localStorage:", parsedTheme);
+    }
+  }, []);
+  
 
   // 📌 Función para verificar si todos los ítems pertenecen a la misma sección y tema
   const validateSectionAndTheme = async (items) => {
     if (items.length === 0) return;
-
+  
     try {
-      const promises = items.map((item) => itemsService.getItemSectionAndTheme(item.id));
+      console.log("🟢 Iniciando validación de secciones y temas...");
+      console.log("📦 Items recibidos:", items);
+  
+      const promises = items.map((item) =>
+        itemsService.getItemSectionAndTheme(item.id)
+      );
       const responses = await Promise.all(promises);
-
+  
+      console.log("✅ Respuestas del backend:", responses);
+  
       // Extraer todas las secciones y temas únicos
-      const uniqueSections = new Set(responses.map((res) => res.section?.id || null));
-      const uniqueThemes = new Set(responses.map((res) => res.theme?.id || null));
-
+      const uniqueSections = new Set(
+        responses.map((res) => res.section?.id || null)
+      );
+      const uniqueThemes = new Set(
+        responses.map((res) => res.theme?.id || null)
+      );
+  
+      console.log("🔍 Secciones únicas encontradas:", uniqueSections);
+      console.log("🔍 Temas únicos encontrados:", uniqueThemes);
+  
       if (uniqueSections.size === 1 && uniqueThemes.size === 1) {
-        // Actualizamos los estados en el contexto global
-        setSelectedSection(responses[0].section);
-        setSelectedTheme(responses[0].theme);
+        console.log("✅ Se encontró una única sección y tema, actualizando...");
+        
+        // Actualizar el contexto global
+        const section = responses[0].section;
+        const theme = responses[0].theme;
+        
+        setSelectedSection(section);
+        setSelectedTheme(theme);
+  
+        // Guardar en localStorage
+        localStorage.setItem("selectedSection", JSON.stringify(section));
+        localStorage.setItem("selectedTheme", JSON.stringify(theme));
+  
+        console.log("💾 selectedSection guardado en localStorage:", section);
+        console.log("💾 selectedTheme guardado en localStorage:", theme);
       } else {
-        // Si hay múltiples secciones o temas, limpiamos los estados
+        console.log("⚠️ Hay múltiples secciones o temas, limpiando estados...");
+        
         setSelectedSection(null);
         setSelectedTheme(null);
+  
+        localStorage.removeItem("selectedSection");
+        localStorage.removeItem("selectedTheme");
+  
+        console.log("🗑 selectedSection y selectedTheme eliminados del localStorage");
       }
     } catch (error) {
-      console.error("Error validando secciones y temas:", error);
+      console.error("❌ Error validando secciones y temas:", error);
     }
   };
+  
 
   // 📌 Función para buscar nuevos items
   const handleSearch = async () => {
@@ -82,25 +134,28 @@ export default function ItemsSearch() {
           Swal.showLoading();
         },
       });
-
+  
       try {
         setLoading(true);
+        console.log("🔍 Iniciando búsqueda de:", searchTerm);
+  
         const results = await itemsService.getItemsByName(searchTerm);
-
+        console.log("✅ Resultados obtenidos:", results);
+  
         if (Array.isArray(results) && results.length > 0) {
-          console.log("Items encontrados:", results);
+          console.log("📦 Items encontrados:", results);
           setSearchResults(results);
-
+  
           // Validar si todos los ítems pertenecen a la misma sección y tema
           await validateSectionAndTheme(results);
-
+  
           Swal.close();
         } else {
-          console.log(`No se encontraron items con el nombre "${searchTerm}"`);
+          console.log(`⚠️ No se encontraron items con el nombre "${searchTerm}"`);
           setSearchResults([]);
           setSelectedSection(null);
           setSelectedTheme(null);
-
+  
           Swal.fire({
             title: "Sin resultados",
             text: `No se encontró ningún dataset con el nombre "${searchTerm}".`,
@@ -110,11 +165,11 @@ export default function ItemsSearch() {
           });
         }
       } catch (error) {
-        console.error("Error en la búsqueda de items:", error);
+        console.error("❌ Error en la búsqueda de items:", error);
         setSearchResults([]);
         setSelectedSection(null);
         setSelectedTheme(null);
-
+  
         Swal.fire({
           title: "Error",
           text: "Ocurrió un error al buscar los items.",
@@ -127,10 +182,16 @@ export default function ItemsSearch() {
       }
     }
   };
+  
 
   return (
-    <div className="mt-24 w-full h-screen flex justify-center">
-      <div className="w-[90%]">
+    <div className="mt-24 w-full h-screen flex items-center flex-col">
+      <Breadcrumb
+        category={null} // No se necesita categoría para este caso
+        theme={null} // Tampoco hay tema
+        showTitle={false} // Solo mostramos la flecha para regresar
+      />
+      <div className="w-[92%]">
         <div className="w-full h-32">
           <div className="w-full h-[45%] flex items-end">
             <h4 className="font-semibold text-[#3e4345] font-grotesk">

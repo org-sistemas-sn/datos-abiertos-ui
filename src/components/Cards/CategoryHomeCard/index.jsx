@@ -29,7 +29,7 @@ export default function CategoryHomeCard({ icon, name }) {
         </div>
         {/* Contenedor del texto */}
         <div className="w-[65%] md:w-auto h-full flex items-center">
-          <p className="text-sn md:ml-4 md:text-[1.5rem] font-semibold text-base text-center truncate">
+          <p className="text-sn md:ml-4 md:text-[1.5rem] font-semibold text-base text-center truncate font-grotesk">
             {formatName(name)}
           </p>
         </div>

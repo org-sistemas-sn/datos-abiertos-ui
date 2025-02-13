@@ -132,15 +132,6 @@ export const Home = () => {
 
   const handleSearch = async () => {
     if (searchTerm.trim() !== "") {
-      Swal.fire({
-        title: "Buscando...",
-        text: "Por favor, espera mientras encontramos los resultados.",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-
       try {
         const results = await itemsService.getItemsByName(searchTerm);
 
@@ -368,7 +359,7 @@ export const Home = () => {
             <div className="w-[360px] h-auto">
               <div className="bg-white border-none rounded-lg flex">
                 <Calendar
-                  className="react-calendar"
+                  className="react-calendar font-grotesk"
                   tileClassName={({ date, view }) => {
                     if (view === "month") {
                       const dayNumber = date.getDate();
