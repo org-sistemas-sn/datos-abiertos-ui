@@ -108,7 +108,7 @@ export const Home = () => {
       const duration = 2500;
       const stepTime = duration / end;
       const timer = setInterval(() => {
-        start += Math.ceil(end / 45);
+        start += Math.ceil(end / 50);
         if (start >= end) {
           start = end;
           clearInterval(timer);
