@@ -53,13 +53,21 @@ async function getItemFile(itemId) {
 
 async function getItemData(itemId) {
   try {
+    console.log(`🔍 Buscando datos del item con ID: ${itemId}...`);
+    
     const res = await API.get(`/items/${itemId}/data`);
-    return res.data; // Devuelve el archivo formateado en JSON
+    
+    console.log("✅ Datos obtenidos del backend:", res.data);
+    return res.data; // Solo los últimos 10 registros
+    
   } catch (error) {
-    console.error(`Error al obtener el archivo del item con ID ${itemId}:`, error.response ? error.response.data : error.message);
+    console.error(
+      `❌ Error al obtener el archivo del item con ID ${itemId}:`,
+      error.response ? error.response.data : error.message
+    );
     throw error;
   }
-}
+};
 
 // 📌 Nuevo servicio para buscar items por nombre
 async function getItemsByName(name) {

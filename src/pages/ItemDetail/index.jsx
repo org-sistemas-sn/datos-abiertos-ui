@@ -37,24 +37,27 @@ const ItemDetail = () => {
 
   useEffect(() => {
     if (item && (item.type === "XLSX" || item.type === "CSV")) {
+      console.log(`📂 Buscando datos del item (${item.type}): ${itemId}`);
+      
       itemsService
         .getItemData(itemId)
         .then((data) => {
-          console.log("Archivo obtenido desde el servicio:", data);
+          console.log("✅ Archivo obtenido desde el servicio:", data);
           setFileData(data);
 
-          // 📌 Tomar los últimos 10 registros del JSON si existen
+          // 📌 El backend ya trae solo los últimos 10 registros
           if (data?.data && Array.isArray(data.data)) {
-            setTableData(data.data.slice(-10));
+            setTableData(data.data);
           }
         })
         .catch((error) => {
-          console.error("Error al obtener el archivo:", error);
+          console.error("❌ Error al obtener el archivo:", error);
         })
         .finally(() => setIsLoading(false));
     }
   }, [item, itemId]);
 
+  
   if (!item) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
