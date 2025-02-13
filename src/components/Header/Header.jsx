@@ -90,7 +90,7 @@ export default function Header() {
           <div className="w-80 h-full flex items-center justify-evenly">
             <Link to={`/categorias`}>
               <span className="text-lg ml-20 mr-8 text-white cursor-pointer select-none hover:underline">
-                Categorias
+                Categorías
               </span>
             </Link>
             <Link to={`/acerca`}>

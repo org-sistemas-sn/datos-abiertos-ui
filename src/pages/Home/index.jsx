@@ -63,19 +63,19 @@ export const Home = () => {
       try {
         const data = await dateService.getDatesByMonthYear(date);
         setEvents(data);
-  
+
         // Extraer y transformar las fechas en español
         const formattedDates = data.map((event) => {
           const dateObj = new Date(event.date);
-  
+
           // Obtener día, mes y año
           const day = dateObj.toLocaleDateString("es-ES", { weekday: "long" });
           const month = dateObj.toLocaleDateString("es-ES", { month: "long" });
-  
+
           // Convertir la primera letra a mayúscula
           const dayFormatted = day.charAt(0).toUpperCase() + day.slice(1);
           const monthFormatted = month.charAt(0).toUpperCase() + month.slice(1);
-  
+
           return {
             fullDate: dateObj.toLocaleDateString("es-ES", {
               weekday: "long",
@@ -88,12 +88,12 @@ export const Home = () => {
             monthNumber: dateObj.getMonth() + 1, // Se agrega el mes en formato numérico (1-12)
             number: dateObj.getDate().toString(), // "25"
             year: dateObj.getFullYear().toString(), // "2025"
-            title: event.title // Se añade el título del evento
+            title: event.title, // Se añade el título del evento
           };
         });
-  
+
         setHighlightedDates(formattedDates);
-  
+
         console.log("📅 Fechas transformadas (ES):", formattedDates);
       } catch (error) {
         console.error("Error al cargar eventos:", error);
@@ -101,7 +101,6 @@ export const Home = () => {
     };
     fetchEvents();
   }, [date]);
-  
 
   useEffect(() => {
     const animateCount = (key, end) => {
@@ -109,7 +108,7 @@ export const Home = () => {
       const duration = 2500;
       const stepTime = duration / end;
       const timer = setInterval(() => {
-        start += Math.ceil(end / 25);
+        start += Math.ceil(end / 35);
         if (start >= end) {
           start = end;
           clearInterval(timer);
@@ -372,29 +371,37 @@ export const Home = () => {
                   className="react-calendar"
                   tileClassName={({ date, view }) => {
                     if (view === "month") {
-                      const dayNumber = date.getDate(); // Obtener el número del día (1-31)
-                      const monthNumber = date.getMonth() + 1; // Obtener el mes (1-12)
-                      const yearNumber = date.getFullYear(); // Obtener el año
+                      const dayNumber = date.getDate();
+                      const monthNumber = date.getMonth() + 1;
+                      const yearNumber = date.getFullYear();
 
-                      // Verificar si el día, mes y año coinciden con un evento
                       const isHighlighted = highlightedDates.some(
                         (event) =>
                           parseInt(event.number, 10) === dayNumber &&
-                          parseInt(event.monthNumber, 10) === monthNumber && // Verificar mes
-                          parseInt(event.year, 10) === yearNumber // Verificar año
+                          parseInt(event.monthNumber, 10) === monthNumber &&
+                          parseInt(event.year, 10) === yearNumber
                       );
 
                       return isHighlighted ? "highlighted-date" : null;
                     }
                     return null;
                   }}
-                  navigationLabel={({ date }) =>
-                    `${date.toLocaleDateString("es-ES", {
+                  tileDisabled={() => true} // 🔹 Deshabilita la selección de todos los días
+                  navigationLabel={({ date }) => {
+                    const monthName = date.toLocaleDateString("es-ES", {
                       month: "long",
-                      year: "numeric",
-                    })}`
-                  }
-                  onChange={setDate}
+                    });
+                    const formattedMonth =
+                      monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                    return `${formattedMonth} de ${date.getFullYear()}`;
+                  }}
+                  prevLabel={null} // 🔹 Quita la flecha para ir al mes anterior
+                  nextLabel={null} // 🔹 Quita la flecha para ir al mes siguiente
+                  prev2Label={null} // 🔹 Quita la flecha para ir al año anterior
+                  next2Label={null} // 🔹 Quita la flecha para ir al año siguiente
+                  view="month" // 🔹 Forza la vista de mes para que no se pueda cambiar
+                  minDetail="month" // 🔹 Evita que el usuario haga clic en el mes y vea los años
+                  onChange={() => {}} // 🔹 Evita cualquier cambio al seleccionar un día
                   value={date}
                   locale="es-ES"
                 />
@@ -522,29 +529,38 @@ export const Home = () => {
                       className="react-calendar"
                       tileClassName={({ date, view }) => {
                         if (view === "month") {
-                          const dayNumber = date.getDate(); // Obtener el número del día (1-31)
-                          const monthNumber = date.getMonth() + 1; // Obtener el mes (1-12)
-                          const yearNumber = date.getFullYear(); // Obtener el año
+                          const dayNumber = date.getDate();
+                          const monthNumber = date.getMonth() + 1;
+                          const yearNumber = date.getFullYear();
 
-                          // Verificar si el día, mes y año coinciden con un evento
                           const isHighlighted = highlightedDates.some(
                             (event) =>
                               parseInt(event.number, 10) === dayNumber &&
-                              parseInt(event.monthNumber, 10) === monthNumber && // Verificar mes
-                              parseInt(event.year, 10) === yearNumber // Verificar año
+                              parseInt(event.monthNumber, 10) === monthNumber &&
+                              parseInt(event.year, 10) === yearNumber
                           );
 
                           return isHighlighted ? "highlighted-date" : null;
                         }
                         return null;
                       }}
-                      navigationLabel={({ date }) =>
-                        `${date.toLocaleDateString("es-ES", {
+                      tileDisabled={() => true} // 🔹 Deshabilita la selección de todos los días
+                      navigationLabel={({ date }) => {
+                        const monthName = date.toLocaleDateString("es-ES", {
                           month: "long",
-                          year: "numeric",
-                        })}`
-                      }
-                      onChange={setDate}
+                        });
+                        const formattedMonth =
+                          monthName.charAt(0).toUpperCase() +
+                          monthName.slice(1);
+                        return `${formattedMonth} de ${date.getFullYear()}`;
+                      }}
+                      prevLabel={null} // 🔹 Quita la flecha para ir al mes anterior
+                      nextLabel={null} // 🔹 Quita la flecha para ir al mes siguiente
+                      prev2Label={null} // 🔹 Quita la flecha para ir al año anterior
+                      next2Label={null} // 🔹 Quita la flecha para ir al año siguiente
+                      view="month" // 🔹 Forza la vista de mes para que no se pueda cambiar
+                      minDetail="month" // 🔹 Evita que el usuario haga clic en el mes y vea los años
+                      onChange={() => {}} // 🔹 Evita cualquier cambio al seleccionar un día
                       value={date}
                       locale="es-ES"
                     />
@@ -682,29 +698,37 @@ export const Home = () => {
                 className="react-calendar"
                 tileClassName={({ date, view }) => {
                   if (view === "month") {
-                    const dayNumber = date.getDate(); // Obtener el número del día (1-31)
-                    const monthNumber = date.getMonth() + 1; // Obtener el mes (1-12)
-                    const yearNumber = date.getFullYear(); // Obtener el año
+                    const dayNumber = date.getDate();
+                    const monthNumber = date.getMonth() + 1;
+                    const yearNumber = date.getFullYear();
 
-                    // Verificar si el día, mes y año coinciden con un evento
                     const isHighlighted = highlightedDates.some(
                       (event) =>
                         parseInt(event.number, 10) === dayNumber &&
-                        parseInt(event.monthNumber, 10) === monthNumber && // Verificar mes
-                        parseInt(event.year, 10) === yearNumber // Verificar año
+                        parseInt(event.monthNumber, 10) === monthNumber &&
+                        parseInt(event.year, 10) === yearNumber
                     );
 
                     return isHighlighted ? "highlighted-date" : null;
                   }
                   return null;
                 }}
-                navigationLabel={({ date }) =>
-                  `${date.toLocaleDateString("es-ES", {
+                tileDisabled={() => true} // 🔹 Deshabilita la selección de todos los días
+                navigationLabel={({ date }) => {
+                  const monthName = date.toLocaleDateString("es-ES", {
                     month: "long",
-                    year: "numeric",
-                  })}`
-                }
-                onChange={setDate}
+                  });
+                  const formattedMonth =
+                    monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                  return `${formattedMonth} de ${date.getFullYear()}`;
+                }}
+                prevLabel={null} // 🔹 Quita la flecha para ir al mes anterior
+                nextLabel={null} // 🔹 Quita la flecha para ir al mes siguiente
+                prev2Label={null} // 🔹 Quita la flecha para ir al año anterior
+                next2Label={null} // 🔹 Quita la flecha para ir al año siguiente
+                view="month" // 🔹 Forza la vista de mes para que no se pueda cambiar
+                minDetail="month" // 🔹 Evita que el usuario haga clic en el mes y vea los años
+                onChange={() => {}} // 🔹 Evita cualquier cambio al seleccionar un día
                 value={date}
                 locale="es-ES"
               />
