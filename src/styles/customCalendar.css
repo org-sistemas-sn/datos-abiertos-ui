@@ -13,7 +13,7 @@
 .react-calendar__navigation {
   background: white !important;
   box-shadow: none !important;
-  border-bottom: solid 1px rgba(91, 91, 91, 0.31);
+  border-bottom: solid 1px rgba(91, 91, 91, 0.141);
 }
 
 /* Elementos internos del encabezado */

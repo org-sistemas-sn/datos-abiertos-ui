@@ -38,7 +38,7 @@ const ItemDetail = () => {
   useEffect(() => {
     if (item && (item.type === "XLSX" || item.type === "CSV")) {
       console.log(`📂 Buscando datos del item (${item.type}): ${itemId}`);
-      
+
       itemsService
         .getItemData(itemId)
         .then((data) => {
@@ -57,7 +57,6 @@ const ItemDetail = () => {
     }
   }, [item, itemId]);
 
-  
   if (!item) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -76,9 +75,13 @@ const ItemDetail = () => {
   let ftpUrl = import.meta.env.VITE_FTP_SERVER_URL;
 
   if (item.type === "XLSX") {
-    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${item.url_or_ftp_path}`;
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${
+      item.url_or_ftp_path
+    }`;
   } else if (item.type === "CSV") {
-    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${item.url_or_ftp_path}`;
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${
+      item.url_or_ftp_path
+    }`;
   }
 
   console.log(ftpUrl);
@@ -295,63 +298,52 @@ const ItemDetail = () => {
               {/* Campos de este recurso */}
               <div className="mt-6">
                 <h2 className="text-2xl font-semibold text-[#3e4345] mb-4">
-                  Ultimos 10 registros del {item.type}
+                  Últimos 10 registros del {item.type}
                 </h2>
+
                 <div className="overflow-x-auto w-full">
                   {isLoading ? (
                     <div className="w-full h-[30vh] flex justify-center items-center">
-                      <MoonLoader color="#0477AD" size={50}/>
+                      <MoonLoader color="#0477AD" size={50} />
                     </div>
                   ) : (
-                    <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
-                      <tbody>
-                        {tableData.length > 0 && (
-                          <div className="overflow-x-auto w-full">
-                            <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
-                              <thead>
-                                <tr className="bg-[#f2f7ff]">
-                                  {/* Renderiza dinámicamente las columnas según las claves del JSON */}
-                                  {tableData.length > 0 &&
-                                    Object.keys(tableData[0]).map(
-                                      (key, index) => (
-                                        <th
-                                          key={index}
-                                          className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-left font-semibold text-[#3e4345]"
-                                        >
-                                          {key}
-                                        </th>
-                                      )
-                                    )}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {tableData.map((row, rowIndex) => (
-                                  <tr
-                                    key={rowIndex}
-                                    className={
-                                      rowIndex % 2 === 0
-                                        ? "bg-[#f9fafb]"
-                                        : "bg-white"
-                                    }
-                                  >
-                                    {Object.values(row).map(
-                                      (value, colIndex) => (
-                                        <td
-                                          key={colIndex}
-                                          className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-[#3e4345]"
-                                        >
-                                          {value}
-                                        </td>
-                                      )
-                                    )}
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
-                      </tbody>
-                    </table>
+                    tableData.length > 0 && (
+                      <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
+                        <thead>
+                          <tr className="bg-[#f2f7ff]">
+                            {/* Renderizar encabezados solo si hay datos */}
+                            {tableData.length > 0 &&
+                              Object.keys(tableData[0]).map((key, index) => (
+                                <th
+                                  key={index}
+                                  className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-left font-semibold text-[#3e4345]"
+                                >
+                                  {key}
+                                </th>
+                              ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {tableData.map((row, rowIndex) => (
+                            <tr
+                              key={rowIndex}
+                              className={
+                                rowIndex % 2 === 0 ? "bg-[#f9fafb]" : "bg-white"
+                              }
+                            >
+                              {Object.keys(row).map((key, colIndex) => (
+                                <td
+                                  key={colIndex}
+                                  className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-[#3e4345]"
+                                >
+                                  {row[key]}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )
                   )}
                 </div>
               </div>
