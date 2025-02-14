@@ -57,7 +57,12 @@ const ItemDetail = () => {
     }
   }, [item, itemId]);
 
+  // Verifica qué valor tiene `item`
+  console.log("📌 Item recuperado:", item);
+
+  // Si item es undefined o null, se muestra un mensaje y se evita el error
   if (!item) {
+    console.error("❌ El item no fue encontrado. Verifica el estado.");
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <h1 className="text-2xl font-bold text-red-500">
@@ -65,6 +70,13 @@ const ItemDetail = () => {
         </h1>
       </div>
     );
+  }
+
+  // Verifica si item.type está definido antes de usarlo
+  console.log("📌 Tipo de archivo del item:", item.type);
+
+  if (!item.type) {
+    console.error("❌ El tipo de archivo no está definido en item.");
   }
 
   const handleLoad = () => {
