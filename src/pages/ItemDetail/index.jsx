@@ -37,12 +37,10 @@ const ItemDetail = () => {
 
   useEffect(() => {
     if (item && (item.type === "XLSX" || item.type === "CSV")) {
-      console.log(`📂 Buscando datos del item (${item.type}): ${itemId}`);
 
       itemsService
         .getItemData(itemId)
         .then((data) => {
-          console.log("✅ Archivo obtenido desde el servicio:", data);
           setFileData(data);
 
           // 📌 El backend ya trae solo los últimos 10 registros
@@ -58,7 +56,6 @@ const ItemDetail = () => {
   }, [item, itemId]);
 
   // Verifica qué valor tiene `item`
-  console.log("📌 Item recuperado:", item);
 
   // Si item es undefined o null, se muestra un mensaje y se evita el error
   if (!item) {
@@ -73,14 +70,12 @@ const ItemDetail = () => {
   }
 
   // Verifica si item.type está definido antes de usarlo
-  console.log("📌 Tipo de archivo del item:", item.type);
 
   if (!item.type) {
     console.error("❌ El tipo de archivo no está definido en item.");
   }
 
   const handleLoad = () => {
-    console.log("Iframe cargado completamente");
     setIsLoading(false);
   };
 
@@ -96,7 +91,6 @@ const ItemDetail = () => {
     }`;
   }
 
-  console.log(ftpUrl);
 
   const handleDownload = () => {
     Swal.fire({
