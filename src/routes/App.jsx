@@ -21,7 +21,7 @@ const App = () => {
           <Route path="/themes/:id" element={<Themes />} />
           <Route path="/themes/:categoryId/:themeId" element={<ThemeItems />} />
           <Route path="/item/:id" element={<ItemDetail />} />
-          <Route path="/event" element={<EventDetail />} /> 
+          <Route path="/event/:id" element={<EventDetail />} />
         </Route>
       </Routes>
     </BrowserRouter>

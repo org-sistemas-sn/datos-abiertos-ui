@@ -1,6 +1,15 @@
-export default function CardEventCalendary({ day, title, bgColor, isSelected }) {
+import { useNavigate } from "react-router-dom";
+
+export default function CardEventCalendary({ day, title, bgColor, isSelected, event }) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/event/${event.id}`, { state: event }); 
+  };
+
   return (
     <div
+      onClick={handleClick}
       className={`flex w-full font-grotesk cursor-pointer h-20 items-center select-none p-4 bg-white border rounded-lg shadow transition-transform duration-500 ease-in-out lg:max-w-[400px] 
         ${isSelected ? "shadow-lg scale-105" : "hover:shadow-lg hover:scale-105"}`}
     >

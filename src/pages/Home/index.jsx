@@ -86,6 +86,10 @@ export const Home = () => {
           number: dateObj.getDate().toString(),
           year: dateObj.getFullYear().toString(),
           title: event.title,
+          id: event.id,
+          date: event.date,
+          description: event.description,
+          img_path: event.img_path
         };
       });
 
@@ -444,6 +448,7 @@ export const Home = () => {
                             title={event.title} // Mantiene el título del evento
                             bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
                             isSelected={isSelected}
+                            event={event} // Pasa todo el objeto evento
                           />
                         </motion.div>
                       );
