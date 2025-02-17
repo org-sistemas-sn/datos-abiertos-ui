@@ -62,9 +62,7 @@ const ItemDetail = () => {
     console.error("❌ El item no fue encontrado. Verifica el estado.");
     return (
       <div className="w-full h-screen flex items-center justify-center">
-        <h1 className="text-2xl font-bold text-red-500">
-          El ítem solicitado no fue encontrado.
-        </h1>
+
       </div>
     );
   }

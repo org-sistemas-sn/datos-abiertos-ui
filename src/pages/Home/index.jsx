@@ -17,6 +17,7 @@ export const Home = () => {
   const [date, setDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
   const [sections, setSections] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState([]);
   const [highlightedDates, setHighlightedDates] = useState([]);
   const [loading, setLoading] = useState(null);
@@ -185,6 +186,11 @@ export const Home = () => {
     if (e.key === "Enter") {
       handleSearch();
     }
+  };
+
+  const handleDateClick = (value) => {
+    const formattedDate = value.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+    setSelectedDate(formattedDate);
   };
 
   return (
@@ -406,7 +412,8 @@ export const Home = () => {
                   locale="es-ES"
                   onActiveStartDateChange={({ activeStartDate }) =>
                     handleMonthChange(activeStartDate)
-                  } // 🔹 Agregado para detectar cambio de mes
+                  }
+                  onClickDay={handleDateClick}
                 />
               </div>
             </div>
@@ -420,16 +427,27 @@ export const Home = () => {
                     initial="hidden"
                     animate="show"
                   >
-                    {highlightedDates.map((event, index) => (
-                      <motion.div key={index} variants={itemVariants}>
-                        <CardEventCalendary
-                          day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
-                          month={event.month} // Ejemplo: "Febrero"
-                          title={event.title} // Mantiene el título del evento
-                          bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
-                        />
-                      </motion.div>
-                    ))}
+                    {highlightedDates.map((event, index) => {
+                      const isSelected =
+                        `${event.year}-${event.monthNumber
+                          .toString()
+                          .padStart(2, "0")}-${event.number.padStart(
+                          2,
+                          "0"
+                        )}` === selectedDate;
+
+                      return (
+                        <motion.div key={index} variants={itemVariants}>
+                          <CardEventCalendary
+                            day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
+                            month={event.month} // Ejemplo: "Febrero"
+                            title={event.title} // Mantiene el título del evento
+                            bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
+                            isSelected={isSelected}
+                          />
+                        </motion.div>
+                      );
+                    })}
                   </motion.div>
                 </div>
               </div>
@@ -578,6 +596,7 @@ export const Home = () => {
                       }
                       value={date}
                       locale="es-ES"
+                      onClickDay={handleDateClick}
                       onActiveStartDateChange={({ activeStartDate }) =>
                         handleMonthChange(activeStartDate)
                       } // 🔹 Agregado para detectar cambio de mes
@@ -596,16 +615,27 @@ export const Home = () => {
                     initial="hidden"
                     animate="show"
                   >
-                    {highlightedDates.map((event, index) => (
-                      <motion.div key={index} variants={itemVariants}>
-                        <CardEventCalendary
-                          day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
-                          month={event.month} // Ejemplo: "Febrero"
-                          title={event.title} // Mantiene el título del evento
-                          bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
-                        />
-                      </motion.div>
-                    ))}
+                    {highlightedDates.map((event, index) => {
+                      const isSelected =
+                        `${event.year}-${event.monthNumber
+                          .toString()
+                          .padStart(2, "0")}-${event.number.padStart(
+                          2,
+                          "0"
+                        )}` === selectedDate;
+
+                      return (
+                        <motion.div key={index} variants={itemVariants}>
+                          <CardEventCalendary
+                            day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
+                            month={event.month} // Ejemplo: "Febrero"
+                            title={event.title} // Mantiene el título del evento
+                            bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
+                            isSelected={isSelected}
+                          />
+                        </motion.div>
+                      );
+                    })}
                   </motion.div>
                 </div>
               </div>
@@ -761,6 +791,7 @@ export const Home = () => {
                 }
                 value={date}
                 locale="es-ES"
+                onClickDay={handleDateClick}
                 onActiveStartDateChange={({ activeStartDate }) =>
                   handleMonthChange(activeStartDate)
                 } // 🔹 Agregado para detectar cambio de mes
@@ -778,16 +809,25 @@ export const Home = () => {
               initial="hidden"
               animate="show"
             >
-              {highlightedDates.map((event, index) => (
-                <motion.div key={index} variants={itemVariants}>
-                  <CardEventCalendary
-                    day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
-                    month={event.month} // Ejemplo: "Febrero"
-                    title={event.title} // Mantiene el título del evento
-                    bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
-                  />
-                </motion.div>
-              ))}
+              {highlightedDates.map((event, index) => {
+                const isSelected =
+                  `${event.year}-${event.monthNumber
+                    .toString()
+                    .padStart(2, "0")}-${event.number.padStart(2, "0")}` ===
+                  selectedDate;
+
+                return (
+                  <motion.div key={index} variants={itemVariants}>
+                    <CardEventCalendary
+                      day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
+                      month={event.month} // Ejemplo: "Febrero"
+                      title={event.title} // Mantiene el título del evento
+                      bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
+                      isSelected={isSelected}
+                    />
+                  </motion.div>
+                );
+              })}
             </motion.div>
           </div>
         </div>
