@@ -41,7 +41,7 @@ export const Home = () => {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 }, // Inicia con opacidad 0 y 20px abajo
+    hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
 
@@ -58,49 +58,49 @@ export const Home = () => {
     fetchSections();
   }, []);
 
+  const fetchEvents = async (selectedDate) => {
+    try {
+      const data = await dateService.getDatesByMonthYear(selectedDate);
+      setEvents(data);
+
+      const formattedDates = data.map((event) => {
+        const dateObj = new Date(event.date);
+
+        const day = dateObj.toLocaleDateString("es-ES", { weekday: "long" });
+        const month = dateObj.toLocaleDateString("es-ES", { month: "long" });
+
+        const dayFormatted = day.charAt(0).toUpperCase() + day.slice(1);
+        const monthFormatted = month.charAt(0).toUpperCase() + month.slice(1);
+
+        return {
+          fullDate: dateObj.toLocaleDateString("es-ES", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }),
+          day: dayFormatted,
+          month: monthFormatted,
+          monthNumber: dateObj.getMonth() + 1,
+          number: dateObj.getDate().toString(),
+          year: dateObj.getFullYear().toString(),
+          title: event.title,
+        };
+      });
+
+      setHighlightedDates(formattedDates);
+    } catch (error) {
+      console.error("Error al cargar eventos:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const data = await dateService.getDatesByMonthYear(date);
-        setEvents(data);
-
-        // Extraer y transformar las fechas en español
-        const formattedDates = data.map((event) => {
-          const dateObj = new Date(event.date);
-
-          // Obtener día, mes y año
-          const day = dateObj.toLocaleDateString("es-ES", { weekday: "long" });
-          const month = dateObj.toLocaleDateString("es-ES", { month: "long" });
-
-          // Convertir la primera letra a mayúscula
-          const dayFormatted = day.charAt(0).toUpperCase() + day.slice(1);
-          const monthFormatted = month.charAt(0).toUpperCase() + month.slice(1);
-
-          return {
-            fullDate: dateObj.toLocaleDateString("es-ES", {
-              weekday: "long",
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-            }),
-            day: dayFormatted, // "Martes"
-            month: monthFormatted, // "Febrero"
-            monthNumber: dateObj.getMonth() + 1, // Se agrega el mes en formato numérico (1-12)
-            number: dateObj.getDate().toString(), // "25"
-            year: dateObj.getFullYear().toString(), // "2025"
-            title: event.title, // Se añade el título del evento
-          };
-        });
-
-        setHighlightedDates(formattedDates);
-
-        console.log("📅 Fechas transformadas (ES):", formattedDates);
-      } catch (error) {
-        console.error("Error al cargar eventos:", error);
-      }
-    };
-    fetchEvents();
+    fetchEvents(date);
   }, [date]);
+
+  const handleMonthChange = (newDate) => {
+    setDate(newDate);
+  };
 
   useEffect(() => {
     const animateCount = (key, end) => {
@@ -122,7 +122,6 @@ export const Home = () => {
     animateCount("horas", 42000);
   }, []);
 
-  // Colores predefinidos
   const bgColors = [
     "bg-blue-100",
     "bg-pink-100",
@@ -138,7 +137,6 @@ export const Home = () => {
         if (Array.isArray(results) && results.length > 0) {
           setSearchResults(results);
 
-          // Oculta la alerta y redirige automáticamente
           Swal.close();
           navigate("/itemssearch", { state: { searchTerm, results } });
         } else {
@@ -183,7 +181,6 @@ export const Home = () => {
     }
   };
 
-  // Función para manejar la tecla "Enter"
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearch();
@@ -355,7 +352,7 @@ export const Home = () => {
               </h6>
             </div>
           </div>
-          <div className="w-[90%] h-full flex">
+          <div className="w-[90%] h-[80vh] flex">
             <div className="w-[360px] h-auto">
               <div className="bg-white border-none rounded-lg flex">
                 <Calendar
@@ -377,7 +374,6 @@ export const Home = () => {
                     }
                     return null;
                   }}
-                  tileDisabled={() => true} // 🔹 Deshabilita la selección de todos los días
                   navigationLabel={({ date }) => {
                     const monthName = date.toLocaleDateString("es-ES", {
                       month: "long",
@@ -386,15 +382,31 @@ export const Home = () => {
                       monthName.charAt(0).toUpperCase() + monthName.slice(1);
                     return `${formattedMonth} de ${date.getFullYear()}`;
                   }}
-                  prevLabel={null} // 🔹 Quita la flecha para ir al mes anterior
-                  nextLabel={null} // 🔹 Quita la flecha para ir al mes siguiente
-                  prev2Label={null} // 🔹 Quita la flecha para ir al año anterior
-                  next2Label={null} // 🔹 Quita la flecha para ir al año siguiente
-                  view="month" // 🔹 Forza la vista de mes para que no se pueda cambiar
-                  minDetail="month" // 🔹 Evita que el usuario haga clic en el mes y vea los años
-                  onChange={() => {}} // 🔹 Evita cualquier cambio al seleccionar un día
+                  prevLabel="‹"
+                  nextLabel="›"
+                  prev2Label={null}
+                  next2Label={null}
+                  minDetail="month"
+                  maxDetail="month"
+                  minDate={
+                    new Date(
+                      new Date().getFullYear(),
+                      new Date().getMonth() - 1,
+                      1
+                    )
+                  }
+                  maxDate={
+                    new Date(
+                      new Date().getFullYear(),
+                      new Date().getMonth() + 2,
+                      0
+                    )
+                  }
                   value={date}
                   locale="es-ES"
+                  onActiveStartDateChange={({ activeStartDate }) =>
+                    handleMonthChange(activeStartDate)
+                  } // 🔹 Agregado para detectar cambio de mes
                 />
               </div>
             </div>
@@ -517,7 +529,7 @@ export const Home = () => {
                   </h3>
                   <div className="bg-white border-none rounded-lg">
                     <Calendar
-                      className="react-calendar"
+                      className="react-calendar font-grotesk"
                       tileClassName={({ date, view }) => {
                         if (view === "month") {
                           const dayNumber = date.getDate();
@@ -535,7 +547,6 @@ export const Home = () => {
                         }
                         return null;
                       }}
-                      tileDisabled={() => true} // 🔹 Deshabilita la selección de todos los días
                       navigationLabel={({ date }) => {
                         const monthName = date.toLocaleDateString("es-ES", {
                           month: "long",
@@ -545,15 +556,31 @@ export const Home = () => {
                           monthName.slice(1);
                         return `${formattedMonth} de ${date.getFullYear()}`;
                       }}
-                      prevLabel={null} // 🔹 Quita la flecha para ir al mes anterior
-                      nextLabel={null} // 🔹 Quita la flecha para ir al mes siguiente
-                      prev2Label={null} // 🔹 Quita la flecha para ir al año anterior
-                      next2Label={null} // 🔹 Quita la flecha para ir al año siguiente
-                      view="month" // 🔹 Forza la vista de mes para que no se pueda cambiar
-                      minDetail="month" // 🔹 Evita que el usuario haga clic en el mes y vea los años
-                      onChange={() => {}} // 🔹 Evita cualquier cambio al seleccionar un día
+                      prevLabel="‹"
+                      nextLabel="›"
+                      prev2Label={null}
+                      next2Label={null}
+                      minDetail="month"
+                      maxDetail="month"
+                      minDate={
+                        new Date(
+                          new Date().getFullYear(),
+                          new Date().getMonth() - 1,
+                          1
+                        )
+                      }
+                      maxDate={
+                        new Date(
+                          new Date().getFullYear(),
+                          new Date().getMonth() + 2,
+                          0
+                        )
+                      }
                       value={date}
                       locale="es-ES"
+                      onActiveStartDateChange={({ activeStartDate }) =>
+                        handleMonthChange(activeStartDate)
+                      } // 🔹 Agregado para detectar cambio de mes
                     />
                   </div>
                 </div>
@@ -686,7 +713,7 @@ export const Home = () => {
             </h3>
             <div className="bg-white border-none rounded-lg flex">
               <Calendar
-                className="react-calendar"
+                className="react-calendar font-grotesk"
                 tileClassName={({ date, view }) => {
                   if (view === "month") {
                     const dayNumber = date.getDate();
@@ -704,7 +731,6 @@ export const Home = () => {
                   }
                   return null;
                 }}
-                tileDisabled={() => true} // 🔹 Deshabilita la selección de todos los días
                 navigationLabel={({ date }) => {
                   const monthName = date.toLocaleDateString("es-ES", {
                     month: "long",
@@ -713,15 +739,31 @@ export const Home = () => {
                     monthName.charAt(0).toUpperCase() + monthName.slice(1);
                   return `${formattedMonth} de ${date.getFullYear()}`;
                 }}
-                prevLabel={null} // 🔹 Quita la flecha para ir al mes anterior
-                nextLabel={null} // 🔹 Quita la flecha para ir al mes siguiente
-                prev2Label={null} // 🔹 Quita la flecha para ir al año anterior
-                next2Label={null} // 🔹 Quita la flecha para ir al año siguiente
-                view="month" // 🔹 Forza la vista de mes para que no se pueda cambiar
-                minDetail="month" // 🔹 Evita que el usuario haga clic en el mes y vea los años
-                onChange={() => {}} // 🔹 Evita cualquier cambio al seleccionar un día
+                prevLabel="‹"
+                nextLabel="›"
+                prev2Label={null}
+                next2Label={null}
+                minDetail="month"
+                maxDetail="month"
+                minDate={
+                  new Date(
+                    new Date().getFullYear(),
+                    new Date().getMonth() - 1,
+                    1
+                  )
+                }
+                maxDate={
+                  new Date(
+                    new Date().getFullYear(),
+                    new Date().getMonth() + 2,
+                    0
+                  )
+                }
                 value={date}
                 locale="es-ES"
+                onActiveStartDateChange={({ activeStartDate }) =>
+                  handleMonthChange(activeStartDate)
+                } // 🔹 Agregado para detectar cambio de mes
               />
             </div>
           </div>
