@@ -63,16 +63,18 @@ export const Home = () => {
     try {
       const data = await dateService.getDatesByMonthYear(selectedDate);
       setEvents(data);
-
+  
       const formattedDates = data.map((event) => {
-        const dateObj = new Date(event.date);
-
-        const day = dateObj.toLocaleDateString("es-ES", { weekday: "long" });
-        const month = dateObj.toLocaleDateString("es-ES", { month: "long" });
-
-        const dayFormatted = day.charAt(0).toUpperCase() + day.slice(1);
-        const monthFormatted = month.charAt(0).toUpperCase() + month.slice(1);
-
+        // Descomponer la fecha manualmente para evitar desfases de zona horaria
+        const [year, month, day] = event.date.split("-").map(Number);
+        const dateObj = new Date(year, month - 1, day); // Meses en JS son 0-indexed
+  
+        const dayName = dateObj.toLocaleDateString("es-ES", { weekday: "long" });
+        const monthName = dateObj.toLocaleDateString("es-ES", { month: "long" });
+  
+        const dayFormatted = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+        const monthFormatted = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+  
         return {
           fullDate: dateObj.toLocaleDateString("es-ES", {
             weekday: "long",
@@ -83,8 +85,8 @@ export const Home = () => {
           day: dayFormatted,
           month: monthFormatted,
           monthNumber: dateObj.getMonth() + 1,
-          number: dateObj.getDate().toString(),
-          year: dateObj.getFullYear().toString(),
+          number: day.toString(),
+          year: year.toString(),
           title: event.title,
           id: event.id,
           date: event.date,
@@ -92,12 +94,15 @@ export const Home = () => {
           img_path: event.img_path
         };
       });
-
+  
       setHighlightedDates(formattedDates);
+      console.log("Highlighted Dates:", formattedDates);
     } catch (error) {
       console.error("Error al cargar eventos:", error);
     }
   };
+  
+
 
   useEffect(() => {
     fetchEvents(date);
@@ -362,7 +367,7 @@ export const Home = () => {
               </h6>
             </div>
           </div>
-          <div className="w-[90%] h-[80vh] flex">
+          <div className="w-[90%] h-auto flex">
             <div className="w-[360px] h-auto">
               <div className="bg-white border-none rounded-lg flex">
                 <Calendar
