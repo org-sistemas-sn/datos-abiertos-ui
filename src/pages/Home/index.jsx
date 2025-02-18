@@ -369,7 +369,7 @@ export const Home = () => {
           </div>
           <div className="w-[90%] h-auto flex">
             <div className="w-[360px] h-auto">
-              <div className="bg-white border-none rounded-lg flex">
+              <div className="bg-white border-none rounded-lg flex pb-5">
                 <Calendar
                   className="react-calendar font-grotesk"
                   tileClassName={({ date, view }) => {
