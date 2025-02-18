@@ -4,7 +4,9 @@ import Breadcrumb from "../../components/Breadcrumb";
 import { useNavigate } from "react-router-dom";
 import { useSectionContext } from "../../context/sectionContext/sectionContext";
 import MoonLoader from "react-spinners/MoonLoader";
+import checkCircle from "../../assets/icons/check-circle.png";
 import { itemsService } from "../../services/items/itemsService";
+import { gisDetailsService } from "../../services/gisDetail/gisDetailService";
 import Swal from "sweetalert2";
 
 const ItemDetail = () => {
@@ -15,10 +17,10 @@ const ItemDetail = () => {
   const [selectedTheme, setSelectedTheme] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [gisDetails, setGisDetails] = useState(null);
   const [fileData, setFileData] = useState(null);
   const [tableData, setTableData] = useState([]);
 
-  // Recuperar `selectedTheme` y `selectedSection` desde localStorage al montar el componente
   useEffect(() => {
     const storedTheme = localStorage.getItem("selectedTheme");
     const storedSection = localStorage.getItem("selectedSection");
@@ -32,18 +34,14 @@ const ItemDetail = () => {
     }
   }, []);
 
-  // Buscar el ítem dentro del tema actual
   const item = selectedTheme?.items?.find((item) => item.id === itemId);
 
   useEffect(() => {
     if (item && (item.type === "XLSX" || item.type === "CSV")) {
-
       itemsService
         .getItemData(itemId)
         .then((data) => {
           setFileData(data);
-
-          // 📌 El backend ya trae solo los últimos 10 registros
           if (data?.data && Array.isArray(data.data)) {
             setTableData(data.data);
           }
@@ -55,19 +53,28 @@ const ItemDetail = () => {
     }
   }, [item, itemId]);
 
-  // Verifica qué valor tiene `item`
+  useEffect(() => {
+    if (item?.have_gis_detail === true || item?.have_gis_detail === 1) {
+      gisDetailsService
+        .getGisDetailsById(item.id)
+        .then((data) => {
+          console.log("GIS Details:", data);
+          setGisDetails(data);
+        })
+        .catch((error) => {
+          console.error("❌ Error al obtener los detalles GIS:", error);
+        });
+    }
+  }, [item]);
 
-  // Si item es undefined o null, se muestra un mensaje y se evita el error
   if (!item) {
     console.error("❌ El item no fue encontrado. Verifica el estado.");
     return (
-      <div className="w-full h-screen flex items-center justify-center">
-
-      </div>
+      <div className="w-full h-screen flex items-center justify-center"></div>
     );
+  } else {
+    console.log("have gis detail?:", item.have_gis_detail);
   }
-
-  // Verifica si item.type está definido antes de usarlo
 
   if (!item.type) {
     console.error("❌ El tipo de archivo no está definido en item.");
@@ -89,7 +96,6 @@ const ItemDetail = () => {
     }`;
   }
 
-
   const handleDownload = () => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -110,7 +116,7 @@ const ItemDetail = () => {
   };
 
   return (
-    <div className="w-full h-auto mt-24">
+    <div className="w-full h-auto mt-24 font-grotesk">
       {/* Breadcrumb */}
       <Breadcrumb
         category={selectedSection}
@@ -167,6 +173,117 @@ const ItemDetail = () => {
                   onLoad={handleLoad} // Detecta cuando carga el iframe
                 ></iframe>
               </div>
+              {item.have_gis_detail === 1 ? (
+                <div className="w-full">
+                  {/* Título */}
+                  <div className="w-full mt-5 flex items-center">
+                    <h4 className="text-xl ml-2 font-bold text-[#3e4345]">
+                      INFORMACIÓN DE LUGARES
+                    </h4>
+                  </div>
+
+                  {/* Categorías */}
+                  <div className="flex ml-2 flex-col md:flex-row md:items-center md:gap-x-4 gap-y-3 mt-3">
+                    <div className="flex items-center">
+                      <div className="rounded-full h-[15px] w-[15px] bg-[#0378ad]"></div>
+                      <span className="ml-2 text-[#3e4345]">
+                        Gestión Municipal
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="rounded-full h-[15px] w-[15px] bg-[#34a354]"></div>
+                      <span className="ml-2 text-[#3e4345]">
+                        Gestión Provincial
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="rounded-full h-[15px] w-[15px] bg-[#c77b0a]"></div>
+                      <span className="ml-2 text-[#3e4345]">
+                        Gestión Privada
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Contenedor de Cards */}
+                  <div className="w-full pt-5 pb-5 h-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {gisDetails?.map((detail, index) => (
+                        <div
+                          key={index}
+                          className="w-full h-[300px] rounded-md bg-[#f2f7ff] pl-5 pt-5 pb-5 shadow-md"
+                        >
+                          <div className="w-full h-full">
+                            {/* Nombre + Categoría */}
+                            <div className="w-full h-auto flex">
+                              <div className="w-[85%] h-full">
+                                <h5 className="text-xl text-[#3e4345] font-semibold">
+                                  {detail.name}
+                                </h5>
+                              </div>
+                              <div className="w-[15%] flex justify-center items-center">
+                                <div 
+                                  className={`rounded-full h-[20px] w-[20px] 
+                                    ${detail.management === "Gestión Privada" ? "bg-[#c77b0a]" : 
+                                      detail.management === "Gestión Provincial" ? "bg-[#34a354]" : 
+                                      detail.management === "Gestión Municipal" ? "bg-[#0378ad]" : "bg-gray-400"}`}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Horario y Teléfono */}
+                            <div className="w-full h-auto flex mt-3">
+                              <div className="w-[50%]">
+                                <span className="font-semibold">Horario</span>
+                                <br />
+                                <span className="text-[#677073]">
+                                  {detail.opening_hours}
+                                </span>
+                              </div>
+                              <div className="w-[50%]">
+                                <span className="font-semibold">Teléfono</span>
+                                <br />
+                                <span className="text-[#677073]">
+                                  {detail.tel}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Dirección */}
+                            <div className="w-full h-auto pt-3">
+                              <span className="font-semibold">Dirección</span>
+                              <br />
+                              <span className="text-[#677073]">
+                                {detail.location}
+                              </span>
+                            </div>
+
+                            {/* Seguro Médico */}
+                            {detail.smm === true || detail.smm === 1 ? (
+                              <div className="w-full h-[60px] flex items-center mt-4">
+                                <div className="w-auto h-[30px] bg-[#c4e0ff] rounded-md pl-2 flex items-center">
+                                  <span className="text-[14px] text-[#0378ad] font-semibold">
+                                    Seguro Médico Municipal Aplicable
+                                  </span>
+                                  <div className="w-[30px] flex justify-center items-center h-full">
+                                    <img
+                                      src={checkCircle}
+                                      className="object-contain w-[60%] h-[60%]"
+                                      alt="checkcircle"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="w-full h-20 flex items-center">
                 <h4 className="text-2xl font-semibold text-[#3e4345] mt-2">
                   Información adicional
