@@ -4,7 +4,7 @@ export default function CardEventCalendary({ day, title, bgColor, isSelected, ev
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/event/${event.id}`, { state: event }); 
+    window.open("https://www.instagram.com/descubrisannicolas/", "_blank");
   };
 
   return (
