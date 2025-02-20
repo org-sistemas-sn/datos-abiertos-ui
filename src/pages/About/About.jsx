@@ -4,123 +4,71 @@ export default function About() {
   return (
     <>
       <div className="w-full mt-24">
-        <Breadcrumb
-          category={null} // No se necesita categoría para este caso
-          theme={null} // Tampoco hay tema
-          showTitle={false} // Solo mostramos la flecha para regresar
-        />
+        <Breadcrumb category={null} theme={null} showTitle={false} />
       </div>
       <div className="w-full px-6 sm:px-10 lg:px-24 py-12 bg-white">
         {/* Header */}
         <div className="max-w-screen-lg mx-auto">
           <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">
-            Términos, condiciones y políticas de privacidad
+            Términos, Condiciones y Políticas de Privacidad
           </h1>
-          <p className="text-sm text-gray-600 mt-2">
-            Actualizado al 24 de diciembre de 2021.{" "}
-            <span className="underline select-none" rel="noopener noreferrer">
-              Decreto Nº 2098. ANEXO II
-            </span>
-          </p>
+          <p className="text-sm text-gray-600 mt-2">Actualizado al 01 de febrero de 2025.</p>
         </div>
 
         {/* Content */}
-        <div className="max-w-screen-lg mx-auto mt-8 space-y-6">
-          {/* Section 1 */}
+        <div className="max-w-screen-lg mx-auto mt-4 space-y-6">
           <p className="text-base text-gray-700 leading-relaxed">
-            Los presentes Términos y Condiciones (en adelante, los Términos)
-            regulan el uso de los activos digitales que brinda la Municipalidad
-            de Rosario, sus entes autárquicos, empresas, sociedades y demás
-            organismos descentralizados (en adelante, la “Municipalidad”) a
-            través de sus sitios web (Sitios) y aplicaciones relacionadas
-            (Aplicaciones), denominados en su conjunto “Activos Digitales”. El
-            uso de los activos digitales indica la aceptación incondicional de
-            estos Términos.
+            Los presentes Términos y Condiciones (en adelante, los "Términos") regulan el uso de los activos digitales que brinda la Municipalidad de San Nicolás de los Arroyos (en adelante, la "Municipalidad") a través de sus sitios web ("Sitios") y aplicaciones relacionadas ("Aplicaciones"), denominados en su conjunto "Activos Digitales". El uso de los activos digitales implica la aceptación incondicional de estos Términos.
+          </p>
+          <p className="text-base text-gray-700 leading-relaxed">
+            La Municipalidad se reserva el derecho de modificar estos Términos en cualquier momento sin previo aviso, comprometiéndose a publicar las modificaciones indicando la fecha de actualización. El uso continuo por parte de los usuarios significa la aceptación de dichos cambios.
           </p>
 
+          <h3 className="text-xl font-semibold text-gray-800 mt-8">Acceso y Uso de los Activos Digitales</h3>
           <p className="text-base text-gray-700 leading-relaxed">
-            La Municipalidad se reserva el derecho de cambiar o modificar partes
-            de estos Términos en cualquier momento, sin comunicación previa,
-            comprometiéndose a publicar las modificaciones indicando la fecha en
-            que fueron actualizados. Su uso continuo por parte de los Usuarios
-            significa la aceptación de esos cambios.
+            El acceso a los activos digitales es libre y gratuito. Sin embargo, algunos activos digitales pueden requerir autenticación mediante usuario y contraseña. Además, ciertos servicios pueden estar sujetos a términos adicionales.
           </p>
 
+          <h3 className="text-xl font-semibold text-gray-800 mt-8">Propiedad Intelectual</h3>
           <p className="text-base text-gray-700 leading-relaxed">
-            El acceso a los activos digitales es libre y gratuito. Sin embargo,
-            otros activos digitales requieren un ingreso con usuario o registro.
-            Además, al usar ciertos Activos Digitales, el usuario puede estar
-            sujeto a Términos adicionales.
+            Los usuarios reconocen que todo contenido publicado en los activos digitales es propiedad de la Municipalidad o cuenta con las licencias necesarias para su uso. Salvo disposiciones específicas, los datos abiertos pueden ser utilizados, reproducidos y modificados siempre que se haga referencia a la licencia Creative Commons 4.0 correspondiente.
           </p>
 
-          {/* Section 2 */}
-          <h3 className="text-xl font-semibold text-gray-800 mt-8">
-            Propiedad intelectual
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-800 mt-8">Privacidad y Protección de Datos Personales</h3>
           <p className="text-base text-gray-700 leading-relaxed">
-            Los usuarios reconocen que todo contenido que se encuentra publicado
-            en los activos digitales es de propiedad de la Municipalidad,
-            pudiendo hacer uso de los mismos, reproducirlos, y/o modificarlos
-            siempre y cuando hagan referencia a la licencia Creative Commons 4.0
-            especificada en cada Activo Digital.
+            La Municipalidad recopila datos personales de los usuarios en cumplimiento de la Ley 25.326 de Protección de Datos Personales. Los datos proporcionados serán utilizados para mejorar la calidad de los servicios, optimizar trámites y facilitar la comunicación con los ciudadanos.
+          </p>
+          <p className="text-base text-gray-700 leading-relaxed">
+            Los usuarios aceptan que sus datos puedan ser utilizados por la Municipalidad y/o transferidos dentro de su infraestructura de servidores. La Municipalidad se compromete a no compartir datos personales con terceros sin consentimiento previo, salvo disposiciones legales aplicables.
           </p>
 
-          {/* Section 3 */}
-          <h3 className="text-xl font-semibold text-gray-800 mt-8">
-            Privacidad - Protección de Datos Personales
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-800 mt-8">Perfil Digital del Usuario</h3>
           <p className="text-base text-gray-700 leading-relaxed">
-            Cuando los usuarios interactúan con la Municipalidad a través de los
-            activos digitales pueden proporcionar Datos personales. En dichos
-            casos, la Municipalidad actúa bajo el cumplimiento de la Ley 25.326
-            de Protección de Datos Personales.
+            Al crear un Perfil Digital, el usuario proporcionará datos personales que serán almacenados en una base de datos con el fin de:
+          </p>
+          <ul className="list-disc list-inside text-gray-700">
+            <li>Facilitar el acceso centralizado a trámites administrativos.</li>
+            <li>Recibir notificaciones sobre expedientes y solicitudes.</li>
+            <li>Acceder a inscripciones a cursos y capacitaciones.</li>
+            <li>Interactuar con servicios municipales.</li>
+          </ul>
+          <p className="text-base text-gray-700 leading-relaxed">
+            La información recibida a través del Perfil Digital es confidencial y no será divulgada sin el consentimiento del usuario, salvo requerimiento de autoridad competente o disposición legal.
           </p>
 
+          <h3 className="text-xl font-semibold text-gray-800 mt-8">Seguridad de la Información</h3>
           <p className="text-base text-gray-700 leading-relaxed">
-            Al proporcionar Datos Personales, los Usuarios reconocen y aceptan
-            que dichos datos puedan ser utilizados por la Municipalidad y/o
-            transferidos desde su ubicación actual a las oficinas y/o servidores
-            de la Municipalidad. La Municipalidad proporciona a los Usuarios los
-            recursos técnicos adecuados para que tomen conocimiento de las
-            presentes Políticas de Privacidad.
+            La Municipalidad implementa medidas de seguridad para proteger la información almacenada en sus sistemas. Sin embargo, no garantiza que sus plataformas estén exentas de vulnerabilidades. El usuario es responsable de mantener la confidencialidad de su información de acceso y de notificar cualquier actividad sospechosa.
           </p>
 
+          <h3 className="text-xl font-semibold text-gray-800 mt-8">Limitación de Responsabilidad</h3>
           <p className="text-base text-gray-700 leading-relaxed">
-            La Municipalidad no recopila ni trata ningún tipo de información
-            personal por parte de los Usuarios sin que la misma sea
-            explícitamente provista voluntariamente.
+            La Municipalidad no será responsable por daños derivados del uso de los activos digitales, incluyendo interrupciones del servicio, errores en la información publicada o acceso no autorizado a datos.
           </p>
 
+          <h3 className="text-xl font-semibold text-gray-800 mt-8">Contacto</h3>
           <p className="text-base text-gray-700 leading-relaxed">
-            La Municipalidad, mantiene absoluta confidencialidad acerca de los
-            Datos Personales que recopila y puede utilizar esta información para
-            comunicarse con los Usuarios para informarle sobre servicios y/o
-            trámites que considera de interés. En estos casos, el usuario tendrá
-            disponible la opción de dejar de recibir dicha comunicación.
-          </p>
-
-          <p className="text-base text-gray-700 leading-relaxed">
-            Al crear su Perfil Digital el Usuario deberá consignar sus datos
-            personales en un formulario que contiene campos obligatorios y
-            campos opcionales. Los datos solicitados serán utilizados para su
-            inclusión en una base de datos de Perfil Digital a fin de satisfacer
-            y optimizar los servicios prestados por la Municipalidad al
-            ciudadano; permitir al Usuario acceder de una manera centralizada a
-            los trámites en curso, a los expedientes administrativos, a las
-            solicitudes que deban tramitarse ante la Municipalidad, a las
-            notificaciones de sus trámites, inscripciones a capacitaciones y/o
-            cursos y todo aquél acto administrativo en el cual el ciudadano deba
-            interactuar con la Municipalidad.
-          </p>
-
-          <p className="text-base text-gray-700 leading-relaxed">
-            Toda información que sea recibida a través del Perfil Digital,
-            determinada por ley y referida a los Usuarios, es confidencial y no
-            puede hacerse pública sin el consentimiento previo de aquellos,
-            salvo que sea requerida por la autoridad competente, cumpliendo con
-            las normas y recaudos establecidos para la protección de datos
-            personales o en en virtud de una disposición legal que así lo
-            establezca.
+            Para consultas sobre estos Términos y Condiciones, los usuarios pueden comunicarse con la Municipalidad de San Nicolás de los Arroyos a través de sus canales oficiales.
           </p>
         </div>
       </div>

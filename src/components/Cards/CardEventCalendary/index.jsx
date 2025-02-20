@@ -1,16 +1,12 @@
-import { useNavigate } from "react-router-dom";
-
 export default function CardEventCalendary({ day, title, bgColor, isSelected, event }) {
-  const navigate = useNavigate();
-
   const handleClick = () => {
-    navigate(`/event/${event.id}`, { state: event }); 
+    window.open("https://www.instagram.com/descubrisannicolas/", "_blank");
   };
 
   return (
     <div
       onClick={handleClick}
-      className={`flex w-full font-grotesk cursor-pointer h-20 items-center select-none p-4 bg-white border rounded-lg shadow transition-transform duration-500 ease-in-out lg:max-w-[400px] 
+      className={`flex w-full cursor-pointer font-grotesk h-20 items-center select-none p-4 bg-white border rounded-lg shadow transition-transform duration-500 ease-in-out lg:max-w-[400px] 
         ${isSelected ? "shadow-lg scale-105" : "hover:shadow-lg hover:scale-105"}`}
     >
       <div className={`w-24 h-full flex items-center justify-center rounded-lg ${bgColor}`}>
