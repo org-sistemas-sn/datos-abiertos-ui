@@ -10,12 +10,13 @@ export default function CategoryHomeCard({ icon, name }) {
     if (!text) return "";
 
     return text
-      .toLowerCase()
       .split(" ")
-      .map((word) =>
-        word === "y"
+      .map((word) => 
+        word.toUpperCase() === "GIS"
+          ? "GIS" // Mantener "GIS" en mayúsculas
+          : word === "y"
           ? "y" // Mantener "y" en minúscula
-          : word.charAt(0).toUpperCase() + word.slice(1) // Primera letra en mayúscula
+          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() // Primera letra en mayúscula
       )
       .join(" ");
   };
@@ -29,7 +30,7 @@ export default function CategoryHomeCard({ icon, name }) {
         </div>
         {/* Contenedor del texto */}
         <div className="w-[65%] md:w-auto h-full flex items-center">
-          <p className="text-sn md:ml-4 md:text-[1.5rem] font-semibold text-base text-center truncate">
+          <p className="text-sn md:ml-4 md:text-[1.5rem] font-semibold text-base text-center truncate font-grotesk">
             {formatName(name)}
           </p>
         </div>

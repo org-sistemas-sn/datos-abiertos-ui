@@ -4,7 +4,9 @@ import Breadcrumb from "../../components/Breadcrumb";
 import { useNavigate } from "react-router-dom";
 import { useSectionContext } from "../../context/sectionContext/sectionContext";
 import MoonLoader from "react-spinners/MoonLoader";
+import checkCircle from "../../assets/icons/check-circle.png";
 import { itemsService } from "../../services/items/itemsService";
+import { gisDetailsService } from "../../services/gisDetail/gisDetailService";
 import Swal from "sweetalert2";
 
 const ItemDetail = () => {
@@ -15,10 +17,10 @@ const ItemDetail = () => {
   const [selectedTheme, setSelectedTheme] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [gisDetails, setGisDetails] = useState(null);
   const [fileData, setFileData] = useState(null);
   const [tableData, setTableData] = useState([]);
 
-  // Recuperar `selectedTheme` y `selectedSection` desde localStorage al montar el componente
   useEffect(() => {
     const storedTheme = localStorage.getItem("selectedTheme");
     const storedSection = localStorage.getItem("selectedSection");
@@ -32,7 +34,6 @@ const ItemDetail = () => {
     }
   }, []);
 
-  // Buscar el ítem dentro del tema actual
   const item = selectedTheme?.items?.find((item) => item.id === itemId);
 
   useEffect(() => {
@@ -40,45 +41,60 @@ const ItemDetail = () => {
       itemsService
         .getItemData(itemId)
         .then((data) => {
-          console.log("Archivo obtenido desde el servicio:", data);
           setFileData(data);
-
-          // 📌 Tomar los últimos 10 registros del JSON si existen
           if (data?.data && Array.isArray(data.data)) {
-            setTableData(data.data.slice(-10));
+            setTableData(data.data);
           }
         })
         .catch((error) => {
-          console.error("Error al obtener el archivo:", error);
+          console.error("❌ Error al obtener el archivo:", error);
         })
         .finally(() => setIsLoading(false));
     }
   }, [item, itemId]);
 
+  useEffect(() => {
+    if (item?.have_gis_detail === true || item?.have_gis_detail === 1) {
+      gisDetailsService
+        .getGisDetailsById(item.id)
+        .then((data) => {
+          console.log("GIS Details:", data);
+          setGisDetails(data);
+        })
+        .catch((error) => {
+          console.error("❌ Error al obtener los detalles GIS:", error);
+        });
+    }
+  }, [item]);
+
   if (!item) {
+    console.error("❌ El item no fue encontrado. Verifica el estado.");
     return (
-      <div className="w-full h-screen flex items-center justify-center">
-        <h1 className="text-2xl font-bold text-red-500">
-          El ítem solicitado no fue encontrado.
-        </h1>
-      </div>
+      <div className="w-full h-screen flex items-center justify-center"></div>
     );
+  } else {
+    console.log("have gis detail?:", item.have_gis_detail);
+  }
+
+  if (!item.type) {
+    console.error("❌ El tipo de archivo no está definido en item.");
   }
 
   const handleLoad = () => {
-    console.log("Iframe cargado completamente");
     setIsLoading(false);
   };
 
   let ftpUrl = import.meta.env.VITE_FTP_SERVER_URL;
 
   if (item.type === "XLSX") {
-    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${item.url_or_ftp_path}`;
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${
+      item.url_or_ftp_path
+    }`;
   } else if (item.type === "CSV") {
-    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${item.url_or_ftp_path}`;
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${
+      item.url_or_ftp_path
+    }`;
   }
-
-  console.log(ftpUrl);
 
   const handleDownload = () => {
     Swal.fire({
@@ -100,7 +116,7 @@ const ItemDetail = () => {
   };
 
   return (
-    <div className="w-full h-auto mt-24">
+    <div className="w-full h-auto mt-24 font-grotesk">
       {/* Breadcrumb */}
       <Breadcrumb
         category={selectedSection}
@@ -157,6 +173,117 @@ const ItemDetail = () => {
                   onLoad={handleLoad} // Detecta cuando carga el iframe
                 ></iframe>
               </div>
+              {item.have_gis_detail === 1 ? (
+                <div className="w-full">
+                  {/* Título */}
+                  <div className="w-full mt-5 flex items-center">
+                    <h4 className="text-xl ml-2 font-bold text-[#3e4345]">
+                      INFORMACIÓN DE LUGARES
+                    </h4>
+                  </div>
+
+                  {/* Categorías */}
+                  <div className="flex ml-2 flex-col md:flex-row md:items-center md:gap-x-4 gap-y-3 mt-3">
+                    <div className="flex items-center">
+                      <div className="rounded-full h-[15px] w-[15px] bg-[#0378ad]"></div>
+                      <span className="ml-2 text-[#3e4345]">
+                        Gestión Municipal
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="rounded-full h-[15px] w-[15px] bg-[#34a354]"></div>
+                      <span className="ml-2 text-[#3e4345]">
+                        Gestión Provincial
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="rounded-full h-[15px] w-[15px] bg-[#c77b0a]"></div>
+                      <span className="ml-2 text-[#3e4345]">
+                        Gestión Privada
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Contenedor de Cards */}
+                  <div className="w-full pt-5 pb-5 h-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {gisDetails?.map((detail, index) => (
+                        <div
+                          key={index}
+                          className="w-full h-[300px] rounded-md bg-[#f2f7ff] pl-5 pt-5 pb-5 shadow-md"
+                        >
+                          <div className="w-full h-full">
+                            {/* Nombre + Categoría */}
+                            <div className="w-full h-auto flex">
+                              <div className="w-[85%] h-full">
+                                <h5 className="text-xl text-[#3e4345] font-semibold">
+                                  {detail.name}
+                                </h5>
+                              </div>
+                              <div className="w-[15%] flex justify-center items-center">
+                                <div 
+                                  className={`rounded-full h-[20px] w-[20px] 
+                                    ${detail.management === "Gestión Privada" ? "bg-[#c77b0a]" : 
+                                      detail.management === "Gestión Provincial" ? "bg-[#34a354]" : 
+                                      detail.management === "Gestión Municipal" ? "bg-[#0378ad]" : "bg-gray-400"}`}
+                                />
+                              </div>
+                            </div>
+
+                            {/* Horario y Teléfono */}
+                            <div className="w-full h-auto flex mt-3">
+                              <div className="w-[50%]">
+                                <span className="font-semibold">Horario</span>
+                                <br />
+                                <span className="text-[#677073]">
+                                  {detail.opening_hours}
+                                </span>
+                              </div>
+                              <div className="w-[50%]">
+                                <span className="font-semibold">Teléfono</span>
+                                <br />
+                                <span className="text-[#677073]">
+                                  {detail.tel}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Dirección */}
+                            <div className="w-full h-auto pt-3">
+                              <span className="font-semibold">Dirección</span>
+                              <br />
+                              <span className="text-[#677073]">
+                                {detail.location}
+                              </span>
+                            </div>
+
+                            {/* Seguro Médico */}
+                            {detail.smm === true || detail.smm === 1 ? (
+                              <div className="w-full h-[60px] flex items-center mt-4">
+                                <div className="w-auto h-[30px] bg-[#c4e0ff] rounded-md pl-2 flex items-center">
+                                  <span className="text-[14px] text-[#0378ad] font-semibold">
+                                    Seguro Médico Municipal Aplicable
+                                  </span>
+                                  <div className="w-[30px] flex justify-center items-center h-full">
+                                    <img
+                                      src={checkCircle}
+                                      className="object-contain w-[60%] h-[60%]"
+                                      alt="checkcircle"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
               <div className="w-full h-20 flex items-center">
                 <h4 className="text-2xl font-semibold text-[#3e4345] mt-2">
                   Información adicional
@@ -292,63 +419,52 @@ const ItemDetail = () => {
               {/* Campos de este recurso */}
               <div className="mt-6">
                 <h2 className="text-2xl font-semibold text-[#3e4345] mb-4">
-                  Ultimos 10 registros del {item.type}
+                  Últimos 10 registros del {item.type}
                 </h2>
+
                 <div className="overflow-x-auto w-full">
                   {isLoading ? (
                     <div className="w-full h-[30vh] flex justify-center items-center">
-                      <MoonLoader color="#0477AD" size={50}/>
+                      <MoonLoader color="#0477AD" size={50} />
                     </div>
                   ) : (
-                    <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
-                      <tbody>
-                        {tableData.length > 0 && (
-                          <div className="overflow-x-auto w-full">
-                            <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
-                              <thead>
-                                <tr className="bg-[#f2f7ff]">
-                                  {/* Renderiza dinámicamente las columnas según las claves del JSON */}
-                                  {tableData.length > 0 &&
-                                    Object.keys(tableData[0]).map(
-                                      (key, index) => (
-                                        <th
-                                          key={index}
-                                          className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-left font-semibold text-[#3e4345]"
-                                        >
-                                          {key}
-                                        </th>
-                                      )
-                                    )}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {tableData.map((row, rowIndex) => (
-                                  <tr
-                                    key={rowIndex}
-                                    className={
-                                      rowIndex % 2 === 0
-                                        ? "bg-[#f9fafb]"
-                                        : "bg-white"
-                                    }
-                                  >
-                                    {Object.values(row).map(
-                                      (value, colIndex) => (
-                                        <td
-                                          key={colIndex}
-                                          className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-[#3e4345]"
-                                        >
-                                          {value}
-                                        </td>
-                                      )
-                                    )}
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
-                      </tbody>
-                    </table>
+                    tableData.length > 0 && (
+                      <table className="min-w-full border-collapse border border-gray-200 bg-white rounded-lg">
+                        <thead>
+                          <tr className="bg-[#f2f7ff]">
+                            {/* Renderizar encabezados solo si hay datos */}
+                            {tableData.length > 0 &&
+                              Object.keys(tableData[0]).map((key, index) => (
+                                <th
+                                  key={index}
+                                  className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-left font-semibold text-[#3e4345]"
+                                >
+                                  {key}
+                                </th>
+                              ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {tableData.map((row, rowIndex) => (
+                            <tr
+                              key={rowIndex}
+                              className={
+                                rowIndex % 2 === 0 ? "bg-[#f9fafb]" : "bg-white"
+                              }
+                            >
+                              {Object.keys(row).map((key, colIndex) => (
+                                <td
+                                  key={colIndex}
+                                  className="border border-gray-200 px-4 lg:px-6 py-2 lg:py-4 text-[#3e4345]"
+                                >
+                                  {row[key]}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    )
                   )}
                 </div>
               </div>

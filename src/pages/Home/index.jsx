@@ -18,6 +18,11 @@ import { containerVariants, itemVariants } from "../../utils/homeMotionVariants/
 export const Home = () => {
   const [date, setDate] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState("");
+  const [sections, setSections] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [events, setEvents] = useState([]);
+  const [highlightedDates, setHighlightedDates] = useState([]);
+  const [loading, setLoading] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
 
   const navigate = useNavigate();
@@ -28,9 +33,86 @@ export const Home = () => {
     horas: 0,
   });
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
 
-  const { sections, loadingSections, errorSections, refreshSections } = useSections();
-  const { events, highlightedDates, loadingEvents, errorEvents } = useEvents(date);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  };
+
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const sectionsData = await sectionsService.getAllSections();
+        setSections(sectionsData);
+      } catch (error) {
+        console.error("Error al obtener las secciones:", error);
+      }
+    };
+
+    fetchSections();
+  }, []);
+
+  const fetchEvents = async (selectedDate) => {
+    try {
+      const data = await dateService.getDatesByMonthYear(selectedDate);
+      setEvents(data);
+  
+      const formattedDates = data.map((event) => {
+        // Descomponer la fecha manualmente para evitar desfases de zona horaria
+        const [year, month, day] = event.date.split("-").map(Number);
+        const dateObj = new Date(year, month - 1, day); // Meses en JS son 0-indexed
+  
+        const dayName = dateObj.toLocaleDateString("es-ES", { weekday: "long" });
+        const monthName = dateObj.toLocaleDateString("es-ES", { month: "long" });
+  
+        const dayFormatted = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+        const monthFormatted = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+  
+        return {
+          fullDate: dateObj.toLocaleDateString("es-ES", {
+            weekday: "long",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+          }),
+          day: dayFormatted,
+          month: monthFormatted,
+          monthNumber: dateObj.getMonth() + 1,
+          number: day.toString(),
+          year: year.toString(),
+          title: event.title,
+          id: event.id,
+          date: event.date,
+          description: event.description,
+          img_path: event.img_path
+        };
+      });
+  
+      setHighlightedDates(formattedDates);
+      console.log("Highlighted Dates:", formattedDates);
+    } catch (error) {
+      console.error("Error al cargar eventos:", error);
+    }
+  };
+  
+
+
+  useEffect(() => {
+    fetchEvents(date);
+  }, [date]);
+
+  const handleMonthChange = (newDate) => {
+    setDate(newDate);
+  };
 
   useEffect(() => {
     const animateCount = (key, end) => {
@@ -38,7 +120,7 @@ export const Home = () => {
       const duration = 2500;
       const stepTime = duration / end;
       const timer = setInterval(() => {
-        start += Math.ceil(end / 25);
+        start += Math.ceil(end / 50);
         if (start >= end) {
           start = end;
           clearInterval(timer);
@@ -52,7 +134,6 @@ export const Home = () => {
     animateCount("horas", 42000);
   }, []);
 
-  // Colores predefinidos
   const bgColors = [
     "bg-blue-100",
     "bg-pink-100",
@@ -62,22 +143,12 @@ export const Home = () => {
 
   const handleSearch = async () => {
     if (searchTerm.trim() !== "") {
-      Swal.fire({
-        title: "Buscando...",
-        text: "Por favor, espera mientras encontramos los resultados.",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-
       try {
         const results = await itemsService.getItemsByName(searchTerm);
 
         if (Array.isArray(results) && results.length > 0) {
           setSearchResults(results);
 
-          // Oculta la alerta y redirige automáticamente
           Swal.close();
           navigate("/itemssearch", { state: { searchTerm, results } });
         } else {
@@ -122,11 +193,15 @@ export const Home = () => {
     }
   };
 
-  // Función para manejar la tecla "Enter"
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearch();
     }
+  };
+
+  const handleDateClick = (value) => {
+    const formattedDate = value.toISOString().split("T")[0]; // Formato YYYY-MM-DD
+    setSelectedDate(formattedDate);
   };
 
   return (
@@ -286,7 +361,7 @@ export const Home = () => {
             </div>
           </div>
         </div>
-        <div className="w-full h-auto flex flex-col items-center max-w-[1500px]">
+        <div className="w-full h-auto flex flex-col items-center max-w-[1650px]">
           <div className="w-[90%]">
             <div className="w-full pb-6 h-12 flex items-center">
               <h6 className="font-semibold text-xl font-grotesk text-[#3e4345] select-none">
@@ -294,38 +369,62 @@ export const Home = () => {
               </h6>
             </div>
           </div>
-          <div className="w-[90%] h-full flex">
+          <div className="w-[90%] h-auto flex">
             <div className="w-[360px] h-auto">
-              <div className="bg-white border-none rounded-lg flex">
+              <div className="bg-white border-none rounded-lg flex pb-5">
                 <Calendar
-                  className="react-calendar"
+                  className="react-calendar font-grotesk"
                   tileClassName={({ date, view }) => {
                     if (view === "month") {
-                      const dayNumber = date.getDate(); // Obtener el número del día (1-31)
-                      const monthNumber = date.getMonth() + 1; // Obtener el mes (1-12)
-                      const yearNumber = date.getFullYear(); // Obtener el año
+                      const dayNumber = date.getDate();
+                      const monthNumber = date.getMonth() + 1;
+                      const yearNumber = date.getFullYear();
 
-                      // Verificar si el día, mes y año coinciden con un evento
                       const isHighlighted = highlightedDates.some(
                         (event) =>
                           parseInt(event.number, 10) === dayNumber &&
-                          parseInt(event.monthNumber, 10) === monthNumber && // Verificar mes
-                          parseInt(event.year, 10) === yearNumber // Verificar año
+                          parseInt(event.monthNumber, 10) === monthNumber &&
+                          parseInt(event.year, 10) === yearNumber
                       );
 
                       return isHighlighted ? "highlighted-date" : null;
                     }
                     return null;
                   }}
-                  navigationLabel={({ date }) =>
-                    `${date.toLocaleDateString("es-ES", {
+                  navigationLabel={({ date }) => {
+                    const monthName = date.toLocaleDateString("es-ES", {
                       month: "long",
-                      year: "numeric",
-                    })}`
+                    });
+                    const formattedMonth =
+                      monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                    return `${formattedMonth} de ${date.getFullYear()}`;
+                  }}
+                  prevLabel="‹"
+                  nextLabel="›"
+                  prev2Label={null}
+                  next2Label={null}
+                  minDetail="month"
+                  maxDetail="month"
+                  minDate={
+                    new Date(
+                      new Date().getFullYear(),
+                      new Date().getMonth() - 1,
+                      1
+                    )
                   }
-                  onChange={setDate}
+                  maxDate={
+                    new Date(
+                      new Date().getFullYear(),
+                      new Date().getMonth() + 2,
+                      0
+                    )
+                  }
                   value={date}
                   locale="es-ES"
+                  onActiveStartDateChange={({ activeStartDate }) =>
+                    handleMonthChange(activeStartDate)
+                  }
+                  onClickDay={handleDateClick}
                 />
               </div>
             </div>
@@ -339,16 +438,28 @@ export const Home = () => {
                     initial="hidden"
                     animate="show"
                   >
-                    {highlightedDates.map((event, index) => (
-                      <motion.div key={index} variants={itemVariants}>
-                        <CardEventCalendary
-                          day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
-                          month={event.month} // Ejemplo: "Febrero"
-                          title={event.title} // Mantiene el título del evento
-                          bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
-                        />
-                      </motion.div>
-                    ))}
+                    {highlightedDates.map((event, index) => {
+                      const isSelected =
+                        `${event.year}-${event.monthNumber
+                          .toString()
+                          .padStart(2, "0")}-${event.number.padStart(
+                          2,
+                          "0"
+                        )}` === selectedDate;
+
+                      return (
+                        <motion.div key={index} variants={itemVariants}>
+                          <CardEventCalendary
+                            day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
+                            month={event.month} // Ejemplo: "Febrero"
+                            title={event.title} // Mantiene el título del evento
+                            bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
+                            isSelected={isSelected}
+                            event={event} // Pasa todo el objeto evento
+                          />
+                        </motion.div>
+                      );
+                    })}
                   </motion.div>
                 </div>
               </div>
@@ -448,34 +559,59 @@ export const Home = () => {
                   </h3>
                   <div className="bg-white border-none rounded-lg">
                     <Calendar
-                      className="react-calendar"
+                      className="react-calendar font-grotesk"
                       tileClassName={({ date, view }) => {
                         if (view === "month") {
-                          const dayNumber = date.getDate(); // Obtener el número del día (1-31)
-                          const monthNumber = date.getMonth() + 1; // Obtener el mes (1-12)
-                          const yearNumber = date.getFullYear(); // Obtener el año
+                          const dayNumber = date.getDate();
+                          const monthNumber = date.getMonth() + 1;
+                          const yearNumber = date.getFullYear();
 
-                          // Verificar si el día, mes y año coinciden con un evento
                           const isHighlighted = highlightedDates.some(
                             (event) =>
                               parseInt(event.number, 10) === dayNumber &&
-                              parseInt(event.monthNumber, 10) === monthNumber && // Verificar mes
-                              parseInt(event.year, 10) === yearNumber // Verificar año
+                              parseInt(event.monthNumber, 10) === monthNumber &&
+                              parseInt(event.year, 10) === yearNumber
                           );
 
                           return isHighlighted ? "highlighted-date" : null;
                         }
                         return null;
                       }}
-                      navigationLabel={({ date }) =>
-                        `${date.toLocaleDateString("es-ES", {
+                      navigationLabel={({ date }) => {
+                        const monthName = date.toLocaleDateString("es-ES", {
                           month: "long",
-                          year: "numeric",
-                        })}`
+                        });
+                        const formattedMonth =
+                          monthName.charAt(0).toUpperCase() +
+                          monthName.slice(1);
+                        return `${formattedMonth} de ${date.getFullYear()}`;
+                      }}
+                      prevLabel="‹"
+                      nextLabel="›"
+                      prev2Label={null}
+                      next2Label={null}
+                      minDetail="month"
+                      maxDetail="month"
+                      minDate={
+                        new Date(
+                          new Date().getFullYear(),
+                          new Date().getMonth() - 1,
+                          1
+                        )
                       }
-                      onChange={setDate}
+                      maxDate={
+                        new Date(
+                          new Date().getFullYear(),
+                          new Date().getMonth() + 2,
+                          0
+                        )
+                      }
                       value={date}
                       locale="es-ES"
+                      onClickDay={handleDateClick}
+                      onActiveStartDateChange={({ activeStartDate }) =>
+                        handleMonthChange(activeStartDate)
+                      } // 🔹 Agregado para detectar cambio de mes
                     />
                   </div>
                 </div>
@@ -491,16 +627,27 @@ export const Home = () => {
                     initial="hidden"
                     animate="show"
                   >
-                    {highlightedDates.map((event, index) => (
-                      <motion.div key={index} variants={itemVariants}>
-                        <CardEventCalendary
-                          day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
-                          month={event.month} // Ejemplo: "Febrero"
-                          title={event.title} // Mantiene el título del evento
-                          bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
-                        />
-                      </motion.div>
-                    ))}
+                    {highlightedDates.map((event, index) => {
+                      const isSelected =
+                        `${event.year}-${event.monthNumber
+                          .toString()
+                          .padStart(2, "0")}-${event.number.padStart(
+                          2,
+                          "0"
+                        )}` === selectedDate;
+
+                      return (
+                        <motion.div key={index} variants={itemVariants}>
+                          <CardEventCalendary
+                            day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
+                            month={event.month} // Ejemplo: "Febrero"
+                            title={event.title} // Mantiene el título del evento
+                            bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
+                            isSelected={isSelected}
+                          />
+                        </motion.div>
+                      );
+                    })}
                   </motion.div>
                 </div>
               </div>
@@ -608,34 +755,58 @@ export const Home = () => {
             </h3>
             <div className="bg-white border-none rounded-lg flex">
               <Calendar
-                className="react-calendar"
+                className="react-calendar font-grotesk"
                 tileClassName={({ date, view }) => {
                   if (view === "month") {
-                    const dayNumber = date.getDate(); // Obtener el número del día (1-31)
-                    const monthNumber = date.getMonth() + 1; // Obtener el mes (1-12)
-                    const yearNumber = date.getFullYear(); // Obtener el año
+                    const dayNumber = date.getDate();
+                    const monthNumber = date.getMonth() + 1;
+                    const yearNumber = date.getFullYear();
 
-                    // Verificar si el día, mes y año coinciden con un evento
                     const isHighlighted = highlightedDates.some(
                       (event) =>
                         parseInt(event.number, 10) === dayNumber &&
-                        parseInt(event.monthNumber, 10) === monthNumber && // Verificar mes
-                        parseInt(event.year, 10) === yearNumber // Verificar año
+                        parseInt(event.monthNumber, 10) === monthNumber &&
+                        parseInt(event.year, 10) === yearNumber
                     );
 
                     return isHighlighted ? "highlighted-date" : null;
                   }
                   return null;
                 }}
-                navigationLabel={({ date }) =>
-                  `${date.toLocaleDateString("es-ES", {
+                navigationLabel={({ date }) => {
+                  const monthName = date.toLocaleDateString("es-ES", {
                     month: "long",
-                    year: "numeric",
-                  })}`
+                  });
+                  const formattedMonth =
+                    monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                  return `${formattedMonth} de ${date.getFullYear()}`;
+                }}
+                prevLabel="‹"
+                nextLabel="›"
+                prev2Label={null}
+                next2Label={null}
+                minDetail="month"
+                maxDetail="month"
+                minDate={
+                  new Date(
+                    new Date().getFullYear(),
+                    new Date().getMonth() - 1,
+                    1
+                  )
                 }
-                onChange={setDate}
+                maxDate={
+                  new Date(
+                    new Date().getFullYear(),
+                    new Date().getMonth() + 2,
+                    0
+                  )
+                }
                 value={date}
                 locale="es-ES"
+                onClickDay={handleDateClick}
+                onActiveStartDateChange={({ activeStartDate }) =>
+                  handleMonthChange(activeStartDate)
+                } // 🔹 Agregado para detectar cambio de mes
               />
             </div>
           </div>
@@ -650,16 +821,25 @@ export const Home = () => {
               initial="hidden"
               animate="show"
             >
-              {highlightedDates.map((event, index) => (
-                <motion.div key={index} variants={itemVariants}>
-                  <CardEventCalendary
-                    day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
-                    month={event.month} // Ejemplo: "Febrero"
-                    title={event.title} // Mantiene el título del evento
-                    bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
-                  />
-                </motion.div>
-              ))}
+              {highlightedDates.map((event, index) => {
+                const isSelected =
+                  `${event.year}-${event.monthNumber
+                    .toString()
+                    .padStart(2, "0")}-${event.number.padStart(2, "0")}` ===
+                  selectedDate;
+
+                return (
+                  <motion.div key={index} variants={itemVariants}>
+                    <CardEventCalendary
+                      day={`${event.day} ${event.number}`} // Ejemplo: "Martes 25"
+                      month={event.month} // Ejemplo: "Febrero"
+                      title={event.title} // Mantiene el título del evento
+                      bgColor={bgColors[index % bgColors.length]} // Asigna el color según el índice
+                      isSelected={isSelected}
+                    />
+                  </motion.div>
+                );
+              })}
             </motion.div>
           </div>
         </div>

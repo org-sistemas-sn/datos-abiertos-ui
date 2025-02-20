@@ -9,7 +9,7 @@ import saludWhite from "../../assets/icons/salud-white.png"; // Asegúrate de us
 import snLogo from "../../assets/sn-logos/san-nicolas.logo.png";
 import snMobile from "../../assets/sn-logos/sn-mobile-logo.png";
 import movilidadWhite from "../../assets/icons/movilidad-white.png";
-import descubriWhite from "../../assets/icons/descubri-white.png";
+import datosWhite from "../../assets/icons/datos-white.png";
 import gisWhite from "../../assets/icons/gis-white.png";
 import educacionWhite from "../../assets/icons/educacion-white.png";
 import crossIcon from "../../assets/icons/x-circle.png";
@@ -32,7 +32,7 @@ export default function Header() {
     },
     {
       id: 3,
-      icon: descubriWhite,
+      icon: datosWhite,
     },
     {
       id: 4,
@@ -90,7 +90,7 @@ export default function Header() {
           <div className="w-80 h-full flex items-center justify-evenly">
             <Link to={`/categorias`}>
               <span className="text-lg ml-20 mr-8 text-white cursor-pointer select-none hover:underline">
-                Categorias
+                Categorías
               </span>
             </Link>
             <Link to={`/acerca`}>
