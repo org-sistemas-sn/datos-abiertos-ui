@@ -49,7 +49,7 @@ export default function About() {
           <ul className="list-disc list-inside text-gray-700">
             <li>Facilitar el acceso centralizado a trámites administrativos.</li>
             <li>Recibir notificaciones sobre expedientes y solicitudes.</li>
-            <li>Acceder a inscripciones a cursos y capacitaciones.</li>
+            <li>Acceder a inscripciones a cursos y capacitaciones. </li>
             <li>Interactuar con servicios municipales.</li>
           </ul>
           <p className="text-base text-gray-700 leading-relaxed">
