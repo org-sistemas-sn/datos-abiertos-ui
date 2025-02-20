@@ -1,7 +1,4 @@
-import { useNavigate } from "react-router-dom";
-
 export default function CardEventCalendary({ day, title, bgColor, isSelected, event }) {
-  const navigate = useNavigate();
 
   const handleClick = () => {
     window.open("https://www.instagram.com/descubrisannicolas/", "_blank");
