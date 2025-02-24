@@ -1,8 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
 import { sectionsService } from "../../services/sections/sectionService";
-import { useState } from "react";
-import Breadcrumb from "../../components/Breadcrumb"; // Importamos el Breadcrumb
+import Breadcrumb from "../../components/Breadcrumb";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -10,9 +9,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
+    transition: { staggerChildren: 0.2 },
   },
 };
 
@@ -40,10 +37,10 @@ export default function Categories() {
   return (
     <div className="mt-24 w-full h-auto flex flex-col items-center">
       {/* Breadcrumb con solo la flecha */}
-      <Breadcrumb
-        category={null} // No se necesita categoría para este caso
-        theme={null} // Tampoco hay tema
-        showTitle={false} // Solo mostramos la flecha para regresar
+      <Breadcrumb 
+        category={null}
+        theme={null}
+        showTitle={false}
       />
 
       {/* Título */}
@@ -64,7 +61,60 @@ export default function Categories() {
           >
             {sections.map((section) => (
               <motion.div key={section.id} variants={itemVariants}>
-                <Link to={`/themes/${section.id}`}>
+                <Link
+                  to={
+                    section.name === "GIS"
+                      ? "/item/10"
+                      : `/themes/${section.id}`
+                  }
+                  onClick={() => {
+                    if (section.name === "GIS") {
+                      localStorage.setItem(
+                        "selectedSection",
+                        JSON.stringify({
+                          id: 4,
+                          name: "GIS",
+                          icon_path: "gis.png",
+                          enabled: 1,
+                          createdAt: "2025-02-07T10:45:56.000Z",
+                          updatedAt: "2025-02-07T10:45:56.000Z",
+                          deletedAt: null,
+                        })
+                      );
+                      localStorage.setItem(
+                        "selectedTheme",
+                        JSON.stringify({
+                          id: 7,
+                          name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                          description:
+                            "plataforma de aplicaciones geográficas para la gestión municipal ",
+                          id_section: 4,
+                          items: [
+                            {
+                              id: 10,
+                              name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                              description:
+                                "plataforma de aplicaciones geográficas para la gestión municipal",
+                              url_or_ftp_path:
+                                "https://experience.arcgis.com/experience/b877e6b58fb6478d81b93da2cdea7774/?draft=true",
+                              id_theme: 7,
+                              type: "GIS",
+                              publication_date: "12/01/2025",
+                              responsible:
+                                "Secretaría de Innovación y ciudad inteligente",
+                              maintenance: "Departamento de Datos & GIS",
+                              have_gis_detail: 0,
+                              enabled: 1,
+                              createdAt: "2025-02-07T11:37:06.000Z",
+                              updatedAt: "2025-02-07T11:37:06.000Z",
+                              deletedAt: null,
+                            },
+                          ],
+                        })
+                      );
+                    }
+                  }}
+                >
                   <CategoryHomeCard
                     icon={section.icon_path}
                     name={section.name}

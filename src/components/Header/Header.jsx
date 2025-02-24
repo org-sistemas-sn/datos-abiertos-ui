@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
+import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
+import { sectionsService } from "../../services/sections/sectionService";
+import { useNavigate } from "react-router-dom";
+import { itemsService } from "../../services/items/itemsService";
+import { dateService } from "../../services/date/dateService";
+import "../../styles/customCalendar.css";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { FaChevronDown, FaChevronUp, FaHome, FaFileAlt } from "react-icons/fa";
 import { HiOutlineViewGrid } from "react-icons/hi";
-import { sectionsService } from "../../services/sections/sectionService";
-import saludWhite from "../../assets/icons/salud-white.png"; // Asegúrate de usar el formato de archivo correcto
+import saludWhite from "../../assets/icons/salud-white.png";
 import snLogo from "../../assets/sn-logos/san-nicolas.logo.png";
 import snMobile from "../../assets/sn-logos/sn-mobile-logo.png";
 import movilidadWhite from "../../assets/icons/movilidad-white.png";
@@ -22,27 +27,11 @@ export default function Header() {
   const ftpUrl = import.meta.env.VITE_FTP_SERVER_URL + "statics/icons/";
 
   const sectionsIcons = [
-    {
-      id: 1, // ID de la sección
-      icon: saludWhite, // Ruta al ícono correspondiente
-    },
-    {
-      id: 2,
-      icon: movilidadWhite,
-    },
-    {
-      id: 3,
-      icon: datosWhite,
-    },
-    {
-      id: 4,
-      icon: gisWhite,
-    },
-    {
-      id: 5,
-      icon: educacionWhite,
-    },
-    // Agrega más íconos según corresponda
+    { id: 1, icon: saludWhite },
+    { id: 2, icon: movilidadWhite },
+    { id: 3, icon: datosWhite },
+    { id: 4, icon: gisWhite },
+    { id: 5, icon: educacionWhite },
   ];
 
   useEffect(() => {
@@ -217,9 +206,9 @@ export default function Header() {
                 <ul className="p-4 space-y-4 text-base">
                   {sections.map((section, index) => {
                     const icon =
-                      sectionsIcons.find((iconObj) => iconObj.id === section.id)
-                        ?.icon || `${ftpUrl}default-icon.png`; // Ícono predeterminado si no hay coincidencia
-
+                      sectionsIcons.find(
+                        (iconObj) => iconObj.id === section.id
+                      )?.icon || `${ftpUrl}default-icon.png`;
                     return (
                       <motion.li
                         key={section.id}
@@ -236,8 +225,60 @@ export default function Header() {
                           />
                         </div>
                         <Link
-                          to={`/themes/${section.id}`}
-                          onClick={() => setIsOpen(false)}
+                          to={
+                            section.name === "GIS"
+                              ? "/item/10"
+                              : `/themes/${section.id}`
+                          }
+                          onClick={() => {
+                            if (section.name === "GIS") {
+                              localStorage.setItem(
+                                "selectedSection",
+                                JSON.stringify({
+                                  id: 4,
+                                  name: "GIS",
+                                  icon_path: "gis.png",
+                                  enabled: 1,
+                                  createdAt: "2025-02-07T10:45:56.000Z",
+                                  updatedAt: "2025-02-07T10:45:56.000Z",
+                                  deletedAt: null,
+                                })
+                              );
+                              localStorage.setItem(
+                                "selectedTheme",
+                                JSON.stringify({
+                                  id: 7,
+                                  name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                                  description:
+                                    "plataforma de aplicaciones geográficas para la gestión municipal ",
+                                  id_section: 4,
+                                  items: [
+                                    {
+                                      id: 10,
+                                      name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                                      description:
+                                        "plataforma de aplicaciones geográficas para la gestión municipal",
+                                      url_or_ftp_path:
+                                        "https://experience.arcgis.com/experience/b877e6b58fb6478d81b93da2cdea7774/?draft=true",
+                                      id_theme: 7,
+                                      type: "GIS",
+                                      publication_date: "12/01/2025",
+                                      responsible:
+                                        "Secretaría de Innovación y ciudad inteligente",
+                                      maintenance:
+                                        "Departamento de Datos & GIS",
+                                      have_gis_detail: 0,
+                                      enabled: 1,
+                                      createdAt: "2025-02-07T11:37:06.000Z",
+                                      updatedAt: "2025-02-07T11:37:06.000Z",
+                                      deletedAt: null,
+                                    },
+                                  ],
+                                })
+                              );
+                            }
+                            setIsOpen(false);
+                          }}
                         >
                           <span>{section.name}</span>
                         </Link>
