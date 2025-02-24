@@ -66,14 +66,6 @@ const Breadcrumb = ({ category, theme, item, showTitle = true }) => {
                 </span>
               </>
             )}
-            {item && (
-              <>
-                <span className="ml-1 font-semibold text-sn mb-5">/</span>
-                <span className="ml-1 font-grotesk text-[#677073] font-semibold text-sn mb-5">
-                  {item.type.toUpperCase()}
-                </span>
-              </>
-            )}
           </>
         )}
       </div>

@@ -9,6 +9,11 @@ import { itemsService } from "../../services/items/itemsService";
 import { gisDetailsService } from "../../services/gisDetail/gisDetailService";
 import Swal from "sweetalert2";
 
+function removeExtension(path) {
+  const dotIndex = path.lastIndexOf('.');
+  return dotIndex !== -1 ? path.substring(0, dotIndex) : path;
+}
+
 const ItemDetail = () => {
   const { id } = useParams();
   const itemId = parseInt(id, 10);
@@ -35,6 +40,9 @@ const ItemDetail = () => {
   }, []);
 
   const item = selectedTheme?.items?.find((item) => item.id === itemId);
+
+  const itemExtension = item ? removeExtension(item.url_or_ftp_path) : "";
+  console.log("Item filename without extension:", itemExtension);
 
   useEffect(() => {
     if (item && (item.type === "XLSX" || item.type === "CSV")) {
@@ -98,23 +106,34 @@ const ItemDetail = () => {
 
   const handleDownload = () => {
     Swal.fire({
-      title: "¿Estás seguro?",
-      text: `Vas a descargar el archivo: ${item.url_or_ftp_path}`,
-      icon: "warning",
+      title: "Elige el archivo que deseas descargar",
+      html: `
+        <button id="download-csv" style="margin: 10px; width: 60px; height: 35px; background-color: #bbf7d0; color: #065f46; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer;">CSV</button>
+        <button id="download-xlsx" style="margin: 10px; width: 60px; height: 35px; background-color: #fecaca; color: #7f1d1d; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 500; border-radius: 0.375rem; border: none; cursor: pointer;">XLSX</button>
+      `,
+      showConfirmButton: false,
       showCancelButton: true,
-      customClass: {
-        confirmButton: "custom-confirm-button",
-        cancelButton: "custom-cancel-button",
-      },
-      confirmButtonText: "Descargar",
       cancelButtonText: "Cancelar",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = ftpUrl;
-      }
+      didOpen: () => {
+        const popup = Swal.getPopup();
+        const cancelButton = popup.querySelector('.swal2-cancel');
+        if (cancelButton) {
+          cancelButton.style.backgroundColor = '#0477AD';
+        }
+        const btnCSV = popup.querySelector('#download-csv');
+        const btnXLSX = popup.querySelector('#download-xlsx');
+        btnCSV.addEventListener('click', () => {
+          Swal.close();
+          window.location.href = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${itemExtension}.csv`;
+        });
+        btnXLSX.addEventListener('click', () => {
+          Swal.close();
+          window.location.href = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${itemExtension}.xlsx`;
+        });
+      },
     });
   };
-
+  
   return (
     <div className="w-full h-auto mt-24 font-grotesk">
       {/* Breadcrumb */}
@@ -369,23 +388,6 @@ const ItemDetail = () => {
 
               {/* Contenedor dinámico */}
               <div className="flex md:flex-row md:items-center gap-2 mt-3">
-                {/* Etiqueta */}
-                <span
-                  className={`w-[50px] px-3 py-1 text-sm font-medium rounded ${
-                    item.type.toUpperCase() === "CSV"
-                      ? "bg-green-200 text-green-800"
-                      : item.type.toUpperCase() === "GIS"
-                      ? "bg-blue-200 text-blue-800"
-                      : item.type.toUpperCase() === "PBIX"
-                      ? "bg-yellow-200 text-yellow-800"
-                      : item.type.toUpperCase() === "XLSX"
-                      ? "bg-red-200 text-red-800"
-                      : "bg-gray-200 text-gray-800"
-                  }`}
-                >
-                  {item.type.toUpperCase()}
-                </span>
-
                 {/* Fecha de publicación */}
                 <span className="w-auto text-sm text-[#677073] bg-[#f2f7ff] rounded px-2 py-1">
                   Fecha de publicación: {item.publication_date}
@@ -419,7 +421,7 @@ const ItemDetail = () => {
               {/* Campos de este recurso */}
               <div className="mt-6">
                 <h2 className="text-2xl font-semibold text-[#3e4345] mb-4">
-                  Últimos 10 registros del {item.type}
+                  Últimos 10 registros
                 </h2>
 
                 <div className="overflow-x-auto w-full">

@@ -1,3 +1,4 @@
+// ThemeItems.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -12,9 +13,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
+    transition: { staggerChildren: 0.2 },
   },
 };
 
@@ -31,7 +30,6 @@ const ThemeItems = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Recuperar el tema guardado en localStorage al montar el componente
     const storedTheme = localStorage.getItem("selectedTheme");
     if (storedTheme) {
       const parsedTheme = JSON.parse(storedTheme);
@@ -43,32 +41,56 @@ const ThemeItems = () => {
       try {
         setLoading(true);
         setError(null);
-
-        // Obtener el tema con todos sus datos
         const themeData = await themeService.getThemeById(themeId);
-
-        // Obtener los items relacionados al themeId
         const itemsData = await itemsService.getItemsByThemeId(themeId);
-        setItems(itemsData);
 
-        // Guardar el tema seleccionado con toda la información en el contexto
+        const groups = {};
+        itemsData.forEach((item) => {
+          const name = item.name;
+          if (!groups[name]) groups[name] = [];
+          groups[name].push(item);
+        });
+
+        const aggregatedItems = [];
+        Object.values(groups).forEach((group) => {
+          const mergeable = group.filter((item) => {
+            const t = item.type.trim().toUpperCase();
+            return t === "CSV" || t === "XLSX";
+          });
+          const nonMergeable = group.filter((item) => {
+            const t = item.type.trim().toUpperCase();
+            return !(t === "CSV" || t === "XLSX");
+          });
+          const hasCSV = mergeable.some((item) => item.type.trim().toUpperCase() === "CSV");
+          const hasXLSX = mergeable.some((item) => item.type.trim().toUpperCase() === "XLSX");
+          if (hasCSV && hasXLSX) {
+            aggregatedItems.push({
+              ...mergeable[0],
+              merged: true,
+              files: mergeable,
+            });
+          } else {
+            mergeable.forEach((item) => aggregatedItems.push(item));
+          }
+          nonMergeable.forEach((item) => aggregatedItems.push(item));
+        });
+
+        setItems(aggregatedItems);
         const newTheme = {
           id: themeData.id,
           name: themeData.name,
           description: themeData.description,
           id_section: themeData.id_section,
-          items: itemsData,
+          items: aggregatedItems,
         };
-
         setSelectedTheme(newTheme);
-        localStorage.setItem("selectedTheme", JSON.stringify(newTheme)); // Guardar en localStorage
+        localStorage.setItem("selectedTheme", JSON.stringify(newTheme));
         console.log("🟢 Theme guardado en localStorage:", newTheme);
 
-        // Si no hay una sección seleccionada, obtener y guardar la sección
         if (!selectedSection || selectedSection.id !== themeData.id_section) {
           const sectionData = await themeService.getSectionById(themeData.id_section);
           setSelectedSection(sectionData);
-          localStorage.setItem("selectedSection", JSON.stringify(sectionData)); // Guardar sección en localStorage
+          localStorage.setItem("selectedSection", JSON.stringify(sectionData));
           console.log("🟢 Sección guardada en localStorage:", sectionData);
         }
       } catch (err) {
@@ -96,10 +118,7 @@ const ThemeItems = () => {
 
   return (
     <div className="w-full h-auto mt-24 flex flex-col items-center">
-      {/* Breadcrumb con la sección */}
       <Breadcrumb category={selectedSection} theme={selectedTheme} showTitle={false} />
-
-      {/* Título y descripción del tema */}
       <div className="w-full flex justify-center max-w-[1730px]">
         <div className="w-[92%] pt-4">
           <h2 className="font-grotesk text-3xl font-semibold text-[#3e4345]">
@@ -108,14 +127,11 @@ const ThemeItems = () => {
           <div className="w-full pt-1 font-semibold text-[#677073]">
             {selectedTheme?.description}
           </div>
-
-          {/* Si el tema no tiene ítems, mostrar un mensaje */}
           {items.length === 0 ? (
             <div className="w-full text-center mt-6 text-gray-500 text-lg font-semibold">
               <p>Este tema no tiene ítems relacionados.</p>
             </div>
           ) : (
-            /* Tarjetas de los items con animación escalonada */
             <motion.div
               className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6"
               variants={containerVariants}
@@ -124,16 +140,7 @@ const ThemeItems = () => {
             >
               {items.map((item) => (
                 <motion.div key={item.id} variants={itemVariants}>
-                  <ItemCard
-                    id={item.id}
-                    name={item.name}
-                    description={item.description}
-                    type={item.type}
-                    publicationDate={item.publication_date}
-                    url_or_ftp_path={item.url_or_ftp_path}
-                    selectedSection={selectedSection}
-                    selectedTheme={selectedTheme}
-                  />
+                  <ItemCard {...item} />
                 </motion.div>
               ))}
             </motion.div>

@@ -25,6 +25,10 @@ export const Home = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
+
   const [counts, setCounts] = useState({
     nicoleños: 0,
     becas: 0,
@@ -63,18 +67,23 @@ export const Home = () => {
     try {
       const data = await dateService.getDatesByMonthYear(selectedDate);
       setEvents(data);
-  
+
       const formattedDates = data.map((event) => {
         // Descomponer la fecha manualmente para evitar desfases de zona horaria
         const [year, month, day] = event.date.split("-").map(Number);
         const dateObj = new Date(year, month - 1, day); // Meses en JS son 0-indexed
-  
-        const dayName = dateObj.toLocaleDateString("es-ES", { weekday: "long" });
-        const monthName = dateObj.toLocaleDateString("es-ES", { month: "long" });
-  
+
+        const dayName = dateObj.toLocaleDateString("es-ES", {
+          weekday: "long",
+        });
+        const monthName = dateObj.toLocaleDateString("es-ES", {
+          month: "long",
+        });
+
         const dayFormatted = dayName.charAt(0).toUpperCase() + dayName.slice(1);
-        const monthFormatted = monthName.charAt(0).toUpperCase() + monthName.slice(1);
-  
+        const monthFormatted =
+          monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
         return {
           fullDate: dateObj.toLocaleDateString("es-ES", {
             weekday: "long",
@@ -91,18 +100,16 @@ export const Home = () => {
           id: event.id,
           date: event.date,
           description: event.description,
-          img_path: event.img_path
+          img_path: event.img_path,
         };
       });
-  
+
       setHighlightedDates(formattedDates);
       console.log("Highlighted Dates:", formattedDates);
     } catch (error) {
       console.error("Error al cargar eventos:", error);
     }
   };
-  
-
 
   useEffect(() => {
     fetchEvents(date);
@@ -344,12 +351,70 @@ export const Home = () => {
                     >
                       {sections.map((category, index) => (
                         <motion.div key={index} variants={itemVariants}>
-                          <Link to={`/themes/${category.id}`}>
-                            <CategoryHomeCard
-                              icon={category.icon_path}
-                              name={category.name}
-                            />
-                          </Link>
+                          {category.name === "GIS" ? (
+                            <Link
+                              to="/item/10"
+                              onClick={() => {
+                                // Guarda la sección y el tema correspondientes en el localStorage
+                                localStorage.setItem(
+                                  "selectedSection",
+                                  JSON.stringify({
+                                    id: 4,
+                                    name: "GIS",
+                                    icon_path: "gis.png",
+                                    enabled: 1,
+                                    createdAt: "2025-02-07T10:45:56.000Z",
+                                    updatedAt: "2025-02-07T10:45:56.000Z",
+                                    deletedAt: null,
+                                  })
+                                );
+                                localStorage.setItem(
+                                  "selectedTheme",
+                                  JSON.stringify({
+                                    id: 7,
+                                    name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                                    description:
+                                      "plataforma de aplicaciones geográficas para la gestión municipal ",
+                                    id_section: 4,
+                                    items: [
+                                      {
+                                        id: 10,
+                                        name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                                        description:
+                                          "plataforma de aplicaciones geográficas para la gestión municipal",
+                                        url_or_ftp_path:
+                                          "https://experience.arcgis.com/experience/b877e6b58fb6478d81b93da2cdea7774/?draft=true",
+                                        id_theme: 7,
+                                        type: "GIS",
+                                        publication_date: "12/01/2025",
+                                        responsible:
+                                          "Secretaría de Innovación y ciudad inteligente",
+                                        maintenance:
+                                          "Departamento de Datos & GIS",
+                                        have_gis_detail: 0,
+                                        enabled: 1,
+                                        createdAt: "2025-02-07T11:37:06.000Z",
+                                        updatedAt: "2025-02-07T11:37:06.000Z",
+                                        deletedAt: null,
+                                      },
+                                    ],
+                                  })
+                                );
+                              }}
+                            >
+                              <CategoryHomeCard
+                                icon={category.icon_path}
+                                name={category.name}
+                              />
+                            </Link>
+                          ) : (
+                            <Link to={`/themes/${category.id}`}>
+                              <CategoryHomeCard
+                                icon={category.icon_path}
+                                name={category.name}
+                              />
+                            </Link>
+                          )}
                         </motion.div>
                       ))}
                     </motion.div>
@@ -520,13 +585,11 @@ export const Home = () => {
                 Categorías
               </h3>
 
-              {/* Si no hay categorías, mostrar MoonLoader */}
               {sections.length === 0 ? (
                 <div className="flex justify-center items-center h-40">
                   <MoonLoader color="#0477AD" size={50} />
                 </div>
               ) : (
-                /* Contenedor con animación */
                 <motion.div
                   className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
                   variants={containerVariants}
@@ -535,12 +598,69 @@ export const Home = () => {
                 >
                   {sections.map((category, index) => (
                     <motion.div key={index} variants={itemVariants}>
-                      <Link to={`/themes/${category.id}`}>
-                        <CategoryHomeCard
-                          icon={category.icon_path}
-                          name={category.name}
-                        />
-                      </Link>
+                      {category.name === "GIS" ? (
+                        <Link
+                          to="/item/10"
+                          onClick={() => {
+                            // Guarda la sección y el tema correspondientes en el localStorage
+                            localStorage.setItem(
+                              "selectedSection",
+                              JSON.stringify({
+                                id: 4,
+                                name: "GIS",
+                                icon_path: "gis.png",
+                                enabled: 1,
+                                createdAt: "2025-02-07T10:45:56.000Z",
+                                updatedAt: "2025-02-07T10:45:56.000Z",
+                                deletedAt: null,
+                              })
+                            );
+                            localStorage.setItem(
+                              "selectedTheme",
+                              JSON.stringify({
+                                id: 7,
+                                name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                                description:
+                                  "plataforma de aplicaciones geográficas para la gestión municipal ",
+                                id_section: 4,
+                                items: [
+                                  {
+                                    id: 10,
+                                    name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                                    description:
+                                      "plataforma de aplicaciones geográficas para la gestión municipal",
+                                    url_or_ftp_path:
+                                      "https://experience.arcgis.com/experience/b877e6b58fb6478d81b93da2cdea7774/?draft=true",
+                                    id_theme: 7,
+                                    type: "GIS",
+                                    publication_date: "12/01/2025",
+                                    responsible:
+                                      "Secretaría de Innovación y ciudad inteligente",
+                                    maintenance: "Departamento de Datos & GIS",
+                                    have_gis_detail: 0,
+                                    enabled: 1,
+                                    createdAt: "2025-02-07T11:37:06.000Z",
+                                    updatedAt: "2025-02-07T11:37:06.000Z",
+                                    deletedAt: null,
+                                  },
+                                ],
+                              })
+                            );
+                          }}
+                        >
+                          <CategoryHomeCard
+                            icon={category.icon_path}
+                            name={category.name}
+                          />
+                        </Link>
+                      ) : (
+                        <Link to={`/themes/${category.id}`}>
+                          <CategoryHomeCard
+                            icon={category.icon_path}
+                            name={category.name}
+                          />
+                        </Link>
+                      )}
                     </motion.div>
                   ))}
                 </motion.div>
@@ -731,12 +851,69 @@ export const Home = () => {
                 >
                   {sections.map((category, index) => (
                     <motion.div key={index} variants={itemVariants}>
-                      <Link to={`/themes/${category.id}`}>
-                        <CategoryHomeCard
-                          icon={category.icon_path}
-                          name={category.name}
-                        />
-                      </Link>
+                      {category.name === "GIS" ? (
+                        <Link
+                          to="/item/10"
+                          onClick={() => {
+                            // Guarda la sección y el tema correspondientes en el localStorage
+                            localStorage.setItem(
+                              "selectedSection",
+                              JSON.stringify({
+                                id: 4,
+                                name: "GIS",
+                                icon_path: "gis.png",
+                                enabled: 1,
+                                createdAt: "2025-02-07T10:45:56.000Z",
+                                updatedAt: "2025-02-07T10:45:56.000Z",
+                                deletedAt: null,
+                              })
+                            );
+                            localStorage.setItem(
+                              "selectedTheme",
+                              JSON.stringify({
+                                id: 7,
+                                name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                                description:
+                                  "plataforma de aplicaciones geográficas para la gestión municipal ",
+                                id_section: 4,
+                                items: [
+                                  {
+                                    id: 10,
+                                    name: "GEOPORTAL MUNICIPALIDAD DE SAN NICOLÁS",
+                                    description:
+                                      "plataforma de aplicaciones geográficas para la gestión municipal",
+                                    url_or_ftp_path:
+                                      "https://experience.arcgis.com/experience/b877e6b58fb6478d81b93da2cdea7774/?draft=true",
+                                    id_theme: 7,
+                                    type: "GIS",
+                                    publication_date: "12/01/2025",
+                                    responsible:
+                                      "Secretaría de Innovación y ciudad inteligente",
+                                    maintenance: "Departamento de Datos & GIS",
+                                    have_gis_detail: 0,
+                                    enabled: 1,
+                                    createdAt: "2025-02-07T11:37:06.000Z",
+                                    updatedAt: "2025-02-07T11:37:06.000Z",
+                                    deletedAt: null,
+                                  },
+                                ],
+                              })
+                            );
+                          }}
+                        >
+                          <CategoryHomeCard
+                            icon={category.icon_path}
+                            name={category.name}
+                          />
+                        </Link>
+                      ) : (
+                        <Link to={`/themes/${category.id}`}>
+                          <CategoryHomeCard
+                            icon={category.icon_path}
+                            name={category.name}
+                          />
+                        </Link>
+                      )}
                     </motion.div>
                   ))}
                 </motion.div>

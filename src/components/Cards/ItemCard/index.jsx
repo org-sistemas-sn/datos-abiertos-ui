@@ -1,12 +1,12 @@
+// ItemCard.jsx
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaDownload } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 import Swal from "sweetalert2";
 import "../../../styles/itemCard.css";
 
-export default function ItemCard({ id, name, description, type, publicationDate, url_or_ftp_path }) {
+export default function ItemCard(props) {
   const navigate = useNavigate();
 
-  // Función para asignar colores según el tipo
   const getBadgeColor = (type) => {
     const cleanType = type.trim().toUpperCase();
     switch (cleanType) {
@@ -23,20 +23,21 @@ export default function ItemCard({ id, name, description, type, publicationDate,
     }
   };
 
-  let ftpUrl = import.meta.env.VITE_FTP_SERVER_URL;
-
-  // Corrección: Acceder a "type" y "url_or_ftp_path" desde las props en lugar de "item"
-  if (type === "XLSX") {
-    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${url_or_ftp_path}`;
-  } else if (type === "CSV") {
-    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${url_or_ftp_path}`;
-  }
-
-  // Función para manejar la descarga con SweetAlert2
-  const handleDownload = () => {
+  const handleDownload = (file) => {
+    let ftpUrl = import.meta.env.VITE_FTP_SERVER_URL;
+    const fileType = file.type.trim().toUpperCase();
+    if (fileType === "XLSX") {
+      ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${
+        file.url_or_ftp_path
+      }`;
+    } else if (fileType === "CSV") {
+      ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${
+        file.url_or_ftp_path
+      }`;
+    }
     Swal.fire({
       title: "¿Estás seguro?",
-      text: `Vas a descargar el archivo: ${url_or_ftp_path}`,
+      text: `Vas a descargar el archivo: ${file.url_or_ftp_path}`,
       icon: "warning",
       showCancelButton: true,
       customClass: {
@@ -47,79 +48,147 @@ export default function ItemCard({ id, name, description, type, publicationDate,
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        window.location.href = ftpUrl; // Redirige a la URL externa
+        window.location.href = ftpUrl;
       }
     });
   };
 
-  const cleanType = type.trim().toUpperCase();
+  if (props.merged && props.files) {
+    const uniqueTypes = Array.from(
+      new Set(props.files.map((file) => file.type.trim().toUpperCase()))
+    );
+    return (
+      <div className="w-full flex border hover:shadow-lg hover:scale-105 border-gray-300 rounded-lg shadow-sm p-4 transition-transform duration-500 ease-in-out justify-between">
+        <div className="w-[60%] h-auto">
+          <div className="w-full h-auto">
+            <h3
+              className="font-grotesk cursor-pointer hover:underline inline text-lg font-bold text-[#3e4345]"
+              onClick={() => navigate(`/item/${props.id}`)}
+            >
+              {props.name.toUpperCase()}
+            </h3>
+          </div>
+          <div className="w-full h-auto">
+            <p className="text-sm text-[#677073] mt-2">{props.description}</p>
+          </div>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="w-[113px] h-auto pt-2 flex justify-between">
+              {uniqueTypes.map((type) => {
+                const file = props.files.find(
+                  (f) => f.type.trim().toUpperCase() === type
+                );
+                return (
+                  <span
+                    key={type}
+                    onClick={() => handleDownload(file)}
+                    className={`cursor-pointer px-3 py-1 rounded text-sm font-medium ${getBadgeColor(
+                      type
+                    )}`}
+                  >
+                    {type}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="pt-2 ml-2">
+              <span className="text-sm text-[#677073] bg-[#f2f7ff] rounded p-1">
+                Fecha de publicación: {props.publication_date}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="w-[30%] flex justify-center items-center">
+          <button
+            className="flex items-center ml-2 gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition"
+            onClick={() => navigate(`/item/${props.id}`)}
+          >
+            Consultar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const cleanType = props.type.trim().toUpperCase();
+  let ftpUrl = import.meta.env.VITE_FTP_SERVER_URL;
+  if (cleanType === "XLSX") {
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}xlsx/${
+      props.url_or_ftp_path
+    }`;
+  } else if (cleanType === "CSV") {
+    ftpUrl = `${import.meta.env.VITE_FTP_SERVER_URL}csv/${
+      props.url_or_ftp_path
+    }`;
+  }
+
+  const handleDownloadSingle = () => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: `Vas a descargar el archivo: ${props.url_or_ftp_path}`,
+      icon: "warning",
+      showCancelButton: true,
+      customClass: {
+        confirmButton: "custom-confirm-button",
+        cancelButton: "custom-cancel-button",
+      },
+      confirmButtonText: "Descargar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = ftpUrl;
+      }
+    });
+  };
 
   return (
-    <div className="w-full border hover:shadow-lg hover:scale-x-105 hover:scale-y-105 border-gray-300 rounded-lg shadow-sm p-4 grid grid-cols-1 lg:grid-cols-[70%_30%] gap-4 items-center transition-transform duration-500 ease-in-out">
-      {/* Contenido principal (70%) */}
+    <div className="w-full border hover:shadow-lg hover:scale-105 border-gray-300 rounded-lg shadow-sm p-4 grid grid-cols-1 lg:grid-cols-[70%_30%] gap-4 items-center transition-transform duration-500 ease-in-out">
       <div className="w-auto">
         <h3
-          className="font-grotesk cursor-pointer hover:underline inline text-lg font-bold text-[#3e4345]"
+          className="font-grotesk cursor-pointer text-lg font-bold text-[#3e4345] hover:underline"
           onClick={() => {
             if (cleanType !== "PDF") {
-              navigate(`/item/${id}`); // Navega al detalle del ítem si no es PDF
-            } else {
-              handleDownload(); // Disparar el modal para PDF
+              navigate(`/item/${props.id}`);
             }
           }}
         >
-          {name.toUpperCase()}
+          {props.name.toUpperCase()}
         </h3>
-        <p className="text-sm text-[#677073] mt-2">{description}</p>
-
-        {/* Información del tipo y fecha */}
+        <p className="text-sm text-[#677073] mt-2">{props.description}</p>
         <div className="flex items-center gap-2 mt-4">
-          <span className={`px-3 py-1 rounded text-sm font-medium ${getBadgeColor(type)}`}>
-            {cleanType}
+          <span
+            onClick={
+              ["CSV", "XLSX"].includes(cleanType)
+                ? () => handleDownloadSingle()
+                : undefined
+            }
+            className={`${
+              ["CSV", "XLSX"].includes(cleanType) ? "cursor-pointer" : ""
+            } px-3 py-1 rounded text-sm font-medium ${getBadgeColor(
+              cleanType
+            )}`}
+          >
+            {props.type}
           </span>
           <span className="text-sm text-[#677073] bg-[#f2f7ff] rounded p-1">
-            Fecha de publicación: {publicationDate}
+            Fecha de publicación: {props.publication_date}
           </span>
         </div>
       </div>
-
-      {/* Botones de acciones (30%) */}
       <div className="w-full flex lg:flex-col items-center gap-2 mt-4 lg:mt-0">
-        {/* Si el archivo es GIS o PBIX, solo mostrar "Consultar" */}
         {(cleanType === "GIS" || cleanType === "PBIX") && (
           <button
             className="flex items-center gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition"
-            onClick={() => navigate(`/item/${id}`)}
+            onClick={() => navigate(`/item/${props.id}`)}
           >
-            Consultar <FaEye />
+            Consultar
           </button>
         )}
-
-        {/* Si el archivo es CSV o XLSX, mostrar ambos botones */}
         {(cleanType === "CSV" || cleanType === "XLSX") && (
-          <>
-            <button
-              className="flex items-center gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition"
-              onClick={() => navigate(`/item/${id}`)}
-            >
-              Consultar <FaEye />
-            </button>
-            <button
-              onClick={handleDownload}
-              className="flex items-center gap-2 bg-[#0477AD] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#005a8c] transition"
-            >
-              Descargar <FaDownload />
-            </button>
-          </>
-        )}
-
-        {/* Si el archivo es PDF, solo mostrar "Descargar" */}
-        {cleanType === "PDF" && (
           <button
-            onClick={handleDownload}
-            className="flex items-center gap-2 bg-[#0477AD] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#005a8c] transition"
+            className="flex items-center gap-2 border border-[#0477AD] text-[#0477AD] px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#e6f7ff] transition"
+            onClick={() => navigate(`/item/${props.id}`)}
           >
-            Descargar <FaDownload />
+            Consultar
           </button>
         )}
       </div>
