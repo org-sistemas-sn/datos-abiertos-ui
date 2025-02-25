@@ -7,7 +7,8 @@ export const itemsService = {
   getItemFile,
   getItemData,
   getItemsByName, 
-  getItemSectionAndTheme
+  getItemSectionAndTheme,
+  getThemeByItemId
 };
 
 async function getAllItems() {
@@ -86,6 +87,24 @@ async function getItemSectionAndTheme(itemId) {
     return res.data; // Devuelve el item con su tema y sección
   } catch (error) {
     console.error(`Error al obtener la sección y el tema del item con ID ${itemId}:`, error.response ? error.response.data : error.message);
+    throw error;
+  }
+}
+
+async function getThemeByItemId(itemId) {
+  try {
+    console.log(`🔍 Buscando theme del item con ID: ${itemId}...`);
+    
+    const res = await API.get(`/items/${itemId}/theme`);
+    
+    console.log("✅ Theme obtenido del backend:", res.data);
+    return res.data;
+    
+  } catch (error) {
+    console.error(
+      `❌ Error al obtener el theme del item con ID ${itemId}:`,
+      error.response ? error.response.data : error.message
+    );
     throw error;
   }
 }
