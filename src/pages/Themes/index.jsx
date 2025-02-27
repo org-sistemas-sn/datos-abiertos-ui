@@ -57,10 +57,12 @@ const Themes = () => {
           setHasOneTheme(true);
           setSelectedTheme(themesData[0]);
           localStorage.setItem("selectedTheme", JSON.stringify(themesData[0]));
+          localStorage.setItem("selectedSection", JSON.stringify(sectionData)); // Guardar selectedSection en localStorage
           navigate(`/themes/${id}/${themesData[0].id}`);
         } else {
           setHasOneTheme(false);
         }
+        
       } catch (err) {
         setError("Error al cargar los datos de la sección.");
       } finally {
