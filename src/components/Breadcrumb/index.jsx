@@ -2,6 +2,8 @@ import { IoArrowBack } from "react-icons/io5";
 import { MdOutlineKeyboardDoubleArrowRight } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useSectionContext } from "../../context/sectionContext/sectionContext";
+
 
 const formatName = (text) => {
   if (!text) return "";
@@ -21,14 +23,26 @@ const Breadcrumb = ({ category, theme, item, showTitle = true }) => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  const { hasOneTheme } = useSectionContext();
+
+  console.log(hasOneTheme)
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const handleGoBack = () => {
+    if(hasOneTheme){
+      navigate("/");
+    } else {
+      navigate(-1);
+    }
+  };
 
   return (
     <div
@@ -37,10 +51,17 @@ const Breadcrumb = ({ category, theme, item, showTitle = true }) => {
       } w-full flex flex-col justify-center items-center`}
     >
       {/* Breadcrumb con flecha y trazado */}
-      <div className="w-[93%] max-w-[1600px] h-auto flex items-center pt-5">
+      <div className="w-[93%] max-w-[1600px] h-auto flex items-center pt-5 relative z-10">
         {/* Botón de regreso */}
-        <button onClick={() => navigate(-1)} className="flex items-center">
-          <IoArrowBack className="mb-5 mr-2 ml-3 md:ml-0" size={32} color="#0477AD" />
+        <button
+          onClick={handleGoBack}
+          className="flex items-center cursor-pointer p-2"
+        >
+          <IoArrowBack
+            className="mb-5 mr-2 ml-3 md:ml-0"
+            size={32}
+            color="#0477AD"
+          />
         </button>
 
         {/* Mostrar breadcrumb solo si no es móvil */}

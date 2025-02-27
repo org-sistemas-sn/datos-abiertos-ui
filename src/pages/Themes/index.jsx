@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import ThemeCard from "../../components/Cards/ThemeCard";
 import Breadcrumb from "../../components/Breadcrumb";
@@ -23,12 +23,13 @@ const itemVariants = {
 
 const Themes = () => {
   const { id } = useParams();
-  const { selectedSection, setSelectedSection, setSelectedTheme } = useSectionContext();
+  const navigate = useNavigate();
+  const { selectedSection, setSelectedSection, setSelectedTheme, hasOneTheme, setHasOneTheme } =
+    useSectionContext();
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Recuperar la sección guardada en localStorage al montar el componente
   useEffect(() => {
     const storedSection = localStorage.getItem("selectedSection");
 
@@ -50,6 +51,16 @@ const Themes = () => {
         // Obtener los temas de la sección
         const themesData = await themeService.getThemesBySectionId(id);
         setThemes(themesData);
+
+        // Setear hasOneTheme según la cantidad de temas
+        if (themesData.length === 1) {
+          setHasOneTheme(true);
+          setSelectedTheme(themesData[0]);
+          localStorage.setItem("selectedTheme", JSON.stringify(themesData[0]));
+          navigate(`/themes/${id}/${themesData[0].id}`);
+        } else {
+          setHasOneTheme(false);
+        }
       } catch (err) {
         setError("Error al cargar los datos de la sección.");
       } finally {
@@ -58,15 +69,7 @@ const Themes = () => {
     };
 
     fetchSectionData();
-  }, [id, setSelectedSection]);
-
-  // Guardar en localStorage cuando selectedSection cambie y tenga datos válidos
-  useEffect(() => {
-    if (selectedSection && Object.keys(selectedSection).length > 0) {
-      localStorage.setItem("selectedSection", JSON.stringify(selectedSection));
-      console.log("🟢 Sección guardada en localStorage:", selectedSection);
-    }
-  }, [selectedSection]);
+  }, [id, setSelectedSection, setSelectedTheme, setHasOneTheme, navigate]);
 
   if (loading) {
     return (
@@ -105,7 +108,7 @@ const Themes = () => {
       {/* Contenedor de Temas */}
       <div className="w-full h-auto flex justify-center pb-20 max-w-[1730px]">
         <div className="w-[91%] max-w-[1730px]">
-          {themes.length > 0 ? (
+          {!hasOneTheme && themes.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-4"
               variants={containerVariants}
@@ -116,7 +119,7 @@ const Themes = () => {
                 <motion.div
                   key={theme.id}
                   variants={itemVariants}
-                  onClick={() => setSelectedTheme(theme)} // Guarda el tema seleccionado en el contexto
+                  onClick={() => setSelectedTheme(theme)}
                 >
                   <Link to={`/themes/${id}/${theme.id}`}>
                     <ThemeCard name={theme.name} description={theme.description} />

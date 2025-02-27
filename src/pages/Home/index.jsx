@@ -12,6 +12,7 @@ import CardEventCalendary from "../../components/Cards/CardEventCalendary";
 import Swal from "sweetalert2";
 import MoonLoader from "react-spinners/MoonLoader";
 import CategoryHomeCard from "../../components/Cards/CategoryHomeCard";
+import { useSectionContext } from "../../context/sectionContext/sectionContext";
 
 export const Home = () => {
   const [date, setDate] = useState(new Date());
@@ -22,6 +23,7 @@ export const Home = () => {
   const [highlightedDates, setHighlightedDates] = useState([]);
   const [loading, setLoading] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
+  const { setHasOneTheme } = useSectionContext();
 
   const navigate = useNavigate();
 
@@ -110,6 +112,11 @@ export const Home = () => {
       console.error("Error al cargar eventos:", error);
     }
   };
+
+  useEffect(() => {
+    localStorage.clear();
+    setHasOneTheme(false); // Resetea el estado cada vez que Home se monta
+  }, []);
 
   useEffect(() => {
     fetchEvents(date);
