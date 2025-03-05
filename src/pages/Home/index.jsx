@@ -23,7 +23,7 @@ export const Home = () => {
   const [highlightedDates, setHighlightedDates] = useState([]);
   const [loading, setLoading] = useState(null);
   const [searchResults, setSearchResults] = useState(null);
-  const { setHasOneTheme } = useSectionContext();
+  const { setHasOneTheme, searchItem, setSearchItem } = useSectionContext();
 
   const navigate = useNavigate();
 
@@ -154,56 +154,55 @@ export const Home = () => {
   ];
 
   const handleSearch = async () => {
-    if (searchTerm.trim() !== "") {
-      try {
-        const results = await itemsService.getItemsByName(searchTerm);
+    if (searchItem.trim() !== "") {
+        // Guardamos el término de búsqueda en el localStorage
+        localStorage.setItem("lastSearchItem", searchItem);
 
-        if (Array.isArray(results) && results.length > 0) {
-          setSearchResults(results);
+        try {
+            const results = await itemsService.getItemsByName(searchItem);
 
-          Swal.close();
-          navigate("/itemssearch", { state: { searchTerm, results } });
-        } else {
-          setSearchResults([]);
-
-          Swal.fire({
-            title: "Sin resultados",
-            text: `No se encontró ningún dataset con el nombre "${searchTerm}".`,
-            icon: "warning",
-            confirmButtonText: "Aceptar",
-            customClass: { confirmButton: "custom-confirm-button" },
-          });
+            if (Array.isArray(results) && results.length > 0) {
+                setSearchResults(results);
+                Swal.close();
+                navigate("/itemssearch", {
+                    state: { searchTerm: searchItem, results },
+                });
+            } else {
+                setSearchResults([]);
+                Swal.fire({
+                    title: "Sin resultados",
+                    text: `No se encontró ningún dataset con el nombre "${searchItem}".`,
+                    icon: "warning",
+                    confirmButtonText: "Aceptar",
+                    customClass: { confirmButton: "custom-confirm-button" },
+                });
+            }
+        } catch (error) {
+            console.error("Error en la búsqueda de items:", error);
+            const errorMessage = error?.response?.data?.error || error?.message || "";
+            if (errorMessage.includes("No se encontraron items con ese nombre")) {
+                setSearchResults([]);
+                Swal.fire({
+                    title: "Sin resultados",
+                    text: `No se encontró ningún dataset con el nombre "${searchItem}".`,
+                    icon: "warning",
+                    confirmButtonText: "Aceptar",
+                    customClass: { confirmButton: "custom-confirm-button" },
+                });
+            } else {
+                setSearchResults([]);
+                Swal.fire({
+                    title: "Error",
+                    text: "Ocurrió un error al buscar los items.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                    customClass: { confirmButton: "custom-confirm-button" },
+                });
+            }
         }
-      } catch (error) {
-        console.error("Error en la búsqueda de items:", error);
-
-        const errorMessage =
-          error?.response?.data?.error || error?.message || "";
-
-        if (errorMessage.includes("No se encontraron items con ese nombre")) {
-          setSearchResults([]);
-
-          Swal.fire({
-            title: "Sin resultados",
-            text: `No se encontró ningún dataset con el nombre "${searchTerm}".`,
-            icon: "warning",
-            confirmButtonText: "Aceptar",
-            customClass: { confirmButton: "custom-confirm-button" },
-          });
-        } else {
-          setSearchResults([]);
-
-          Swal.fire({
-            title: "Error",
-            text: "Ocurrió un error al buscar los items.",
-            icon: "error",
-            confirmButtonText: "Aceptar",
-            customClass: { confirmButton: "custom-confirm-button" },
-          });
-        }
-      }
     }
-  };
+};
+
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
@@ -240,8 +239,8 @@ export const Home = () => {
                   <input
                     type="text"
                     placeholder="Qué dataset buscas?"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    value={searchItem}
+                    onChange={(e) => setSearchItem(e.target.value)}  // Corregido para actualizar correctamente
                     onKeyDown={handleKeyPress}
                     className="w-full py-5 pl-4 pr-10 text-lg rounded-md shadow-lg focus:outline-none"
                   />
@@ -561,8 +560,8 @@ export const Home = () => {
                 <input
                   type="text"
                   placeholder="Qué dataset buscas?"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchItem}
+                  onChange={(e) => setSearchItem(e.target.value)}
                   onKeyDown={handleKeyPress}
                   className="w-full py-5 pl-4 pr-10 text-lg font-grotesk text-gray-500 rounded-lg shadow focus:outline-none focus:ring-2"
                 />
@@ -810,8 +809,8 @@ export const Home = () => {
             <div className="relative w-full max-w-md">
               <input
                 type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchItem}
+                onChange={(e) => setSearchItem(e.target.value)}
                 onKeyDown={handleKeyPress}
                 placeholder="Qué dataset buscas?"
                 className="w-full py-5 pl-4 pr-10 text-lg font-grotesk text-gray-500 rounded-lg shadow focus:outline-none"

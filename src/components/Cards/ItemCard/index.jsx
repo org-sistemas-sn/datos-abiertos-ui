@@ -59,7 +59,7 @@ export default function ItemCard(props) {
     );
     return (
       <div className="w-full flex border hover:shadow-lg hover:scale-105 border-gray-300 rounded-lg shadow-sm p-4 transition-transform duration-500 ease-in-out justify-between">
-        <div className="w-[60%] h-auto">
+        <div className="w-[70%] h-auto">
           <div className="w-full h-auto">
             <h3
               className="font-grotesk cursor-pointer hover:underline inline text-lg font-bold text-[#3e4345]"
@@ -72,7 +72,7 @@ export default function ItemCard(props) {
             <p className="text-sm text-[#677073] mt-2">{props.description}</p>
           </div>
           <div className="flex items-center gap-2 mt-2">
-            <div className="w-[113px] h-auto pt-2 flex justify-between">
+            <div className="h-auto pt-2 flex justify-between">
               {uniqueTypes.map((type) => {
                 const file = props.files.find(
                   (f) => f.type.trim().toUpperCase() === type
@@ -81,7 +81,7 @@ export default function ItemCard(props) {
                   <span
                     key={type}
                     onClick={() => handleDownload(file)}
-                    className={`cursor-pointer px-3 py-1 rounded text-sm font-medium ${getBadgeColor(
+                    className={`cursor-pointer px-3 py-1 rounded text-sm font-medium ml-1 ${getBadgeColor(
                       type
                     )}`}
                   >
@@ -90,7 +90,7 @@ export default function ItemCard(props) {
                 );
               })}
             </div>
-            <div className="pt-2 ml-2">
+            <div className="pt-2">
               <span className="text-sm text-[#677073] bg-[#f2f7ff] rounded p-1">
                 Fecha de publicación: {props.publication_date}
               </span>

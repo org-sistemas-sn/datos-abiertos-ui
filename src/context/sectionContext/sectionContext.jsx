@@ -8,6 +8,7 @@ export const SectionProvider = ({ children }) => {
     const [selectedSection, setSelectedSection] = useState(null);
     const [selectedTheme, setSelectedTheme] = useState(null);
     const [hasOneTheme, setHasOneTheme] = useState(null)
+    const [searchItem, setSearchItem] = useState("")
 
     return (
         <SectionContext.Provider value={{
@@ -16,7 +17,9 @@ export const SectionProvider = ({ children }) => {
             selectedTheme,
             setSelectedTheme,
             hasOneTheme,
-            setHasOneTheme
+            setHasOneTheme,
+            searchItem,
+            setSearchItem
         }}>
             {children}
         </SectionContext.Provider>
