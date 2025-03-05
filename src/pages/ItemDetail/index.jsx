@@ -239,7 +239,7 @@ const ItemDetail = () => {
             <>
               <div className="w-full h-[100vh] flex flex-col">
                 <h1 className="text-4xl font-bold text-[#3e4345]">
-                  {item.name}
+                  {item?.name}
                 </h1>
                 <p className="mt-4 text-lg text-gray-600">{item?.description}</p>
                 <div className="flex md:flex-row md:items-center gap-2 mt-3 mb-3">
@@ -256,10 +256,10 @@ const ItemDetail = () => {
                         : "bg-gray-200 text-gray-800"
                     }`}
                   >
-                    {item.type.toUpperCase()}
+                    {item?.type.toUpperCase()}
                   </span>
                   <span className="w-auto text-sm text-[#677073] bg-[#f2f7ff] rounded px-2 py-1">
-                    Fecha de publicación: {item.publication_date}
+                    Fecha de publicación: {item?.publication_date}
                   </span>
                 </div>
                 {isLoading && (
@@ -426,7 +426,7 @@ const ItemDetail = () => {
                 <div>
                   <h3 className="font-semibold text-[#3e4345]">Etiquetas</h3>
                   <p className="text-gray-700">
-                    {selectedSection.name
+                    {selectedSection?.name
                       .toLowerCase()
                       .split(" ")
                       .map(
@@ -435,7 +435,7 @@ const ItemDetail = () => {
                       .join(" ")}
                   </p>
                   <p className="text-gray-700">
-                    {selectedTheme.name
+                    {selectedTheme?.name
                       .toLowerCase()
                       .split(" ")
                       .map(
