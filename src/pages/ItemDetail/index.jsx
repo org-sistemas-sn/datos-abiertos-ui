@@ -163,7 +163,7 @@ const ItemDetail = () => {
 
   const phoneNumber = "+5493364284703"
 
-  const message = "Quiero reservar un turno"
+  const message = "Hola SantIA!"
   
   const openWhatsApp = () => {
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
