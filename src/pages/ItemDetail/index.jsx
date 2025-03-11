@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Breadcrumb from "../../components/Breadcrumb";
-import ItemCard from "../../components/Cards/ItemCard";
+import { FaWhatsapp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import MoonLoader from "react-spinners/MoonLoader";
@@ -20,8 +20,6 @@ const ItemDetail = () => {
   const { id } = useParams();
   const itemId = parseInt(id, 10);
   const navigate = useNavigate();
-
-  console.log(id)
 
   const [selectedTheme, setSelectedTheme] = useState(null);
   const [selectedSection, setSelectedSection] = useState(null);
@@ -162,7 +160,15 @@ const ItemDetail = () => {
     };
     fetchGeoItems();
   }, [item]);
+
+  const phoneNumber = "+5493364284703"
+
+  const message = "Quiero reservar un turno"
   
+  const openWhatsApp = () => {
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank"); 
+  };
   
 
   if (!item) {
@@ -368,7 +374,7 @@ const ItemDetail = () => {
                               </span>
                             </div>
                             {detail.smm === true || detail.smm === 1 ? (
-                              <div className="w-full h-[60px] flex items-center mt-4">
+                              <div className="w-full h-[60px] flex items-center mt-4 justify-between">
                                 <div className="w-auto h-[30px] bg-[#c4e0ff] rounded-md pl-2 flex items-center">
                                   <span className="text-[14px] text-[#0378ad] font-semibold">
                                     Seguro Médico Municipal Aplicable
@@ -381,9 +387,14 @@ const ItemDetail = () => {
                                     />
                                   </div>
                                 </div>
+                                <div className="w-[100px] h-full flex justify-center items-center">
+                                  <FaWhatsapp onClick={openWhatsApp} className="cursor-pointer" color="#25D366" size={32}/>
+                                </div>
                               </div>
                             ) : (
-                              ""
+                              <div className="w-full h-24 flex items-center justify-end p-8">
+                                <FaWhatsapp onClick={openWhatsApp} className="cursor-pointer" color="#25D366" size={32}/>
+                              </div>
                             )}
                           </div>
                         </div>
