@@ -9,6 +9,9 @@ import checkCircle from "../../assets/icons/check-circle.png";
 import XlsxCsvItemCard from "../../components/Cards/XlsxCsvItemCard";
 import { itemsService } from "../../services/items/itemsService";
 import { gisDetailsService } from "../../services/gisDetail/gisDetailService";
+import busIcon from "../../assets/icons/bus-icon.png";
+import ParadaVerde from "../../assets/icons/paradaVerde.png";
+import ParadaRoja from "../../assets/icons/paradaRoja.png";
 import Swal from "sweetalert2";
 
 function removeExtension(path) {
@@ -47,7 +50,7 @@ const ItemDetail = () => {
       try {
         console.log("🔄 Solicitando theme del item...");
         const themeData = await itemsService.getThemeByItemId(itemId);
-  
+
         console.log("✅ Theme actualizado desde el servicio:", themeData);
         setSelectedTheme(themeData);
         localStorage.setItem("selectedTheme", JSON.stringify(themeData));
@@ -55,24 +58,23 @@ const ItemDetail = () => {
         console.error("❌ Error al obtener el theme del item:", error);
       }
     };
-  
+
     const storedTheme = localStorage.getItem("selectedTheme");
     const storedSection = localStorage.getItem("selectedSection");
-  
+
     if (storedTheme) {
       console.log("ℹ️ Cargando theme desde localStorage...");
       setSelectedTheme(JSON.parse(storedTheme));
     }
-  
+
     if (storedSection) {
       console.log("ℹ️ Cargando sección desde localStorage...");
       setSelectedSection(JSON.parse(storedSection));
     }
-  
+
     // Siempre actualiza la información del tema con la API
     fetchTheme();
   }, [itemId]);
-  
 
   const item = selectedTheme?.items?.find((item) => item.id === itemId);
   const itemExtension = item ? removeExtension(item.url_or_ftp_path) : "";
@@ -116,8 +118,10 @@ const ItemDetail = () => {
       ) {
         try {
           const geoData = await itemsService.getItemsByThemeId(6);
-          const filteredGeoData = geoData.filter((geoItem) => geoItem.type !== "GIS");
-  
+          const filteredGeoData = geoData.filter(
+            (geoItem) => geoItem.type !== "GIS"
+          );
+
           // Agrupar ítems por nombre
           const groups = {};
           filteredGeoData.forEach((geoItem) => {
@@ -125,7 +129,7 @@ const ItemDetail = () => {
             if (!groups[name]) groups[name] = [];
             groups[name].push(geoItem);
           });
-  
+
           const aggregatedGeoItems = [];
           Object.values(groups).forEach((group) => {
             const mergeable = group.filter((geoItem) => {
@@ -136,10 +140,14 @@ const ItemDetail = () => {
               const t = geoItem.type.trim().toUpperCase();
               return !(t === "CSV" || t === "XLSX");
             });
-  
-            const hasCSV = mergeable.some((geoItem) => geoItem.type.trim().toUpperCase() === "CSV");
-            const hasXLSX = mergeable.some((geoItem) => geoItem.type.trim().toUpperCase() === "XLSX");
-  
+
+            const hasCSV = mergeable.some(
+              (geoItem) => geoItem.type.trim().toUpperCase() === "CSV"
+            );
+            const hasXLSX = mergeable.some(
+              (geoItem) => geoItem.type.trim().toUpperCase() === "XLSX"
+            );
+
             if (hasCSV && hasXLSX) {
               aggregatedGeoItems.push({
                 ...mergeable[0],
@@ -151,7 +159,7 @@ const ItemDetail = () => {
             }
             nonMergeable.forEach((geoItem) => aggregatedGeoItems.push(geoItem));
           });
-  
+
           setGeoItems(aggregatedGeoItems);
         } catch (error) {
           console.error("❌ Error al obtener geo items:", error);
@@ -161,22 +169,23 @@ const ItemDetail = () => {
     fetchGeoItems();
   }, [item]);
 
-  const phoneNumber = "+5493364284703"
+  const phoneNumber = "+5493364284703";
 
-  const message = "Hola SantIA!"
-  
+  const message = "Hola SantIA!";
+
   const openWhatsApp = () => {
-    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank"); 
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+      message
+    )}`;
+    window.open(url, "_blank");
   };
-  
 
   if (!item) {
     console.error("❌ El item no fue encontrado. Verifica el estado.");
     return (
       <div className="w-full h-screen flex items-center justify-center"></div>
     );
-  } 
+  }
 
   if (!item.type) {
     console.error("❌ El tipo de archivo no está definido en item.");
@@ -247,7 +256,9 @@ const ItemDetail = () => {
                 <h1 className="text-4xl font-bold text-[#3e4345]">
                   {item?.name}
                 </h1>
-                <p className="mt-4 text-lg text-gray-600">{item?.description}</p>
+                <p className="mt-4 text-lg text-gray-600">
+                  {item?.description}
+                </p>
                 <div className="flex md:flex-row md:items-center gap-2 mt-3 mb-3">
                   <span
                     className={`w-[50px] px-3 py-1 text-sm font-medium rounded ${
@@ -293,6 +304,67 @@ const ItemDetail = () => {
                   </div>
                 </div>
               </div>
+              {item?.name === "TRANSPORTE PÚBLICO" ? (
+                <div className="w-full h-auto flex">
+                  <div className="h-[300px] w-[500px] rounded-md bg-[#f2f7ff] pl-5 pt-5 pb-5 pr-5 shadow-md">
+                    <div className="w-full h-16 flex items-center">
+                      <h5 className="text-xl text-[#3e4345] font-semibold">
+                        Referencias
+                      </h5>
+                    </div>
+                    <div className="w-full h-auto">
+                      <div className="w-full h-[30%] flex items-center">
+                        <div className="w-[30px] h-[30px] ml-1 flex">
+                          <img src={busIcon} className="w-full h-full" />
+                        </div>
+                        <div className="w-[120px] h-[60%]">
+                          <h5 className="text-xl text-[#3e4345] font-semibold ml-2">
+                            CABECERA
+                          </h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full h-auto">
+                      <div className="w-full h-16  flex items-center">
+                        <div className="w-[40%] flex justify-between items-center h-full">
+                          <div className="w-16 h-[1px] text-[#687073] flex justify-center border-2 border-[#40FF00]">
+                            Ida
+                          </div>
+                          <div className="w-16 h-[1px] text-[#687073] border-2 border-red-500">
+                            Regreso
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="w-full h-auto">
+                      <div className="w-full h-16  flex items-center">
+                        <div className="w-[40%] flex justify-between h-full">
+                          <div className="w-[100%]">
+                            <div className="w-[50px] h-[35px] flex justify-center items-center ">
+                              <img
+                                className="w-full h-full object-contain"
+                                src={ParadaVerde}
+                              ></img>
+                            </div>
+                            <span className="text-[#687073]">Paradas Ida</span>
+                          </div>
+                          <div className="w-[50%] flex flex-col items-end">
+                            <div className="w-[50px] h-[35px] flex justify-center items-center ">
+                              <img
+                                className="w-full h-full object-contain"
+                                src={ParadaRoja}
+                              ></img>
+                            </div>
+                            <span className="text-[#687073]">Paradas Regreso</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
               {item?.have_gis_detail === 1 ? (
                 <div className="w-full">
                   <div className="w-full mt-5 flex items-center">
@@ -388,12 +460,22 @@ const ItemDetail = () => {
                                   </div>
                                 </div>
                                 <div className="w-[100px] h-full flex justify-center items-center">
-                                  <FaWhatsapp onClick={openWhatsApp} className="cursor-pointer" color="#25D366" size={32}/>
+                                  <FaWhatsapp
+                                    onClick={openWhatsApp}
+                                    className="cursor-pointer"
+                                    color="#25D366"
+                                    size={32}
+                                  />
                                 </div>
                               </div>
                             ) : (
                               <div className="w-full h-24 flex items-center justify-end p-8">
-                                <FaWhatsapp onClick={openWhatsApp} className="cursor-pointer" color="#25D366" size={32}/>
+                                <FaWhatsapp
+                                  onClick={openWhatsApp}
+                                  className="cursor-pointer"
+                                  color="#25D366"
+                                  size={32}
+                                />
                               </div>
                             )}
                           </div>
@@ -469,7 +551,9 @@ const ItemDetail = () => {
             </>
           ) : (
             <>
-              <h1 className="text-4xl font-bold text-[#3e4345]">{item?.name}</h1>
+              <h1 className="text-4xl font-bold text-[#3e4345]">
+                {item?.name}
+              </h1>
               <p className="mt-4 text-lg text-gray-600">{item?.description}</p>
               <div className="flex md:flex-row md:items-center gap-2 mt-3">
                 <span className="w-auto text-sm text-[#677073] bg-[#f2f7ff] rounded px-2 py-1">
