@@ -665,7 +665,7 @@ const ItemDetail = () => {
                 <div>
                   <h3 className="font-semibold text-[#3e4345]">Etiquetas</h3>
                   <p className="text-gray-700">
-                    {selectedSection.name
+                    {selectedSection?.name
                       .toLowerCase()
                       .split(" ")
                       .map(
